@@ -42,7 +42,7 @@
                         <canvas id="canvas" width="600" height="600" style="border: 1px solid #000000"></canvas>
                         <input class="btn btn-secondary px-3 m-2 " type="file" id="logoInput" accept="image/*">
                         <button class="btn btn-success px-3 m-2 " id="addTextButton">Add Text</button>
-                        <button class="btn btn-success px-3 m-2 " id="saveButton">Save & Next</button>
+                        <button class="btn btn-success px-3 m-2 " id="saveButton">Save Mockup</button>
                         <button class="btn btn-danger px-3 m-2 " id="delateSelectedButton">Delete Selected</button>
                         {{-- <button id="clear">Clear</button> --}}
                     </div>

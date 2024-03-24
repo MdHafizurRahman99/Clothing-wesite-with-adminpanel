@@ -5,9 +5,6 @@
     <meta charset="utf-8">
     <title>Clothing Platform</title>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
-    <meta content="Free HTML Templates" name="keywords">
-    <meta content="Free HTML Templates" name="description">
-
     <!-- Favicon -->
     <link href="img/favicon.ico" rel="icon">
 
@@ -50,12 +47,20 @@
 
     <!-- Contact Javascript File -->
     <script src="{{ asset('frontend') }}/mail/jqBootstrapValidation.min.js"></script>
-    <script src="{{ asset('frontend') }}/mail/contact.js"></script>
+    {{-- <script src="{{ asset('frontend') }}/mail/contact.js"></script> --}}
 
     <!-- Template Javascript -->
     <script src="{{ asset('frontend') }}/js/main.js"></script>
     @yield('js')
 
+
+    @if (session('message'))
+        <script>
+            setTimeout(function() {
+                alert("{{ session('message') }}");
+            }, 500);
+        </script>
+    @endif
 </body>
 
 </html>

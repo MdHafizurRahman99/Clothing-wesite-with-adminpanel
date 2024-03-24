@@ -1,6 +1,6 @@
-import './bootstrap';
-
-import Alpine from 'alpinejs';
+import "./bootstrap";
+window.Dropzone = require("dropzone");
+import Alpine from "alpinejs";
 
 window.Alpine = Alpine;
 

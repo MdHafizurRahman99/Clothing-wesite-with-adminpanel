@@ -14,7 +14,9 @@ return new class extends Migration
         Schema::create('products', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->text('description');
+            $table->string('category_id');
+            $table->text('image')->nullable();
+            $table->text('description')->nullable();
             $table->string('price')->nullable();
             $table->string('fabric')->nullable();
             $table->timestamps();

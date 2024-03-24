@@ -8,4 +8,13 @@ use Illuminate\Database\Eloquent\Model;
 class PriceRange extends Model
 {
     use HasFactory;
+    protected $fillable = [
+        'product_id',
+        'subcategory_id',
+        'fabric',
+        'min_quantity',
+        'max_quantity',
+        'price',
+
+    ];
 }

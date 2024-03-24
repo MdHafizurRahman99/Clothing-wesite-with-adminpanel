@@ -55,8 +55,8 @@
         <div class="row align-items-center bg-light py-3 px-xl-5 d-none d-lg-flex">
             <div class="col-lg-4">
                 <a href="" class="text-decoration-none">
-                    <span class="h1 text-uppercase text-primary bg-dark px-2">Clothing</span>
-                    <span class="h1 text-uppercase text-dark bg-primary px-2 ml-n1">Shop</span>
+                    <span class="h1 text-uppercase text-primary bg-dark px-2">MPC</span>
+                    <span class="h1 text-uppercase text-dark bg-primary px-2 ml-n1">Clothing</span>
                 </a>
             </div>
             <div class="col-lg-4 col-6 text-left">
@@ -126,13 +126,20 @@
                         <div class="navbar-nav mr-auto py-0">
                             <a href="{{ route('home') }}"
                                 class="nav-item nav-link {{ Route::is('home') ? 'active' : '' }}">Home</a>
-                            <a href="{{ route('merchandise.index') }}"
-                                class="nav-item nav-link {{ Route::is('merchandise.index') ? 'active' : '' }}">Merchandise</a>
-                            <a href="detail.html"
-                                class="nav-item nav-link {{ Route::is('custom_order') ? 'active' : '' }}">Custom
+                            <a href="{{ route('buy-bulk.index') }}"
+                                class="nav-item nav-link {{ Route::is('buy-bulk.index') ? 'active' : '' }}">Buy
+                                Bulk</a>
+                            <a href="{{ route('shop.custom-design') }}"
+                                class="nav-item nav-link {{ Route::is('shop.custom-design') ? 'active' : '' }}">Custom
                                 Order</a>
                             <a href="detail.html"
-                                class="nav-item nav-link {{ Route::is('bulk_order') ? 'active' : '' }}">Bulk Order</a>
+                                class="nav-item nav-link {{ Route::is('bulk_order') ? 'active' : '' }}">Order Form
+                                Catalog</a>
+                            <a href="contact.html"
+                                class="nav-item nav-link {{ Route::is('faq') ? 'active' : '' }}">FAQs</a>
+                            <a href="contact.html"
+                                class="nav-item nav-link {{ Route::is('about_us') ? 'active' : '' }}">About Us</a>
+
                             <a href="contact.html"
                                 class="nav-item nav-link {{ Route::is('contact_us') ? 'active' : '' }}">Contact Us</a>
 
@@ -153,11 +160,13 @@
                             {{-- <a href="contact.html" class="nav-item nav-link">Contact Us</a> --}}
                         </div>
                         <div class="navbar-nav ml-auto py-0 d-none d-lg-block">
+
                             {{-- <a href="" class="btn px-0">
                                 <i class="fas fa-heart text-primary"></i>
                                 <span class="badge text-secondary border border-secondary rounded-circle"
                                     style="padding-bottom: 2px;">0</span>
                             </a> --}}
+
                             <a href="{{ route('shop.product-cart') }}" class="btn px-0 ml-3">
                                 <i class="fas fa-shopping-cart text-primary"></i>
                                 <span id="cartBadge" class="badge text-secondary border border-secondary rounded-circle"
@@ -170,6 +179,26 @@
                                     @endif
                                 </span>
                             </a>
+                            @if (isset(auth()->user()->name))
+                                <div class="btn-group  px-4">
+                                    <button type="button" class="btn btn-sm btn-primary dropdown-toggle"
+                                        data-toggle="dropdown">{{ auth()->user()->name }}</button>
+                                    <div class="dropdown-menu dropdown-menu-left">
+                                        {{-- <a href="{{ route('logout') }}" class="btn btn-sm dropdown-item">Logout</a> --}}
+                                        <span class=" py-2">
+
+                                            <form action="{{ route('logout') }}" method="POST">
+                                                @csrf
+
+                                                <input type="submit" class="btn btn-primary btn-block" value="Logout">
+                                            </form>
+                                        </span>
+
+                                    </div>
+                                </div>
+                            @else
+                                <a href="{{ route('login') }}" style="color: white" class="btn px-4">Login</a>
+                            @endif
                         </div>
                     </div>
                 </nav>

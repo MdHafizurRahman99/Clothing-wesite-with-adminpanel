@@ -4,15 +4,19 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\BotManController;
 use App\Http\Controllers\BusinessController;
 use App\Http\Controllers\BusniessProfileController;
+use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\ClientRequestController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\MerchandiseController;
+use App\Http\Controllers\OrderController;
 use App\Http\Controllers\Permission\PermissionController;
 use App\Http\Controllers\Permission\RolesPermissionController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ProjectsController;
 use App\Http\Controllers\RoleController;
+use App\Http\Controllers\SalesRepresentativeController;
 use App\Http\Controllers\ShopController;
 use App\Http\Controllers\StaffController;
 use App\Http\Controllers\ShiftController;
@@ -20,6 +24,7 @@ use App\Http\Controllers\StaffScheduleController;
 use App\Http\Controllers\TryTestController;
 use App\Models\StaffSchedule;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
 
 /*
 |--------------------------------------------------------------------------
@@ -37,11 +42,17 @@ Route::get('/', function () {
     return view('frontend.home');
 })->name('home');
 
-Route::resource('merchandise', MerchandiseController::class);
+//dropzone 
+Route::post('projects/media', [ProjectsController::class, 'storeMedia'])->name('projects.storeMedia');
+Route::post('save-dropzone-image', [ProductController::class, 'dropzoneImage'])->name('save-dropzone-image');
+
+
+Route::resource('buy-bulk', MerchandiseController::class);
+Route::resource('order', OrderController::class);
 Route::match(['get', 'post'], '/botman', [BotManController::class, 'handle']);
 Route::resource('home', HomeController::class);
 Route::resource('shop', ShopController::class);
-Route::get('/product-details', [ShopController::class, 'productDetails'])->name('shop.details');
+Route::get('/product-details/{id}', [ShopController::class, 'productDetails'])->name('shop.details');
 Route::get('/product-cart', [ShopController::class, 'productCart'])->name('shop.product-cart');
 Route::get('/custom-design', [ShopController::class, 'customDesign'])->name('shop.custom-design');
 Route::get('/product-checkout', [ShopController::class, 'productCheckout'])->name('shop.product-checkout');
@@ -58,6 +69,10 @@ Route::post('/delete-canvas-image',  [ProductController::class, 'deleteCanvasIma
 
 
 Route::get('/dashboard', function () {
+    if (Auth::user()->hasRole('User')) {
+        $userId = Auth::id();
+        return redirect()->route('home')->with('message', 'login successFully!');
+    }
     return view('admin.dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
@@ -86,6 +101,27 @@ Route::middleware('auth')->group(function () {
     Route::get('client/index', [ClientController::class, 'index'])->name('client.index')->middleware('permission:client.view');
     Route::get('my-requests', [ClientController::class, 'userIndex'])->name('user.index')->middleware('permission:client.add');
     Route::delete('client/destroy/{client}', [ClientController::class, 'destroy'])->name('client.destroy')->middleware('permission:client.delete');
+
+
+    Route::get('product/create', [ProductController::class, 'create'])->name('product.create')->middleware('permission:product.add');
+    Route::get('product/request', [ProductController::class, 'createRequest'])->name('product.request')->middleware('permission:product.view');
+    Route::post('product/store', [ProductController::class, 'store'])->name('product.store')->middleware('permission:product.add');
+    Route::get('product/edit/{product}', [ProductController::class, 'edit'])->name('product.edit')->middleware('permission:product.edit');
+    Route::put('product/update/{product}', [ProductController::class, 'update'])->name('product.update')->middleware('permission:product.edit');
+    Route::get('product/index', [ProductController::class, 'index'])->name('product.index')->middleware('permission:product.view');
+    Route::get('my-requests', [ProductController::class, 'userIndex'])->name('user.index')->middleware('permission:product.add');
+    Route::delete('product/destroy/{product}', [ProductController::class, 'destroy'])->name('product.destroy')->middleware('permission:product.delete');
+
+
+    Route::get('category/create', [CategoryController::class, 'create'])->name('category.create')->middleware('permission:category.add');
+    Route::get('category/request', [CategoryController::class, 'createRequest'])->name('category.request')->middleware('permission:category.view');
+    Route::post('category/store', [CategoryController::class, 'store'])->name('category.store')->middleware('permission:category.add');
+    Route::get('category/edit/{category}', [CategoryController::class, 'edit'])->name('category.edit')->middleware('permission:category.edit');
+    Route::put('category/update/{category}', [CategoryController::class, 'update'])->name('category.update')->middleware('permission:category.edit');
+    Route::get('category/index', [CategoryController::class, 'index'])->name('category.index')->middleware('permission:category.view');
+    Route::get('my-requests', [CategoryController::class, 'userIndex'])->name('user.index')->middleware('permission:category.add');
+    Route::delete('category/destroy/{category}', [CategoryController::class, 'destroy'])->name('category.destroy')->middleware('permission:category.delete');
+
     Route::get('business/create', [BusinessController::class, 'create'])->name('business.create')->middleware('permission:business.add');
     Route::post('business/store', [BusinessController::class, 'store'])->name('business.store')->middleware('permission:business.add');
     Route::get('business/edit/{business}', [BusinessController::class, 'edit'])->name('business.edit')->middleware('permission:business.edit');
@@ -126,6 +162,12 @@ Route::middleware('auth')->group(function () {
     Route::get('admin/index', [AdminController::class, 'index'])->name('admin.index')->middleware('permission:admin.view');
     Route::post('admin/destroy/{id}', [AdminController::class, 'destroy'])->name('admin.destroy')->middleware('permission:admin.delete');
 
+    Route::get('sales-representative/create', [SalesRepresentativeController::class, 'create'])->name('sales-representative.create')->middleware('permission:sales_representative.add');
+    Route::post('sales-representative/store', [SalesRepresentativeController::class, 'store'])->name('sales-representative.store')->middleware('permission:sales_representative.add');
+    Route::get('sales-representative/edit/{id}', [SalesRepresentativeController::class, 'edit'])->name('sales-representative.edit')->middleware('permission:sales_representative.edit');
+    Route::post('sales-representative/update/{id}', [SalesRepresentativeController::class, 'update'])->name('sales-representative.update')->middleware('permission:sales_representative.edit');
+    Route::get('sales-representative/index', [SalesRepresentativeController::class, 'index'])->name('sales-representative.index')->middleware('permission:sales_representative.view');
+    Route::post('sales-representative/destroy/{id}', [SalesRepresentativeController::class, 'destroy'])->name('sales-representative.destroy')->middleware('permission:sales_representative.delete');
     // Route::get('staff/create', [StaffController::class, 'create'])->name('staff.create');
     Route::get('staff/create', [StaffController::class, 'create'])->name('staff.create')->middleware('permission:staff.add');
     // Route::post('staff/store', [StaffController::class, 'store'])->name('staff.store');

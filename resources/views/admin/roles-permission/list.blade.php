@@ -57,10 +57,10 @@
                                         {{-- @dd($role_permissions->roleHasPermissions) --}}
                                         @if (Auth::user()->can('roles_permission.edit') || Auth::user()->can('roles_permission.delete'))
                                             <td>
-                                                @if (!empty($role_permissions->roleHasPermissions) && count($role_permissions->roleHasPermissions) > 0)
-                                                    @foreach ($role_permissions->roleHasPermissions as $permissions)
+                                                @if (!empty($role_permissions->permissions) && count($role_permissions->permissions) > 0)
+                                                    @foreach ($role_permissions->permissions as $permissions)
                                                         {{-- @dd($permissions->permission->name) --}}
-                                                        <p class=""> {{ $permissions->permission->name }}</p>
+                                                        <p class=""> {{ $permissions->name }}</p>
                                                     @endforeach
                                                 @endif
                                             </td>

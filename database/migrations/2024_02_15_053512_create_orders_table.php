@@ -15,7 +15,8 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('customer_id');
             $table->dateTime('order_date');
-            $table->string('total_price'); // assuming total price is a decimal value
+            $table->string('total_price');
+            $table->string('sub_total');
             $table->unsignedBigInteger('delivery_option_id');
             $table->timestamps();
         });
