@@ -40,6 +40,11 @@
                         <input type="hidden" class="product-id" value="{{ $product_id }}" name="product_id">
 
                         <canvas id="canvas" width="600" height="600" style="border: 1px solid #000000"></canvas>
+
+                        <button onclick="frontside()" class="btn btn-primary">Front Side</button>
+                        <button onclick="backside()" class="btn btn-primary">Back Side</button>
+                        <button onclick="shoulder()" class="btn btn-primary">Shoulder</button>
+
                         <input class="btn btn-secondary px-3 m-2 " type="file" id="logoInput" accept="image/*">
                         <button class="btn btn-success px-3 m-2 " id="addTextButton">Add Text</button>
                         <button class="btn btn-success px-3 m-2 " id="saveButton">Save Mockup</button>
@@ -146,42 +151,8 @@
 
                     </div>
 
-                    <div class="d-flex align-items-center mb-4 pt-2">
-                        {{-- <div class="input-group quantity mr-3" style="width: 130px;">
-                            <div class="input-group-btn">
-                                <button class="btn btn-primary btn-minus">
-                                    <i class="fa fa-minus"></i>
-                                </button>
-                            </div>
-                            <input type="text" class="form-control bg-secondary border-0 text-center" value="1">
-                            <div class="input-group-btn">
-                                <button class="btn btn-primary btn-plus">
-                                    <i class="fa fa-plus"></i>
-                                </button>
-                            </div>
-                        </div> --}}
-                        {{-- <a href="{{ route('shop.custom-design') }}" class="btn btn-primary px-3">
-                            <i class="fa fa-shopping-cart mr-1"></i> Custom design
-                        </a> --}}
 
-                    </div>
-                    {{-- <div class="d-flex pt-2">
-                        <strong class="text-dark mr-2">Share on:</strong>
-                        <div class="d-inline-flex">
-                            <a class="text-dark px-2" href="">
-                                <i class="fab fa-facebook-f"></i>
-                            </a>
-                            <a class="text-dark px-2" href="">
-                                <i class="fab fa-twitter"></i>
-                            </a>
-                            <a class="text-dark px-2" href="">
-                                <i class="fab fa-linkedin-in"></i>
-                            </a>
-                            <a class="text-dark px-2" href="">
-                                <i class="fab fa-pinterest"></i>
-                            </a>
-                        </div>
-                    </div> --}}
+
                 </div>
             </div>
 
@@ -234,10 +205,24 @@
                         <textarea id="message" cols="30" rows="3" class="form-control" name="description"></textarea>
                     </div>
 
-
-                    <a href="{{ route('shop.product-cart') }}" class="btn btn-primary px-3">
-                        <i class="fa fa-shopping-cart mr-1"></i> Add to Cart
-                    </a>
+                    <div class="d-flex align-items-center mb-4 pt-2">
+                        <div class="input-group quantity mr-3" style="width: 130px;">
+                            <div class="input-group-btn">
+                                <button class="btn btn-primary btn-minus">
+                                    <i class="fa fa-minus"></i>
+                                </button>
+                            </div>
+                            <input type="text" class="form-control bg-secondary border-0 text-center" value="1">
+                            <div class="input-group-btn">
+                                <button class="btn btn-primary btn-plus">
+                                    <i class="fa fa-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <a href="{{ route('shop.product-cart') }}" class="btn btn-primary px-3">
+                            <i class="fa fa-shopping-cart mr-1"></i> Add to Cart
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
@@ -400,7 +385,6 @@
 
         var addTextButton = document.getElementById('addTextButton');
 
-        // Add click event listener to the existing button
         addTextButton.onclick = function() {
             addText();
         };
@@ -414,8 +398,6 @@
 
         // Function to add an image/logo to the canvas
         function addImage(imageURL) {
-
-            // uncomment it when need
             fetch(imageURL)
                 .then(res => res.blob())
                 .then(blob => {
@@ -616,6 +598,62 @@
         //     canvas.clear();
         // });
 
+        //change Background image
+        function backside() {
+            canvas.clear();
+
+            // var canvas = new fabric.Canvas('canvas');
+            var newImageURL =
+                '{{ asset('frontend/img/hoodie back side.jpg') }}'; // Replace 'new_image_url.jpg' with the URL of your new background image
+
+            fabric.Image.fromURL(newImageURL, function(img) {
+                img.set({
+                    left: 0,
+                    top: 0,
+                    width: canvas.width,
+                    height: canvas.height,
+                    selectable: false
+                });
+                canvas.setBackgroundImage(img, canvas.renderAll.bind(canvas));
+            });
+        }
+
+        function frontside() {
+            canvas.clear();
+
+            // var canvas = new fabric.Canvas('canvas');
+            var newImageURL =
+                '{{ asset('frontend/img/product-2.jpg') }}'; // Replace 'new_image_url.jpg' with the URL of your new background image
+            fabric.Image.fromURL(newImageURL, function(img) {
+                img.set({
+                    left: 0,
+                    top: 0,
+                    width: canvas.width,
+                    height: canvas.height,
+                    selectable: false
+                });
+                canvas.setBackgroundImage(img, canvas.renderAll.bind(canvas));
+            });
+        }
+
+        function shoulder() {
+            canvas.clear();
+
+            // var canvas = new fabric.Canvas('canvas');
+            var newImageURL =
+                '{{ asset('frontend/img/shoulder.jpeg') }}'; // Replace 'new_image_url.jpg' with the URL of your new background image
+
+            fabric.Image.fromURL(newImageURL, function(img) {
+                img.set({
+                    left: 0,
+                    top: 0,
+                    width: canvas.width,
+                    height: canvas.height,
+                    selectable: false
+                });
+                canvas.setBackgroundImage(img, canvas.renderAll.bind(canvas));
+            });
+        }
         // Add background image
         fabric.Image.fromURL(
             '{{ asset('frontend/img/product-2.jpg') }}', // URL of your background image
@@ -628,6 +666,7 @@
                     selectable: false
                 });
                 canvas.setBackgroundImage(img, canvas.renderAll.bind(canvas));
-            });
+            }
+        );
     </script>
 @endsection

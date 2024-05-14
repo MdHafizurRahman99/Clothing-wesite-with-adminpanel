@@ -14,7 +14,15 @@
     </div>
     <!-- Breadcrumb End -->
 
-
+    @if ($errors->any())
+        <div class="alert alert-danger">
+            <ul>
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
     <!-- Cart Start -->
     <div class="container-fluid">
         <div class="row px-xl-5">
@@ -57,13 +65,19 @@
                                                 $size = substr($key, 0, strpos($key, '_')); // Extract size from key
                                                 $color = substr($key, strpos($key, '_') + 1); // Extract color from key
                                                 $product = App\Models\Product::find($product_id);
+                                                $pattern = App\Models\Pattern::find($product->pattern_id);
+                                                $category = App\Models\Category::find($product->category_id);
                                             @endphp
                                             <tr>
 
                                                 <td class="align-middle"><img
                                                         src="{{ asset('frontend/') }}/img/product-2.jpg" alt=""
                                                         style="width: 50px;">
-                                                    {{ $product->name }}</td>
+                                                    {{ isset($pattern->name) ? $pattern->name : '' }}
+                                                    {{ $product->name }}
+                                                    {{ isset($product->weight) ? $product->weight . 'Gsm' : '' }}
+                                                    {{ isset($category->category_name) ? $category->category_name : '' }}
+                                                </td>
                                                 <td class="align-middle">${{ $product->price }}</td>
 
                                                 <td class="align-middle">{{ $size }} ({{ $color }})</td>
@@ -234,7 +248,7 @@
                                 <h6>${{ $totalPrice }}</h6>
                             </div>
                             <div class="d-flex justify-content-between mb-3">
-                                <h6>Total Discount</h6>
+                                <h6>Total Quantity Discount</h6>
                                 @php
                                     $discount = $totalPrice - $discountedPrice;
                                     $total = $discountedPrice + 50;

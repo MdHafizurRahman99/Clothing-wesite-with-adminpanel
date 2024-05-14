@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
+use App\Models\Inventory;
 use App\Models\PriceRange;
 use App\Models\Product;
 use App\Models\ProductImage;
@@ -18,16 +19,13 @@ class ShopController extends Controller
 
     public function index()
     {
-        // return 'hello';
-
         return view('frontend.shop.shop');
     }
     public function productDetails($product_id)
     {
-        $quentity = ProductQuentity::where('product_id', $product_id)->select('size', 'color', 'quantity')->get();
+        // $quentity = ProductQuentity::where('product_id', $product_id)->select('size', 'color', 'quantity')->get();
+        $quentity = Inventory::where('product_id', $product_id)->select('size', 'color', 'quantity')->get();
         $quantityArray = [];
-
-
         // Loop through each item in the array
         if (isset($quentity)) {
             # code...
@@ -77,6 +75,8 @@ class ShopController extends Controller
     }
     public function productCart()
     {
+        $cartproductscount = 0;
+
         // $uplodedimage = cache()->get('tecture4');
         // return $uplodedimage;
         $cacheKey = session('cacheKey');
@@ -112,10 +112,17 @@ class ShopController extends Controller
             }
             $productColorCounts[$productId] = $colorCounts;
         }
+        // return $productColorCounts;
 
         foreach ($productColorCounts as $key => $value) {
+
+            // return $key;
+            // return $value;
+
             $this->totalProduct = 0;
             $priceRanges = PriceRange::where('product_id', $key)->select('min_quantity', 'price')->get();
+            // return $priceRanges;
+
             $result = [];
             $higestPriceArray = [];
             foreach ($priceRanges as $index => $minQuantity) {
@@ -130,6 +137,7 @@ class ShopController extends Controller
 
             arsort($result, SORT_NUMERIC);
             foreach ($value as $count) {
+                // return $value;
                 foreach ($result as $price => $min_quantity) {
                     if (isset($count) && $count >= $min_quantity) {
                         $this->totalProduct += $count;
@@ -138,6 +146,7 @@ class ShopController extends Controller
                     }
                 }
             }
+            $cartproductscount += $this->totalProduct;
             $this->totalPrice += ($this->totalProduct * $highestPrice);
             // return $this->discountedPrice;
             // return $value[$color];
@@ -145,10 +154,12 @@ class ShopController extends Controller
         }
         // return $this->totalProduct;
         // return $this->discountedPrice;
-        // return $result;
+        // return $this->totalPrice;
 
         session()->put('totalPrice', $this->totalPrice);
         session()->put('discountedPrice', $this->discountedPrice);
+        session()->put('totalProduct', $cartproductscount);
+
         // return        session('totalPrice');
         return view('frontend.shop.cart', [
             'cartproducts' => $allCartproduct,
@@ -158,8 +169,14 @@ class ShopController extends Controller
     }
     public function customDesign()
     {
+        // return session()->get('mockup_1', []);
         return view('frontend.shop.design');
     }
+    // public function customOrder()
+    // {
+    //     // return session()->get('mockup_1', []);
+    //     return view('frontend.shop.custom-order');
+    // }
     public function productCheckout()
     {
         $discountedPrice = session('discountedPrice');
@@ -195,11 +212,34 @@ class ShopController extends Controller
      */
     public function show(Category $shop)
     {
+
+        $product_for= request()->query('product_for');
         // dd($shop);
+        $products = Product::where('category_id', $shop->id)->where('product_for',$product_for)->get();
+
+        if ($product_for=='Buy Blank') {
+            # code...
+            return view('frontend.merchandise.gender',[
+                'category_id'=>$shop->id,
+                'products'=>$products,
+            ]);
+        }else{
+            return view('frontend.catalog-order.gender',[
+                'category_id'=>$shop->id,
+                'products'=>$products,
+            ]);
+        }
+
+    }
+    public function products($category_id,$gender)
+    {
+        // return $gender;
+        // dd($shop);
+        $product_for= request()->query('product_for');
         return view(
             'frontend.shop.shop',
             [
-                'products' => Product::where('category_id', $shop->id)->get(),
+                'products' => Product::where('category_id', $category_id)->where('product_for',$product_for)->where('gender', $gender)->get(),
             ]
         );
     }

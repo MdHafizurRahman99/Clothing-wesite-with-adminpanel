@@ -25,11 +25,7 @@
 
 
 
-    <style>
-        .underline-text {
-            text-decoration: underline;
-        }
-    </style>
+
     <style>
         table {
             border-collapse: collapse;
@@ -60,9 +56,13 @@
 
         input[type="text"] {
             width: 100%;
-            border: none;
+            /* border: none; */
             padding: 4px;
             box-sizing: border-box;
+        }
+
+        .underline-text {
+            text-decoration: underline;
         }
 
         .color-circle {
@@ -126,17 +126,55 @@
                         <section>
                             <div class="inner">
                                 <div class="form-group">
-                                    <label for="name">Product Name</label>
-                                    <input required type="text" id="name" name="name" value="{{ old('name') }}"
-                                        class="form-control" placeholder="Product Name">
-                                    @error('name')
+                                    <label for="product_for">Product Display On</label>
+                                    <select class="form-control" name="product_for" id="product_for">
+                                        <option value="Buy Blank">Buy Blank</option>
+                                        <option value="Order Form Catalog">Order Form Catalog</option>
+                                    </select>
+                                    @error('product_for')
                                         <p class="text-danger">{{ $message }}</p>
                                     @enderror
                                 </div>
                                 <div class="form-group">
+                                    <label for="product_name">Product Name</label>
+                                    <input required type="text" id="product_name" name="name"
+                                        value="{{ old('name') }}" class="form-control" placeholder="Product Name">
+                                    @error('name')
+                                        <p class="text-danger">{{ $message }}</p>
+                                    @enderror
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="product_pattern">Product Pattern</label>
+                                    <select class="form-control" name="pattern_id" id="product_pattern">
+                                        {{-- <option value="">Select Option</option> --}}
+                                        {{-- <option value="Oversized">Oversized</option> --}}
+                                        @foreach ($patterns as $pattern)
+                                            <option value="{{ $pattern->id }}"
+                                                {{ $pattern->id == old('pattern_id') ? 'selected' : '' }}>
+                                                {{ $pattern->name }}</option>
+                                        @endforeach
+                                    </select>
+                                    @error('pattern_id')
+                                        <p class="text-danger">{{ $message }}</p>
+                                    @enderror
+                                </div>
+                                <div class="form-group">
+                                    <label for="gender">Gender</label>
+                                    <select class="form-control" name="gender" id="gender">
+                                        <option value="Man">Man</option>
+                                        <option value="Women">Women</option>
+                                        <option value="Kids">Kids</option>
+                                        <option value="Unisex">Unisex</option>
+                                    </select>
+                                    @error('gender')
+                                        <p class="text-danger">{{ $message }}</p>
+                                    @enderror
+                                </div>
+
+                                <div class="form-group">
                                     <label for="product_category">Product Category</label>
-                                    {{-- <input required type="text" id="product_category" name="product_category" value="{{ old('product_category') }}"
-                                        class="form-control" placeholder="Category"> --}}
+                                    {{-- <input required type="text" id="product_category" name="product_category" value="{{ old('product_category') }}" class="form-control" placeholder="Category"> --}}
                                     <select class="form-control" name="category_id" id="product_category">
                                         <option value="">Select Option</option>
                                         @foreach ($categories as $category)
@@ -144,11 +182,40 @@
                                                 {{ $category->id == old('category_id') ? 'selected' : '' }}>
                                                 {{ $category->category_name }}</option>
                                         @endforeach
-
                                     </select>
+
                                     @error('category_id')
                                         <p class="text-danger">{{ $message }}</p>
                                     @enderror
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="product_weight">Weight(Gsm)</label>
+                                    <input required type="text" id="product_weight" name="weight"
+                                        value="{{ old('weight') }}" class="form-control" placeholder="Weight">
+                                    @error('weight')
+                                        <p class="text-danger">{{ $message }}</p>
+                                    @enderror
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="name">Product Size Type</label>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="productsizetype"
+                                            id="productsizetype1" value="1" checked>
+                                        <label class="form-check-label" for="productsizetype1">
+                                            XS,S,M,L,XL...
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="productsizetype"
+                                            id="productsizetype2" value="2">
+                                        <label class="form-check-label" for="productsizetype2">
+                                            8,10,12,14,12...
+                                        </label>
+                                    </div>
+
+
                                 </div>
                                 <div class="form-group">
                                     <label for="description">Product Description</label>
@@ -184,7 +251,7 @@
                                         <p class="text-danger">{{ $message }}</p>
                                     @enderror
                                 </div> --}}
-                                <div class="form-group">
+                                {{-- <div class="form-group">
                                     <label for="name">Product Quentity</label>
                                     @php
                                         $sizes = ['XS', 'S', 'M', 'L', 'XL'];
@@ -220,27 +287,25 @@
                                             @endforeach
                                         </tbody>
                                     </table>
-                                    {{-- <input required type="number" id="quentity" name="quentity"
-                                        value="{{ old('quentity') }}" class="form-control"> --}}
+
                                     @error('quentity')
                                         <p class="text-danger">{{ $message }}</p>
                                     @enderror
-                                </div>
+                                </div> --}}
 
                                 <div class="form-group">
-                                    <label for="name">Product Discount Price on Quentity</label>
+                                    <label for="name">Product Discount Price on Quantity <span>(if creating a product for catalog then 1st range value(1) and the price)</span></label>
                                     @php
                                         $sizes = ['1st-Range', '2nd-Range', '3rd-Range', '4th-Range', '5th-Range'];
-                                        // $colors = ['Aquamarine', 'DarkGoldenRod', 'Blue', 'Brown', 'Purple', 'White'];
-                                        // $productPrice = 10;
                                     @endphp
                                     <table id="productTable">
                                         <thead>
                                             <tr>
                                                 <th>Units</th>
                                                 @foreach ($sizes as $size)
-                                                    <th><input type="text" name="{{ $size }}" value=""
-                                                            placeholder="{{ isset($predefinedValues[$size][$color]) ? $predefinedValues[$size][$color] : $size }}">
+                                                    <th><input type="text" name="{{ $size }}"
+                                                            value="{{ old($size) }}"
+                                                            placeholder="{{ $size }}">
                                                     </th>
                                                 @endforeach
 
@@ -252,36 +317,17 @@
                                                 <td>Price</td>
                                                 @foreach ($sizes as $size)
                                                     <td><input type="text" name="{{ $size }}_price"
-                                                            value=""
-                                                            placeholder="{{ isset($predefinedValues[$size][$color]) ? $predefinedValues[$size][$color] : '' }}">
+                                                            value="{{ old($size . '_price') }}" placeholder="">
                                                     </td>
                                                 @endforeach
                                             </tr>
-                                            {{-- @foreach ($colors as $color)
-                                                <tr>
-                                                    <td>
-                                                        <span class="color-circle"
-                                                            style="background-color:{{ $color }}"></span>{{ $color }}
-                                                    </td>
-                                                    @foreach ($sizes as $size)
-                                                        <td>
-                                                            <input type="text"
-                                                                name="{{ $size }}_{{ $color }}"
-                                                                value=""
-                                                                placeholder="{{ isset($predefinedValues[$size][$color]) ? $predefinedValues[$size][$color] : '' }}">
-                                                        </td>
-                                                    @endforeach
-                                                </tr>
-                                            @endforeach --}}
                                         </tbody>
                                     </table>
-                                    {{-- <input required type="number" id="quentity" name="quentity"
-                                        value="{{ old('quentity') }}" class="form-control"> --}}
-                                    @error('quentity')
+
+                                    @error('1st-Range')
                                         <p class="text-danger">{{ $message }}</p>
                                     @enderror
                                 </div>
-
 
                             </div>
                         </section>
@@ -474,7 +520,7 @@
 
     <!-- dropzone min -->
     {{-- <script src="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.5.1/min/dropzone.min.js"></script> --}}
-    {{-- 
+    {{--
     <script>
         var uploadedDocumentMap = {}
         Dropzone.options.documentDropzone = {
@@ -514,7 +560,7 @@
         }
     </script> --}}
 
-    {{-- 
+    {{--
     <script>
         $(document).ready(function() {
             $('.wizard-v4-content').on('click', 'a[href="#finish"]', function(event) {

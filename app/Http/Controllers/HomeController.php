@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Inventory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Cache;
@@ -29,6 +30,32 @@ class HomeController extends Controller
      */
     public function store(Request $request)
     {
+        $data = $request->except('_token', 'total_price', 'product_id'); // Exclude CSRF token
+        // return $data;
+        // Check inventory for each item in the request
+        foreach ($data as $key => $quantity) {
+            if ($key === 'total_price' && $key === 'product_id') {
+                continue; // Skip total price field
+            }
+            $size = explode('_', $key)[0]; // Extract size from key (e.g., XS)
+            $color = explode('_', $key)[1];
+            // return $size;
+            $inventory = Inventory::where('product_id', $request->product_id)
+                ->where('color', $color) // Assuming color is still provided in the key
+                ->where('size', $size)
+                ->first();
+            // return $inventory;
+            if (!$inventory || $inventory->quantity < $quantity) {
+                // return back()->withErrors(['error' => "Insufficient stock for '$size - $color'. Please try to order"]);
+                return back()->with('data', $data)->withErrors(['error' => "We apologize, but there is currently limited stock available for '$size - $color'. Please adjust the quantity ."]);
+
+                // Handle insufficient stock
+            }
+
+            // Extract size from key (optional, adjust based on your key format)
+            $size = isset($color) ? explode('_', $key)[1] : null; // Extract size if color is present in the key
+
+        }
         // return $request->product_id;
         // Set expiration time to one day (1440 minutes)
         // $cacheKey = session('cacheKey');
@@ -36,10 +63,7 @@ class HomeController extends Controller
         // // return $cachedData;
         // return $cacheKey;
         // Initialize an empty array to hold product IDs
-        // Initialize an empty array to hold product IDs
-        // Initialize an empty array to hold product IDs
         $productIds = [];
-
         // Retrieve the existing product IDs array from the session
         if (session()->has('product_ids')) {
             $productIds = session('product_ids');
@@ -49,30 +73,21 @@ class HomeController extends Controller
                 $productIds = [$productIds];
             }
         }
-
         // Assuming $request->product_id is an array of product IDs
         if ($request->has('product_id')) {
             // Get the product IDs from the request
             $newProductIds = $request->product_id;
-
             // Convert $newProductIds to an array if it's not already one
             if (!is_array($newProductIds)) {
                 $newProductIds = [$newProductIds];
             }
-
             // Merge the new product IDs with the existing ones and remove duplicates
             $productIds = array_unique(array_merge($productIds, $newProductIds));
         }
-
         // Store the updated product IDs array back in the session
         session(['product_ids' => $productIds]);
-
         // Retrieve and return the updated product IDs array from the session
         // return session('product_ids');
-
-
-
-
         $totalProduct = session('totalProduct');
         // return $totalProduct;
         $requestInputValues = $request->input();
@@ -98,7 +113,6 @@ class HomeController extends Controller
             }
             session(['totalProduct' => $totalProduct], 1440);
         }
-
         // session()->forget('totalProduct');
         // session()->forget('product_ids');
         $cacheKey = session('cacheKey');
@@ -139,18 +153,12 @@ class HomeController extends Controller
             // Store the data in the cache
             cache()->put($productCacheKey, $postData, now()->addMinutes(1440));
         }
-
         // Generate a unique cache key
         // return $cacheKey;
-
-
-
         // Retrieve cached data
         // $cachedData = cache()->get($productCacheKey);
-
         // return $cachedData;
-
-        return back();
+        return redirect()->route('shop.product-cart')->with('message', 'Added to cart successFully');
         //
     }
 

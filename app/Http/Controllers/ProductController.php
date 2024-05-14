@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
+use App\Models\Pattern;
 use App\Models\PriceRange;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -38,6 +39,7 @@ class ProductController extends Controller
         // return $images;
         return view('admin.product.create', [
             'categories' => Category::all(),
+            'patterns' => Pattern::all()
         ]);
         //
     }
@@ -47,18 +49,56 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-        // return $request;
+
 
         $validator = Validator::make($request->all(), [
             'name' => 'required',
             'category_id' => 'required',
+            'weight' => 'required',
+            '1st-Range' => ['required', function ($attribute, $value, $fail) use ($request) {
+                $suffixes = ['1st', '2nd', '3rd', '4th', '5th'];
+                $highestPrice = 0;
+
+                for ($i = 0; $i < count($suffixes); $i++) {
+                    $suffix = $suffixes[$i];
+                    $range = $request->input("$suffix-Range");
+
+                    if ($range != null) {
+
+                        $rangeArray = explode('-', $range);
+                        $minimum = intval($rangeArray[0]);
+                        $maximum = isset($rangeArray[1]) ? intval($rangeArray[1]) : $minimum;
+
+                        // Check for range overlap or crossover
+                        if ($i < count($suffixes) - 1) {
+                            $nextSuffix = $suffixes[$i + 1];
+                            $nextRange = $request->input("$nextSuffix-Range");
+                            $nextRangeArray = explode('-', $nextRange);
+                            $nextMinimum = intval($nextRangeArray[0]);
+                            $nextMaximum = isset($nextRangeArray[1]) ? intval($nextRangeArray[1]) : $nextMinimum;
+
+                            if (($maximum >= $nextMinimum || $maximum >= $nextMaximum) && $nextRange != null) {
+                                // dd($nextRange);
+                                // Ranges overlap or cross over, handle validation failure
+                                // For example, you could throw an exception or return a validation error message
+                                // Here, I'm throwing an exception
+                                // throw new \Exception("Ranges overlap or cross over: $range and $nextRange");
+                                $fail("Ranges overlap or cross over: $range and $nextRange");
+                            }
+                        }
+                    }
+                }
+            },],
         ], [
             'required' => 'The :attribute field is required.',
         ]);
 
+
+
         $validator->setAttributeNames([
             'name' => 'Product Name',
             'category_id' => 'Category',
+            'weight' => 'Weight',
         ]);
 
         if ($validator->fails()) {
@@ -72,25 +112,57 @@ class ProductController extends Controller
             // return response()->json(['errors' => $validator->errors()], 400);
             return redirect()->back()->withErrors($validator)->withInput();
         }
+        // return $request;
+        $category = Category::find($request->category_id);
+
+        $categoryName = $category->category_name; // Example category name
+        $productName = $request->name; // Example product name
+        $weight =  $request->weight; // Example weight
+
+        // Function to extract first letters of words in a string
+        function extractFirstLetters($string)
+        {
+            $words = explode(' ', $string);
+            $firstLetters = array_map(function ($word) {
+                return strtoupper(substr($word, 0, 1));
+            }, $words);
+
+            return implode('', $firstLetters);
+        }
+
+        // Generate the key
+        $key = 'MPC-' . extractFirstLetters($categoryName) . extractFirstLetters($productName) . $weight . rand();
+
+        // Output the key
+        // return $key;
+
 
 
         $image = $this->saveImage($request);
         $product = Product::create([
+            'id' => $key,
             'name' => $request->name,
+            'product_for' => $request->product_for,
+            'pattern_id' => $request->pattern_id,
+            'productsizetype' => $request->productsizetype,
+            'weight' => $request->weight,
+            'gender' => $request->gender,
             'category_id' => $request->category_id,
             'image' => $image,
             'description' => $request->description,
         ]);
 
         $images = session()->get('product_image');
-        foreach ($images as $imageUrl) {
-            $saveImage = ProductImage::create([
-                'product_id' => $product->id,
-                'type' => 'gallery',
-                'image_url' => $imageUrl,
-            ]);
+        if (isset($images)) {
+            foreach ($images as $imageUrl) {
+                $saveImage = ProductImage::create([
+                    'product_id' => $product->id,
+                    'type' => 'gallery',
+                    'image_url' => $imageUrl,
+                ]);
+            }
+            session()->forget('product_image');
         }
-        session()->forget('product_image');
         // return $saveImage;
         foreach ($request->all() as $key => $value) {
             // return $key;
@@ -107,11 +179,11 @@ class ProductController extends Controller
                 ]);
             }
         }
+
         $suffixes = ['1st', '2nd', '3rd', '4th', '5th'];
         $higestPrice = 0;
 
         foreach ($suffixes as $suffix) {
-
             $range = $request->input("$suffix-Range");
             // $rangeArray = explode('-', $range);
             if ($range) {
@@ -119,7 +191,6 @@ class ProductController extends Controller
                 if (substr($range, -1) === '+') {
                     // Extract the minimum value (remove the "+" sign)
                     $minimum = intval(substr($range, 0, -1));
-
                     // Set the maximum value to null or any other appropriate value
                     $maximum = null;
                 } else {
@@ -133,14 +204,18 @@ class ProductController extends Controller
                         $maximum = $rangeArray[1];
                     } else {
                         // Set the maximum value to the same as minimum
-                        // $maximum = $minimum;
+                        $maximum = $minimum;
+                        // $maximum = null;
                     }
                 }
+
                 $temp = $higestPrice;
                 $higestPrice = $request->input("$suffix-Range_price");
+
                 if ($higestPrice < $temp) {
                     $higestPrice = $temp;
                 }
+
                 $productPriceRange = PriceRange::create([
                     'product_id' => $product->id,
                     'min_quantity' => $minimum,
@@ -173,12 +248,11 @@ class ProductController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
+
     public function edit(Product $product)
     {
         $quentity = ProductQuentity::where('product_id', $product->id)->select('size', 'color', 'quantity')->get();
         $quantityArray = [];
-
-
         // Loop through each item in the array
         if (isset($quentity)) {
             # code...
@@ -217,6 +291,7 @@ class ProductController extends Controller
         return view('admin.product.edit', [
             'product' => $product,
             'categories' => Category::all(),
+            'patterns' => Pattern::all(),
             'quentity' => $quantityArray,
             'prices' => $priceArray,
             'minQuantity' => $minQuantityArray,
@@ -240,6 +315,7 @@ class ProductController extends Controller
         $validator->setAttributeNames([
             'name' => 'Product Name',
             'category_id' => 'Category',
+
         ]);
 
         if ($validator->fails()) {
@@ -257,11 +333,20 @@ class ProductController extends Controller
 
         $product->update([
             'name' => $request->name,
+            'product_for' => $request->product_for,
+            'weight' => $request->weight,
+            'gender' => $request->gender,
             'category_id' => $request->category_id,
             'description' => $request->description,
+            'pattern_id' => $request->pattern_id,
+            'productsizetype' => $request->productsizetype,
         ]);
+
         if (isset($request->image)) {
-            unlink($product->image);
+            if (isset($product->image)) {
+                unlink($product->image);
+            }
+
             $image = $this->saveImage($request);
             $product->update([
                 'image' => $image,
@@ -288,12 +373,8 @@ class ProductController extends Controller
             }
         }
         session()->forget('product_image');
-
-
         // return $saveImage;
-
         $productQuentity = ProductQuentity::where('product_id', $product->id)->delete();
-
         foreach ($request->all() as $key => $value) {
             // return $key;
             // Check if the key starts with "XS_", "S_", "M_", "L_", or "XL_"
@@ -320,7 +401,7 @@ class ProductController extends Controller
                     // Extract the minimum value (remove the "+" sign)
                     $minimum = intval(substr($range, 0, -1));
                     // Set the maximum value to null or any other appropriate value
-                    $maximum = null;
+                    $maximum = $minimum;
                 } else {
                     // Split the range string into an array
                     $rangeArray = explode('-', $range);
@@ -377,7 +458,6 @@ class ProductController extends Controller
         if (isset($product->image)) {
             unlink($product->image);
         }
-
         $product = $product->delete();
         return redirect()->route('product.index')->with('message', 'Product Deleted Successfully!');
         //
@@ -506,7 +586,23 @@ class ProductController extends Controller
 
             $sessionKey = 'mockup' . '_' . $request->product_id;
 
-            session()->put($sessionKey, $imageUrl);
+            $imageUrls = session()->get($sessionKey, []);
+
+            // $imageUrls[] = $imageUrl;
+            // // Store the updated array back into the session
+            // session()->put($sessionKey, $imageUrls);
+            if (isset($imageUrls)) {
+                $imageUrls[] = $imageUrl;
+                session()->put($sessionKey, $imageUrls);
+            } else {
+                $imageUrls = [];
+                $imageUrls[] = $imageUrl;
+                session()->put($sessionKey, $imageUrls);
+            }
+
+
+
+            // session()->put($sessionKey, $imageUrl);
             // session(['totalProduct' => $totalProduct], 1440);
             // Return a response
             return response()->json(['message' => 'Image uploaded successfully', 'filename' => $filename], 200);

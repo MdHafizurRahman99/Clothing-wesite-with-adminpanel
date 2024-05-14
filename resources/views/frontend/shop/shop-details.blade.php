@@ -46,21 +46,35 @@
         }
 
         /*
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            .table-container {
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    display: inline-block;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    vertical-align: top;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    width: 100%;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            }
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    .table-container {
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            display: inline-block;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            vertical-align: top;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            width: 100%;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    }
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            .add-to-cart {
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                display: inline-block;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                vertical-align: top;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                margin-top: 5px;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                margin-left: calc(100% - 100px);
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            } */
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    .add-to-cart {
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        display: inline-block;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        vertical-align: top;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        margin-top: 5px;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        margin-left: calc(100% - 100px);
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    } */
     </style>
 @endsection
 @section('content')
+    @if ($errors->any())
+        <div class="alert alert-danger">
+            <ul>
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+    {{-- @foreach ($data as $key => $quantity)
+        @if (isset($errors[$key]))
+            <span class="error-message">{{ $errors[$key][0] }}</span>
+        @endif
+    @endforeach --}}
     <!-- Breadcrumb Start -->
     <div class="container-fluid">
         <div class="row px-xl-5">
@@ -82,11 +96,20 @@
             <div class="col-lg-5 mb-30">
                 <div id="product-carousel" class="carousel slide" data-ride="carousel">
                     <div class="carousel-inner bg-light">
-                        @foreach ($galleryImages as $key => $image)
-                            <div class="carousel-item {{ $key == 0 ? 'active' : '' }}">
-                                <img class="w-100 h-100" src="{{ asset($image->image_url) }}" alt="Image">
+                        @if (count($galleryImages) > 0)
+                            @foreach ($galleryImages as $key => $image)
+                                <div class="carousel-item {{ $key == 0 ? 'active' : '' }}">
+                                    <img class="w-100 h-100" src="{{ asset($image->image_url) }}" alt="Image">
+                                </div>
+                            @endforeach
+                        @else
+                            {{-- {{ 'hello' }} --}}
+                            <div class="carousel-item active">
+                                <img class="w-100 h-100" src="{{ asset('assets/product/images/image.png') }}"
+                                    alt="">
                             </div>
-                        @endforeach
+                        @endif
+
                     </div>
 
                     <a class="carousel-control-prev" href="#product-carousel" data-slide="prev">
@@ -100,7 +123,15 @@
 
             <div class="col-lg-7 h-auto mb-30">
                 <div class="h-100 bg-light p-30">
-                    <h3>{{ $product->name }}</h3>
+                    @php
+                        $pattern = App\Models\Pattern::where('id', $product->pattern_id)->first();
+                        $category = App\Models\Category::where('id', $product->category_id)->first();
+                    @endphp
+                    <h3> {{ isset($pattern->name) ? $pattern->name : '' }}
+                        {{ $product->name }}
+                        {{ isset($product->weight) ? $product->weight . 'Gsm' : '' }}
+                        {{ isset($category->category_name) ? $category->category_name : '' }}
+                    </h3>
                     {{-- <div class="d-flex mb-3">
                         <div class="text-primary mr-2">
                             <small class="fas fa-star"></small>
@@ -328,19 +359,28 @@
                         </div>
                         <div class="tab-content">
                             <div class="tab-pane fade show active" id="tab-pane-1">
-                                <p>Inventory available is shown by [piece]. Enter your quantity to begin order.</p>
+                                <p>Inventory available is shown.</p>
                                 {{-- <table id="productTable">
                                 <!-- Rows and columns will be added dynamically by JavaScript -->
                             </table> --}}
                                 @php
-                                    $sizes = ['XS', 'S', 'M', 'L', 'XL'];
                                     $colors = ['Aquamarine', 'DarkGoldenRod', 'Blue', 'Brown', 'Purple', 'White'];
+
                                     $productPrice = 10;
                                 @endphp
+                                @if ($product->productsizetype == 1)
+                                    @php
+                                        $sizes = ['XS', 'S', 'M', 'L', 'XL'];
+                                    @endphp
+                                @else
+                                    @php
+                                        $sizes = ['8', '10', '12', '14', '18'];
+                                    @endphp
+                                @endif
                                 <table id="productTable">
                                     <thead>
                                         <tr>
-                                            <th>Colour</th>
+                                            <th>Colour \ Size</th>
                                             @foreach ($sizes as $size)
                                                 <th>{{ $size }}</th>
                                             @endforeach
@@ -348,16 +388,24 @@
                                         </tr>
                                     </thead>
                                     <tbody>
+                                        <?php $data = session()->get('data'); ?>
                                         @foreach ($colors as $color)
                                             <tr>
                                                 <td>
-                                                    <span class="color-circle"
-                                                        style="background-color:{{ $color }}"></span>{{ $color }}
+                                                    {{-- <span class="color-circle"
+                                                        style="background-color:{{ $color }}">
+                                                    </span> --}}
+                                                    {{ $color }}
                                                 </td>
+
+
+                                                {{-- @dd($data); --}}
                                                 @foreach ($sizes as $size)
                                                     <td>
                                                         <input type="number"
-                                                            name="{{ $size }}_{{ $color }}" value=""
+                                                            name="{{ $size }}_{{ $color }}"
+                                                            value="{{ isset($data[$size . '_' . $color]) ? $data[$size . '_' . $color] : '' }}"
+                                                            {{ isset($quentity[$size][$color]) && $quentity[$size][$color] > '0' ? '' : 'disabled' }}
                                                             placeholder=" {{ isset($quentity[$size][$color]) ? $quentity[$size][$color] : '0' }}">
                                                     </td>
                                                 @endforeach

@@ -5,6 +5,19 @@
 
 @section('css')
     <link href="{{ asset('vendor/datatables/dataTables.bootstrap4.min.css') }}" rel="stylesheet">
+    <style>
+        .user-add-shedule-list {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .user-add-shedule-list button.btn-primary,
+        .user-add-shedule-list button.btn-primary span {
+            color: white !important;
+            border-radius: 10px;
+        }
+    </style>
 @endsection
 
 @section('content')
@@ -13,11 +26,25 @@
         <div class="container-fluid">
             <!-- Page Heading -->
             <h1 class="h3 mb-2 text-gray-800">Product List</h1>
+            @if (Auth::user()->can('product.add'))
+                <div class="user-add-shedule-list">
+                    <div class="col-auto float-right ml-auto">
+                        <a href="{{ route('product.create') }}">
+                            <button class="btn-primary" data-toggle="modal" data-target="#add_schedule">Add Product</button>
+                        </a>
+                        {{-- <button class="btn-primary" data-toggle="modal" data-target="#add_shift"> Add Shifts</button> --}}
+                    </div>
+                </div>
+            @endif
+
             <!-- DataTales Example -->
             <div class="card shadow mb-4">
                 <div class="card-header py-3">
+                    {{-- @if (Auth::user()->can('product.add'))
+                        <a class="btn btn-primary" href="{{ route('product.create') }}">Add Product </a>
+                    @endif --}}
                     @if (session('message'))
-                        <div class="alert alert-success">
+                        <div class="alert alert-success mt-3">
                             {{ session('message') }}
                         </div>
                     @endif
@@ -29,6 +56,7 @@
                             <thead>
                                 <tr>
                                     <th>Product Name</th>
+                                    <th>Product Pattern</th>
                                     @if (Auth::user()->can('product.edit') || Auth::user()->can('product.delete'))
                                         <th>Action</th>
                                     @endif
@@ -52,6 +80,18 @@
                                         <td>
                                             <p class="p-2"> {{ $product->name }}</p>
                                         </td>
+                                        @php
+                                            $pattern = App\Models\Pattern::where('id', $product->pattern_id)->first();
+                                        @endphp
+                                        @if(isset($pattern->name))
+                                        <td>
+                                            <p class="p-2"> {{ $pattern->name }}</p>
+                                        </td>
+                                        @else
+                                        <td>
+                                        </td>
+                                        @endif  
+                                       
                                         @if (Auth::user()->can('product.edit') || Auth::user()->can('product.delete'))
                                             <td>
                                                 @if (Auth::user()->can('product.edit'))

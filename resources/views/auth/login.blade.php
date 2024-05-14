@@ -71,4 +71,12 @@
 
         </div>
     </form>
+
+    @if (session('message'))
+        <script>
+            setTimeout(function() {
+                alert("{{ session('message') }}");
+            }, 500);
+        </script>
+    @endif
 </x-guest-layout>

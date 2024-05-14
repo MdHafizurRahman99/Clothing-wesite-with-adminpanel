@@ -60,9 +60,9 @@
 
         input[type="text"] {
             width: 100%;
-            border: none;
-            padding: 4px;
-            box-sizing: border-box;
+            /* border: none; */
+            /* padding: 4px; */
+            /* box-sizing: border-box; */
         }
 
         .color-circle {
@@ -73,6 +73,30 @@
             margin-right: 5px;
             border: 1px solid #000;
             /* You can adjust the border properties */
+        }
+    </style>
+
+    <style>
+        .thumbnail {
+            width: 100px;
+            /* Adjust size as needed */
+            height: auto;
+            /* Adjust size as needed */
+            cursor: pointer;
+        }
+
+        .image-container {
+            text-align: center;
+            /* Center the image horizontally */
+            margin-bottom: 20px;
+            /* Example margin, adjust as needed */
+        }
+
+        .full-width-image {
+            width: 100%;
+            /* Occupy the full width of the container */
+            height: auto;
+            /* Maintain aspect ratio */
         }
     </style>
 @endsection
@@ -129,6 +153,16 @@
                         <section>
                             <div class="inner">
                                 <div class="form-group">
+                                    <label for="product_for">Product Display On</label>
+                                    <select class="form-control" name="product_for" id="product_for">
+                                        <option {{ "Buy Blank" == $product->product_for ? 'selected' : '' }} value="Buy Blank">Buy Blank</option>
+                                        <option {{ "Order Form Catalog" == $product->product_for ? 'selected' : '' }} value="Order Form Catalog">Order Form Catalog</option>
+                                    </select>
+                                    @error('product_for')
+                                        <p class="text-danger">{{ $message }}</p>
+                                    @enderror
+                                </div>
+                                <div class="form-group">
                                     <label for="name">Product Name</label>
                                     <input required type="text" id="name" name="name"
                                         value="{{ isset($product->name) ? $product->name : old('name') }} "
@@ -136,6 +170,64 @@
                                     @error('name')
                                         <p class="text-danger">{{ $message }}</p>
                                     @enderror
+                                </div>
+                                <div class="form-group">
+                                    <label for="product_pattern">Product Pattern</label>
+                                    <select class="form-control" name="pattern_id" id="product_pattern">
+                                        {{-- <option value="Oversized">Oversized</option> --}}
+                                        @foreach ($patterns as $pattern)
+                                            <option value="{{ $pattern->id }}"
+                                                {{ $pattern->id == $product->pattern_id ? 'selected' : '' }}>
+                                                {{ $pattern->name }}</option>
+                                        @endforeach
+
+                                    </select>
+                                    @error('pattern_id')
+                                        <p class="text-danger">{{ $message }}</p>
+                                    @enderror
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="gender">Gender</label>
+                                    <select class="form-control" name="gender" id="gender">
+                                         <option {{ "Man" == $product->gender ? 'selected' : '' }} value="Man">Man</option>
+                                         <option {{ "Women" == $product->gender ? 'selected' : '' }} value="Women">Women</option>
+                                         <option {{ "Kids" == $product->gender ? 'selected' : '' }} value="Kids">Kids</option>
+                                         <option {{ "Unisex" == $product->gender ? 'selected' : '' }} value="Unisex">Unisex</option>
+                                    </select>
+                                    @error('gender')
+                                        <p class="text-danger">{{ $message }}</p>
+                                    @enderror
+                                </div>
+                                <div class="form-group">
+                                    <label for="product_weight">Weight(Gsm)</label>
+                                    <input required type="text" id="product_weight" name="weight"
+                                        value="{{ isset($product->weight) ? $product->weight : old('weight') }}"
+                                        class="form-control" placeholder="Weight">
+                                    @error('weight')
+                                        <p class="text-danger">{{ $message }}</p>
+                                    @enderror
+                                </div>
+
+
+                                <div class="form-group">
+                                    <label for="name">Product Size Type</label>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="productsizetype"
+                                            id="productsizetype1" value="1"
+                                            {{ $product->productsizetype == 1 ? 'checked' : '' }}>
+                                        <label class="form-check-label" for="productsizetype1">
+                                            XS,S,M,L,XL...
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="productsizetype"
+                                            id="productsizetype2" value="2"
+                                            {{ $product->productsizetype == 2 ? 'checked' : '' }}>
+                                        <label class="form-check-label" for="productsizetype2">
+                                            8,10,12,14,12...
+                                        </label>
+                                    </div>
                                 </div>
                                 <div class="form-group">
                                     <label for="product_category">Product Category</label>
@@ -154,14 +246,11 @@
                                         <p class="text-danger">{{ $message }}</p>
                                     @enderror
                                 </div>
+
+
                                 <div class="form-group">
                                     <label for="description">Product Description</label>
-                                    <textarea name="description" class="form-control" id="description" cols="70" rows="5">
-@if ($errors->any())
-{{ old('description') }}@else{{ $product->description }}
-@endif
-</textarea>
-
+                                    <textarea name="description" class="form-control" id="description" cols="70" rows="5">{{ old('description') != null ? old('description') : $product->description }}</textarea>
                                     {{-- <input required type="text" id="name" name="name" value="{{ old('name') }}"
                                         class="form-control" placeholder="Product Description"> --}}
                                     @error('description')
@@ -191,7 +280,10 @@
                                         <p class="text-danger">{{ $message }}</p>
                                     @enderror
                                 </div> --}}
-                                <div class="form-group">
+
+
+
+                                {{-- <div class="form-group">
                                     <label for="name">Product Quentity</label>
                                     @php
                                         $sizes = ['XS', 'S', 'M', 'L', 'XL'];
@@ -227,9 +319,22 @@
                                             @endforeach
                                         </tbody>
                                     </table>
-                                    {{-- <input required type="number" id="quentity" name="quentity"
-                                        value="{{ old('quentity') }}" class="form-control"> --}}
                                     @error('quentity')
+                                        <p class="text-danger">{{ $message }}</p>
+                                    @enderror
+                                </div> --}}
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="work">Product Feature Image:</label>
+                                        <img src="{{ asset($product->image) }}" alt="Thumbnail Image" id="thumbnail"
+                                            class="thumbnail">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="image">Product Feature Image</label>
+                                    <input required type="file" id="image" name="image"
+                                        value=""class="form-control">
+                                    @error('image')
                                         <p class="text-danger">{{ $message }}</p>
                                     @enderror
                                 </div>
@@ -495,7 +600,7 @@
 
     <!-- dropzone min -->
     {{-- <script src="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.5.1/min/dropzone.min.js"></script> --}}
-    {{-- 
+    {{--
     <script>
         var uploadedDocumentMap = {}
         Dropzone.options.documentDropzone = {
@@ -535,7 +640,7 @@
         }
     </script> --}}
 
-    {{-- 
+    {{--
     <script>
         $(document).ready(function() {
             $('.wizard-v4-content').on('click', 'a[href="#finish"]', function(event) {

@@ -218,7 +218,7 @@
                         @foreach ($products as $product)
                             <div class="col-lg-4 col-md-6 col-sm-6 pb-1">
                                 <a href="{{ route('shop.details', ['id' => $product->id]) }}">
-                                    <div class="product-item bg-light mb-4">
+                                    <div class="product-container product-item bg-light mb-4">
                                         <div class="product-img position-relative overflow-hidden">
                                             <img class="img-fluid w-100"
                                                 src="{{ isset($product->image) ? asset($product->image) : asset('assets/product/images/image.png') }}"
@@ -234,10 +234,21 @@
                                                         class="fa fa-search"></i></a>
                                             </div> --}}
                                         </div>
-                                        <div class="text-center py-4">
-                                            <a class="h6 text-decoration-none text-truncate"
+                                        @php
+                                            $pattern = App\Models\Pattern::where('id', $product->pattern_id)->first();
+                                            $category = App\Models\Category::where(
+                                                'id',
+                                                $product->category_id,
+                                            )->first();
+                                        @endphp
+                                        <div class=" product-name text-center py-4 ">
+                                            <a class="h6 text-decoration-none "
                                                 href="{{ route('shop.details', ['id' => $product->id]) }}">
-                                                {{ $product->name }} </a>
+                                                {{ isset($pattern->name) ? $pattern->name : '' }}
+                                                {{ $product->name }}
+                                                {{ isset($product->weight) ? $product->weight . 'Gsm' : '' }}
+                                                {{ isset($category->category_name) ? $category->category_name : '' }}
+                                            </a>
                                             <div class="d-flex align-items-center justify-content-center mt-2">
                                                 {{-- <h5>$123.00</h5>
                                     <h6 class="text-muted ml-2"><del>$123.00</del></h6> --}}

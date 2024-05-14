@@ -35,6 +35,8 @@ class CategoryController extends Controller
     {
         $rules = [
             'name' => 'required|string',
+            'category_image' => 'required|file|image|mimes:jpeg,png,jpg,gif,JPEG,PNG,JPG,GIF',
+
         ];
 
         // Conditionally add validation rules for 'description' and 'image' only if they are present and not null
@@ -43,7 +45,7 @@ class CategoryController extends Controller
         }
 
         if ($request->filled('category_image')) {
-            $rules['category_image'] = 'file|image|mimes:jpeg,png,jpg,gif,JPEG,PNG,JPG,GIF';
+            $rules['category_image'] = 'required|file|image|mimes:jpeg,png,jpg,gif,JPEG,PNG,JPG,GIF';
         }
 
         $validatedData = $request->validate($rules);

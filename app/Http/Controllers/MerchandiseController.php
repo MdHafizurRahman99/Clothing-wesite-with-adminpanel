@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use App\Models\Merchandise;
+use App\Models\Product;
+
 use Illuminate\Http\Request;
 
 class MerchandiseController extends Controller
@@ -13,10 +15,10 @@ class MerchandiseController extends Controller
      */
     public function index()
     {
-        return view(
-            'frontend.merchandise.index',
+        return view('frontend.merchandise.index',
             [
                 'categories' => Category::all(),
+                'products' => Product::all(),
             ]
         );
     }

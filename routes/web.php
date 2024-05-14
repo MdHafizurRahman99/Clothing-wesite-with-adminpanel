@@ -4,12 +4,16 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\BotManController;
 use App\Http\Controllers\BusinessController;
 use App\Http\Controllers\BusniessProfileController;
+use App\Http\Controllers\CatalogOrderController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\ClientRequestController;
+use App\Http\Controllers\CustomOrderController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\InventoryController;
 use App\Http\Controllers\MerchandiseController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\PatternController;
 use App\Http\Controllers\Permission\PermissionController;
 use App\Http\Controllers\Permission\RolesPermissionController;
 use App\Http\Controllers\ProductController;
@@ -37,24 +41,38 @@ use Illuminate\Support\Facades\Auth;
 */
 
 //clothing shop
+
 Route::get('/', function () {
     // return view('layouts.frontend.master');
     return view('frontend.home');
 })->name('home');
 
-//dropzone 
+// Route::get('/', function() {
+//     return response()->json([
+//      'stuff' => phpinfo()
+//     ]);
+//  });
+
+//dropzone
 Route::post('projects/media', [ProjectsController::class, 'storeMedia'])->name('projects.storeMedia');
 Route::post('save-dropzone-image', [ProductController::class, 'dropzoneImage'])->name('save-dropzone-image');
 
 
 Route::resource('buy-bulk', MerchandiseController::class);
+Route::resource('custom-order', CustomOrderController::class);
+Route::resource('catalog-order', CatalogOrderController::class);
+
 Route::resource('order', OrderController::class);
 Route::match(['get', 'post'], '/botman', [BotManController::class, 'handle']);
 Route::resource('home', HomeController::class);
 Route::resource('shop', ShopController::class);
+Route::get('shop/products/{category_id}/{gender}/',[ShopController::class, 'products'] )->name('shop.products');
+
 Route::get('/product-details/{id}', [ShopController::class, 'productDetails'])->name('shop.details');
 Route::get('/product-cart', [ShopController::class, 'productCart'])->name('shop.product-cart');
 Route::get('/custom-design', [ShopController::class, 'customDesign'])->name('shop.custom-design');
+// Route::get('/custom-order', [ShopController::class, 'customOrder'])->name('shop.custom-order');
+
 Route::get('/product-checkout', [ShopController::class, 'productCheckout'])->name('shop.product-checkout');
 // Route::get('/dashboard', function () {
 //     return view('dashboard');
@@ -102,6 +120,11 @@ Route::middleware('auth')->group(function () {
     Route::get('my-requests', [ClientController::class, 'userIndex'])->name('user.index')->middleware('permission:client.add');
     Route::delete('client/destroy/{client}', [ClientController::class, 'destroy'])->name('client.destroy')->middleware('permission:client.delete');
 
+    Route::resource('pattern', PatternController::class);
+    Route::get('product/inventory/list', [InventoryController::class, 'productInventoryList'])->name('product.inventory.list')->middleware('permission:product.add');
+    Route::get('create/inventory/{product_id}', [InventoryController::class, 'createInventory'])->name('create.inventory')->middleware('permission:product.add');
+    Route::get('product/inventories/{product_id}', [InventoryController::class, 'productInventories'])->name('product.inventories')->middleware('permission:product.add');
+    Route::resource('inventory', InventoryController::class);
 
     Route::get('product/create', [ProductController::class, 'create'])->name('product.create')->middleware('permission:product.add');
     Route::get('product/request', [ProductController::class, 'createRequest'])->name('product.request')->middleware('permission:product.view');
@@ -201,6 +224,6 @@ Route::middleware('auth')->group(function () {
     Route::post('staffschedule/destroy/{id}', [StaffScheduleController::class, 'destroy'])->name('staffschedule.destroy')->middleware('permission:staffschedule.delete');
 });
 
-// use for test 
+// use for test
 Route::resource('test', TryTestController::class);
 require __DIR__ . '/auth.php';

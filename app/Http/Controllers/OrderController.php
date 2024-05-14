@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Category;
+use App\Models\Inventory;
 use App\Models\Order;
 use App\Models\OrderDetail;
+use App\Models\Pattern;
 use App\Models\Product;
 use App\Models\ProductBillingAddress;
 use Illuminate\Http\Request;
@@ -17,7 +20,15 @@ class OrderController extends Controller
      */
     public function index()
     {
-
+        if (isset(Auth()->user()->id)) {
+            return view('frontend.orders.list', [
+                'orders' => Order::where('customer_id', Auth()->user()->id)->get(),
+            ]);
+            # code...
+        } else {
+            return back();
+            # code...
+        }
         //
     }
 
@@ -34,6 +45,7 @@ class OrderController extends Controller
      */
     public function store(Request $request)
     {
+        // return $request;
         $validator = Validator::make($request->all(), [
             'first_name' => 'required',
             'last_name' => 'required',
@@ -64,6 +76,65 @@ class OrderController extends Controller
             // return response()->json(['errors' => $validator->errors()], 400);
             return redirect()->back()->withErrors($validator)->withInput();
         }
+
+
+
+
+
+        $cacheKey = session('cacheKey');
+        $productIds = session('product_ids');
+        $cartproducts = [];
+        if (isset($productIds)) {
+            foreach ($productIds as $productId) {
+                $productCacheKey = $cacheKey . '_' . $productId;
+                $cartProduct = cache()->get($productCacheKey);
+                $cartproducts[$productId] = $cartProduct;
+            }
+        }
+        if (!empty($cartproducts) && isset($cartproducts)) {
+            foreach ($cartproducts as $cartproduct) {
+                if (!empty($cartproduct['input'])) {
+                    $inputData = $cartproduct['input'];
+                    $productData = [];
+                    // Remove the first element from $inputData
+                    array_shift($inputData);
+
+                    foreach ($inputData as $key => $quantity) {
+                        if ($quantity !== null && $quantity > 0) {
+                            if ($key === 'product_id') {
+                                $product_id = $quantity;
+                                continue;
+                            }
+                            $size = substr($key, 0, strpos($key, '_')); // Extract size from key
+                            $color = substr($key, strpos($key, '_') + 1); // Extract color from key
+                            $inventory = Inventory::where('product_id', $product_id)->where('size', $size)->where('color', $color)->first();
+                            $product = Product::find($product_id);
+                            $pattern = Pattern::where('id', $product->pattern_id)->first();
+                            $category = Category::where('id', $product->category_id)->first();
+
+                            $updateQuantity = $inventory->quantity - $quantity;
+
+                            if ($updateQuantity < '0') {
+                                # code...
+                                return redirect()->route('shop.product-cart')->withErrors([
+                                    'error' => "We apologize, but there is currently limited stock ({$inventory->quantity} pcs) available for '{$size}({$color})' of Product '" .
+                                        (isset($pattern->name) ? $pattern->name : '') . ' ' .
+                                        $product->name . ' ' .
+                                        (isset($product->weight) ? $product->weight . 'Gsm' : '') . ' ' .
+                                        (isset($category->category_name) ? $category->category_name : '') . "'. Please adjust the quantity."
+                                ]);
+                            }
+                        }
+                    }
+                    if (!empty($productData)) {
+                        $cartProductsData[] = $productData;
+                    }
+                }
+            }
+        }
+
+
+        ///************************************** */
         $discountedPrice = session('discountedPrice');
         $subTotal = session('totalPrice');
         $order = Order::create([
@@ -119,15 +190,23 @@ class OrderController extends Controller
 
                             $size = substr($key, 0, strpos($key, '_')); // Extract size from key
                             $color = substr($key, strpos($key, '_') + 1); // Extract color from key
-                            $product = Product::find($product_id);
+                            $inventory = Inventory::where('product_id', $product_id)->where('size', $size)->where('color', $color)->first();
+                            $updateQuantity = $inventory->quantity - $quantity;
+                            // return $inventory->quantity;
 
-                            // Build product data array
+                            // return $updateQuantity;
+                            // $product = Product::find($product_id);
+                            // return $product;
                             $orderDetails = OrderDetail::create([
                                 'order_id' => $order->id,
-                                'product_id' => $product->id,
+                                'product_id' => $product_id,
                                 'size' => $size,
                                 'color' => $color,
                                 'quantity' => $quantity,
+                            ]);
+
+                            $inventory->update([
+                                'quantity' => $updateQuantity
                             ]);
                         }
                     }
@@ -150,6 +229,7 @@ class OrderController extends Controller
                     foreach ($productIds as $productId) {
                         $productCacheKey = $cacheKey . '_' . $productId;
                         $cartProduct = cache()->get($productCacheKey);
+                        cache()->forget($productCacheKey);
                     }
                 }
                 // Add cache data to the array
@@ -157,8 +237,10 @@ class OrderController extends Controller
             }
         }
         session()->forget('product_ids');
-
-        return back()->with('message', 'Order Placed Successfully!');
+        session()->forget('totalProduct');
+        session()->forget('totalPrice');
+        session()->forget('discountedPrice');
+        return redirect()->route('home')->with('message', 'Order Placed Successfully!');
     }
 
     /**
@@ -166,7 +248,10 @@ class OrderController extends Controller
      */
     public function show(Order $order)
     {
-        //
+        return view('frontend.orders.order', [
+            'order' => $order,
+            'order_details' => OrderDetail::where('order_id', $order->id)->get()
+        ]);
     }
 
     /**
