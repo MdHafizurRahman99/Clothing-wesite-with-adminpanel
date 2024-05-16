@@ -61,11 +61,21 @@ class ShopController extends Controller
             }
         }
         // return $product_id;
+        $colorRows = [
+            ['#7FFFD4', '#B8860B', '#0000FF', '#A52A2A', '#800080', '#FFFFFF'],
+            ['#FFFFFF', '#D3D3D3', '#D3D3D3', '#D3D3D3', '#F5F5F5', '#FFFFE0', '#FFFF00', '#FFD700', '#FFD700', '#FFA07A'],
+            ['#DDA0DD', '#B22222', '#FF0000', '#FF0000', '#FF0000', '#8B0000', '#8B0000', '#000000', '#000000', '#000000', '#D3D3D3'],
+            ['#BDB76B', '#F4A460', '#8B4513', '#A0522D', '#A52A2A', '#696969', '#808080', '#2F4F4F', '#2F4F4F', '#008B8B'],
+            ['#6B8E23', '#556B2F', '#008000', '#008000', '#008000', '#006400', '#6B8E23', '#9ACD32', '#9ACD32', '#9ACD32'],
+            ['#00008B', '#0000CD', '#0000FF', '#000080', '#000080', '#000080', '#000000', '#C0C0C0', '#C0C0C0', '#C0C0C0']
+        ];
         return view(
             'frontend.shop.shop-details',
             [
+
                 'product' => Product::where('id', $product_id)->first(),
                 'quentity' => $quantityArray,
+                'colorRows' => $colorRows,
                 'prices' => $priceArray,
                 'minQuantity' => $minQuantityArray,
                 'maxQuantity' => $maxQuantityArray,

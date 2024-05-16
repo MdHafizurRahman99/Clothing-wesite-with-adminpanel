@@ -30,9 +30,17 @@ class HomeController extends Controller
      */
     public function store(Request $request)
     {
+
         $data = $request->except('_token', 'total_price', 'product_id'); // Exclude CSRF token
         // return $data;
-        // Check inventory for each item in the request
+        $allValuesAreNull = empty(array_filter($data, function ($value) {
+            return !is_null($value);
+        }));
+        if ($allValuesAreNull) {
+            // return response()->json(['message' => 'All inputs are null'], 400);
+        return back()->with('message','Please select any item.');
+        }
+
         foreach ($data as $key => $quantity) {
             if ($key === 'total_price' && $key === 'product_id') {
                 continue; // Skip total price field
