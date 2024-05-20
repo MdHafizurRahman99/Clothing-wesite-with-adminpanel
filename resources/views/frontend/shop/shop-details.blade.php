@@ -337,7 +337,7 @@
                     </script>
 
                     <div class="form-group">
-                        <label for="name">Product Discount Price on Quantity</label>
+                        <label for="name">Product Discount Price on Quantity:</label>
                         @php
                             $i = 0;
                         @endphp

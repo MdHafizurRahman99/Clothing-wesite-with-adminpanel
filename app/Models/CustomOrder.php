@@ -11,6 +11,7 @@ class CustomOrder extends Model
     protected $fillable = [
         'user_id',
         'name',
+        'company_name',
         'email',
         'phone',
         'clothing_type',

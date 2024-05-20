@@ -41,50 +41,49 @@ use Illuminate\Support\Facades\Auth;
 */
 
 //clothing shop
+Route::middleware('mailverified')->group(function () {
 
-Route::get('/', function () {
-    // return view('layouts.frontend.master');
-    return view('frontend.home');
-})->name('home');
-
-// Route::get('/', function() {
-//     return response()->json([
-//      'stuff' => phpinfo()
-//     ]);
-//  });
-
-//dropzone
-Route::post('projects/media', [ProjectsController::class, 'storeMedia'])->name('projects.storeMedia');
-Route::post('save-dropzone-image', [ProductController::class, 'dropzoneImage'])->name('save-dropzone-image');
-
-
-Route::resource('buy-bulk', MerchandiseController::class);
-Route::resource('custom-order', CustomOrderController::class);
-Route::resource('catalog-order', CatalogOrderController::class);
-
-Route::resource('order', OrderController::class);
-Route::match(['get', 'post'], '/botman', [BotManController::class, 'handle']);
-Route::resource('home', HomeController::class);
-Route::resource('shop', ShopController::class);
-Route::get('shop/products/{category_id}/{gender}/',[ShopController::class, 'products'] )->name('shop.products');
-
-Route::get('/product-details/{id}', [ShopController::class, 'productDetails'])->name('shop.details');
-Route::get('/product-cart', [ShopController::class, 'productCart'])->name('shop.product-cart');
-Route::get('/custom-design', [ShopController::class, 'customDesign'])->name('shop.custom-design');
-// Route::get('/custom-order', [ShopController::class, 'customOrder'])->name('shop.custom-order');
-
-Route::get('/product-checkout', [ShopController::class, 'productCheckout'])->name('shop.product-checkout');
-// Route::get('/dashboard', function () {
-//     return view('dashboard');
-// })->middleware(['auth', 'verified'])->name('dashboard');
-Route::post('/increment-quantity', [ProductController::class, 'incrementQuantity'])->name('increment-quantity');
-Route::post('/decrement-quantity',  [ProductController::class, 'decrementQuantity'])->name('decrement-quantity');
-Route::post('/save-canvas-image',  [ProductController::class, 'saveCanvasImage'])->name('save-canvas-image');
-Route::post('/save-canvas-mockup',  [ProductController::class, 'saveCanvasMockup'])->name('save-canvas-mockup');
-Route::post('/delete-canvas-image',  [ProductController::class, 'deleteCanvasImage'])->name('delete-canvas-image');
-//clothing shop
+    Route::get('/', function () {
+        // return view('layouts.frontend.master');
+        return view('frontend.home');
+    })->name('home');
+    // Route::get('/', function() {
+    //     return response()->json([
+    //      'stuff' => phpinfo()
+    //     ]);
+    //  });
+    //dropzone
+    Route::post('projects/media', [ProjectsController::class, 'storeMedia'])->name('projects.storeMedia');
+    Route::post('save-dropzone-image', [ProductController::class, 'dropzoneImage'])->name('save-dropzone-image');
 
 
+    Route::resource('buy-bulk', MerchandiseController::class);
+    Route::resource('custom-order', CustomOrderController::class);
+    Route::resource('catalog-order', CatalogOrderController::class);
+
+    Route::resource('order', OrderController::class);
+    Route::match(['get', 'post'], '/botman', [BotManController::class, 'handle']);
+    Route::resource('home', HomeController::class);
+    Route::resource('shop', ShopController::class);
+    Route::get('shop/products/{category_id}/{gender}/', [ShopController::class, 'products'])->name('shop.products');
+
+    Route::get('/product-details/{id}', [ShopController::class, 'productDetails'])->name('shop.details');
+    Route::get('/product-cart', [ShopController::class, 'productCart'])->name('shop.product-cart');
+    Route::get('/custom-design', [ShopController::class, 'customDesign'])->name('shop.custom-design');
+    // Route::get('/custom-order', [ShopController::class, 'customOrder'])->name('shop.custom-order');
+
+    Route::get('/product-checkout', [ShopController::class, 'productCheckout'])->name('shop.product-checkout');
+    // Route::get('/dashboard', function () {
+    //     return view('dashboard');
+    // })->middleware(['auth', 'verified'])->name('dashboard');
+    Route::post('/increment-quantity', [ProductController::class, 'incrementQuantity'])->name('increment-quantity');
+    Route::post('/decrement-quantity',  [ProductController::class, 'decrementQuantity'])->name('decrement-quantity');
+    Route::post('/save-canvas-image',  [ProductController::class, 'saveCanvasImage'])->name('save-canvas-image');
+    Route::post('/save-canvas-mockup',  [ProductController::class, 'saveCanvasMockup'])->name('save-canvas-mockup');
+    Route::post('/delete-canvas-image',  [ProductController::class, 'deleteCanvasImage'])->name('delete-canvas-image');
+    //clothing shop
+
+});
 
 Route::get('/dashboard', function () {
     if (Auth::user()->hasRole('User')) {
@@ -99,6 +98,7 @@ Route::get('/dashboard', function () {
 // })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
+
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');

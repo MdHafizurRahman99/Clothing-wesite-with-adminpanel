@@ -14,6 +14,10 @@
                             <span class="text-muted ms-2">{{ $order->name }}</span>
                         </div>
                         <div class="form-group">
+                            <label for="name" class="form-label fw-bold">Company Name:</label>
+                            <span class="text-muted ms-2">{{ $order->company_name }}</span>
+                        </div>
+                        <div class="form-group">
                             <label for="email" class="form-label fw-bold">Email :</label>
                             <span class="text-muted ms-2">{{ $order->email }}</span>
                         </div>
