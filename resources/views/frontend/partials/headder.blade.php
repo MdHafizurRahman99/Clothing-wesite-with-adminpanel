@@ -139,7 +139,9 @@
                     @if (isset(auth()->user()->name))
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" >
-                                {{ auth()->user()->name }}
+                                {{-- <i class="fas fa-shopping-cart"></i> --}}
+                                <i class="fa fa-user" aria-hidden="true"></i>
+                                {{-- {{ auth()->user()->name }} --}}
                             </a>
                             <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
                                 <a class="dropdown-item" href="{{ route('order.index') }}">Orders</a>

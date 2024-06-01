@@ -192,6 +192,24 @@
             </div>
         </li>
     @endif
+    @if (Auth::user()->can('color.view'))
+        <li class="nav-item">
+            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseColor"
+                aria-expanded="true" aria-controls="collapseColor">
+                <span>Color</span>
+            </a>
+            <div id="collapseColor" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+                <div class="bg-white py-2 collapse-inner rounded">
+                    {{-- <h6 class="collapse-header">Custom Components:</h6> --}}
+                    @if (Auth::user()->can('color.add'))
+                        <a class="collapse-item" href="{{ route('color.create') }}">Add Color </a>
+                    @endif
+                    <a class="collapse-item" href="{{ route('color.index') }}">All Color </a>
+                    {{-- <a class="collapse-item" href="cards.html">Cards</a> --}}
+                </div>
+            </div>
+        </li>
+    @endif
 
     @if (Auth::user()->can('product.view'))
         <li class="nav-item">
@@ -222,7 +240,9 @@
             <div class="bg-white py-2 collapse-inner rounded">
                 {{-- <h6 class="collapse-header">Custom Components:</h6> --}}
 
-                <a class="collapse-item" href="{{ route('order.index') }}">All Orders </a>
+                <a class="collapse-item" href="{{ route('order.index') }}"> Orders </a>
+
+                <a class="collapse-item" href="{{ route('custom-order.index') }}"> Custom Order </a>
                 {{-- <a class="collapse-item" href="cards.html">Cards</a> --}}
             </div>
         </div>

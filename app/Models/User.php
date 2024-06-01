@@ -56,4 +56,8 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->belongsToMany(Role::class, 'model_has_roles', 'model_id', 'role_id')
             ->where('model_type', 'App\Models\User'); // Specify the model type
     }
+    public function customOrders()
+    {
+        return $this->hasMany(CustomOrder::class);
+    }
 }

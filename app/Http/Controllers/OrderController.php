@@ -20,16 +20,24 @@ class OrderController extends Controller
      */
     public function index()
     {
-        if (isset(Auth()->user()->id)) {
-            return view('frontend.orders.list', [
-                'orders' => Order::where('customer_id', Auth()->user()->id)->get(),
-            ]);
-            # code...
-        } else {
-            return back();
-            # code...
+        if (auth()->check()) {
+            if (Auth()->user()->role == 'user') {
+
+                return view('frontend.orders.list', [
+                    'orders' => Order::where('customer_id', Auth()->user()->id)->get(),
+                ]);
+            } elseif (Auth()->user()->role == 'admin') {
+
+                return view('admin.orders.list', [
+                    'orders' => Order::latest()->get(),
+                ]);
+            } else {
+                return back();
+            }
         }
-        //
+        else{
+            return redirect()->route('login');
+        }
     }
 
     /**
@@ -37,7 +45,7 @@ class OrderController extends Controller
      */
     public function create()
     {
-        //
+
     }
 
     /**

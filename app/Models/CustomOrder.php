@@ -17,4 +17,9 @@ class CustomOrder extends Model
         'clothing_type',
         'specific_preferences',
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

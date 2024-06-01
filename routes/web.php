@@ -8,6 +8,7 @@ use App\Http\Controllers\CatalogOrderController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\ClientRequestController;
+use App\Http\Controllers\ColorController;
 use App\Http\Controllers\CustomOrderController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\InventoryController;
@@ -59,6 +60,8 @@ Route::middleware('mailverified')->group(function () {
 
     Route::resource('buy-bulk', MerchandiseController::class);
     Route::resource('custom-order', CustomOrderController::class);
+    Route::post('/check-email', [CustomOrderController::class, 'checkEmail'])->name('check.email');
+
     Route::resource('catalog-order', CatalogOrderController::class);
 
     Route::resource('order', OrderController::class);
@@ -151,6 +154,13 @@ Route::middleware('auth')->group(function () {
     Route::put('business/update/{business}', [BusinessController::class, 'update'])->name('business.update')->middleware('permission:business.edit');
     Route::get('business/index', [BusinessController::class, 'index'])->name('business.index')->middleware('permission:business.view');
     Route::delete('business/destroy/{business}', [BusinessController::class, 'destroy'])->name('business.destroy')->middleware('permission:business.delete');
+
+    Route::get('color/create', [ColorController::class, 'create'])->name('color.create')->middleware('permission:color.add');
+    Route::post('color/store', [ColorController::class, 'store'])->name('color.store')->middleware('permission:color.add');
+    Route::get('color/edit/{color}', [ColorController::class, 'edit'])->name('color.edit')->middleware('permission:color.edit');
+    Route::put('color/update/{color}', [ColorController::class, 'update'])->name('color.update')->middleware('permission:color.edit');
+    Route::get('color/index', [ColorController::class, 'index'])->name('color.index')->middleware('permission:color.view');
+    Route::delete('color/destroy/{color}', [ColorController::class, 'destroy'])->name('color.destroy')->middleware('permission:color.delete');
 
     // Route::resource('business', BusinessController::class);
 

@@ -25,7 +25,7 @@
         }
 
         .navbar-brand img {
-            height: 40px;
+            height: 85px;
         }
 
         .navbar-nav .nav-link {

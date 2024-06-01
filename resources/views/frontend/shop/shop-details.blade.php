@@ -309,17 +309,6 @@
                                 'DodgerBlue',
                                 'MediumSeaGreen',
                                 'LightGray',
-                                'Aquamarine',
-                                'DarkGoldenRod',
-                                'Blue',
-                                'Brown',
-                                'Purple',
-                                'White',
-                                'SlateBlue',
-                                'Orange',
-                                'DodgerBlue',
-                                'MediumSeaGreen',
-                                'LightGray',
                             ];
                         @endphp
                         <div class="color-rows">

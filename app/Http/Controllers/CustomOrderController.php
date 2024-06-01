@@ -12,7 +12,6 @@ use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
-use App\Mail\NewClient;
 
 use Illuminate\Support\Facades\Mail;
 
@@ -21,17 +20,38 @@ class CustomOrderController extends Controller
     /**
      * Display a listing of the resource.
      */
+
+     public function checkEmail(Request $request)
+     {
+         $email = $request->input('email');
+         $exists = User::where('email', $email)->exists();
+
+         return response()->json(['exists' => $exists]);
+     }
+
     public function index()
     {
 
-        if (isset(Auth()->user()->id)) {
-            return view('frontend.custom-order.list', [
-                'orders' => CustomOrder::where('user_id', Auth()->user()->id)->get(),
-            ]);
-            # code...
+        if (auth()->check()) {
+            if (Auth()->user()->role == 'user') {
+                return view('frontend.custom-order.list', [
+                    'orders' => CustomOrder::where('user_id', Auth()->user()->id)->get(),
+                ]);
+            } elseif (Auth()->user()->role == 'admin') {
+                $orders = CustomOrder::whereHas('user', function ($query) {
+                    $query->whereNotNull('email_verified_at');
+                })->orderBy('created_at', 'desc')->get();
+                // return $orders;
+                // Log the fetched orders for debugging
+                // \Log::info($orders);
+                return view('admin.custom-order.list', [
+                    'orders' => CustomOrder::whereHas('user', function ($query) {
+                        $query->whereNotNull('email_verified_at');
+                    })->orderBy('created_at', 'desc')->get(),
+                ]);
+            }
         } else {
-            return back();
-            # code...
+            return redirect()->route('login');
         }
     }
 
@@ -50,6 +70,7 @@ class CustomOrderController extends Controller
      */
     public function store(Request $request)
     {
+        // return $request;
         // return auth()->user()->id;
         // $rules = [
         //     'name' => 'required|string|max:255',
@@ -83,13 +104,13 @@ class CustomOrderController extends Controller
         // return $existingUser;
 
         if (!$existingUser && !auth()->check()) {
-                    // return $existingUser;
+            // return $existingUser;
 
             $rules = [
                 'name' => 'required|string|max:255',
                 'email' => 'required|email|max:255',
                 'phone' => 'nullable|string|max:20',
-                'clothing_type' => 'required|string|in:Shirts,Pants,Dresses,Outerwear,Accessories,Other',
+                // 'clothing_type' => 'required|string|in:Shirts,Pants,Dresses,Outerwear,Accessories,Other',
                 'specific_preferences' => 'nullable|string|max:1000',
                 'password' => ['required', 'confirmed', Rules\Password::defaults()],
             ];
@@ -114,7 +135,7 @@ class CustomOrderController extends Controller
                 'company_name' => $request->company_name,
                 'email' => $request->email,
                 'phone' => $request->phone,
-                'clothing_type' => $request->clothing_type,
+                'clothing_type' => json_encode($request->clothing_type),
                 'specific_preferences' => $request->specific_preferences,
             ]);
 
@@ -130,18 +151,17 @@ class CustomOrderController extends Controller
                 'name' => 'required|string|max:255',
                 'email' => 'required|email|max:255',
                 'phone' => 'nullable|string|max:20',
-                'clothing_type' => 'required|string|in:Shirts,Pants,Dresses,Outerwear,Accessories,Other',
+                // 'clothing_type' => 'required|string|in:Shirts,Pants,Dresses,Outerwear,Accessories,Other',
                 'specific_preferences' => 'nullable|string|max:1000',
             ];
 
             // Validate the request data
             $request->validate($rules);
             if (auth()->check()) {
-                $user_id=auth()->user()->id;
+                $user_id = auth()->user()->id;
                 # code...
-            }
-            else {
-                $user_id=$existingUser->id;
+            } else {
+                $user_id = $existingUser->id;
             }
             CustomOrder::create([
                 'user_id' => $user_id,
@@ -149,18 +169,19 @@ class CustomOrderController extends Controller
                 'company_name' => $request->company_name,
                 'email' => $request->email,
                 'phone' => $request->phone,
-                'clothing_type' => $request->clothing_type,
+                'clothing_type' => json_encode($request->clothing_type),
                 'specific_preferences' => $request->specific_preferences,
             ]);
 
             Mail::to($request->email)->send(new MailCustomOrder());
-
         }
 
         if (auth()->check()) {
-            return redirect()->route('home')->with('message', 'Custom order submitted successfully! An agent will contact you soon.');
+            return redirect()->route('home')->with('message', 'Custom order submitted successfully!
+            An agent will contact you soon.');
         } else {
-            return redirect()->route('home')->with('message', 'Custom order submitted successfully! An agent will contact you soon.To see custom order, you need to login/create account using given email.');
+            return redirect()->route('home')->with('message', 'Custom order submitted successfully!
+            An agent will contact you soon.To see custom order, you need to login.');
         }
     }
 

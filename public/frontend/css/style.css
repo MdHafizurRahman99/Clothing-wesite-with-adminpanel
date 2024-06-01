@@ -4849,16 +4849,16 @@ input[type="button"].btn-block {
 .navbar-dark .navbar-nav .active>.nav-link,
 .navbar-dark .navbar-nav .nav-link.show,
 .navbar-dark .navbar-nav .nav-link.active {
-  color: #fff;
+  color: #000000;
 }
 
 .navbar-dark .navbar-toggler {
-  color: rgba(255, 255, 255, 0.5);
-  border-color: rgba(255, 255, 255, 0.1);
+  color: rgba(0, 0, 0, 0.5);
+  border-color: rgba(0, 0, 0, 0.1);
 }
 
 .navbar-dark .navbar-toggler-icon {
-  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='30' height='30' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255, 255, 255, 0.5%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='30' height='30' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(0, 0, 0, 0.5)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
 }
 
 .navbar-dark .navbar-text {
@@ -6769,7 +6769,7 @@ button.bg-light:focus {
 }
 
 .bg-dark {
-  background-color: #3D464D !important;
+  background-color: #FFFFFF !important;
 }
 
 a.bg-dark:hover,
@@ -10424,12 +10424,12 @@ a.text-primary:focus {
 }
 
 .text-secondary {
-  color: #F5F5F5 !important;
+  color: #000000 !important;
 }
 
 a.text-secondary:hover,
 a.text-secondary:focus {
-  color: #cfcfcf !important;
+  color: #000000 !important;
 }
 
 .text-success {
@@ -10685,7 +10685,7 @@ h6 {
 
 .navbar-dark .navbar-nav .nav-link {
   padding: 20px 10px;
-  color: #F5F5F5;
+  color: #000000;
   outline: none;
 }
 
