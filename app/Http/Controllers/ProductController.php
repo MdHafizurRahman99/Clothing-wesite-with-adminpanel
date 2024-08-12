@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
+use App\Models\Inventory;
 use App\Models\Pattern;
 use App\Models\PriceRange;
 use Illuminate\Http\Request;
@@ -135,13 +136,21 @@ class ProductController extends Controller
 
         // Output the key
         // return $key;
+        $pattern = Pattern::where('id', $request->pattern_id)->first();
+        $category = Category::where('id', $request->category_id)->first();
 
+        $patternName = isset($pattern->name) ? $pattern->name : '';
+        $productName = $request->name; // Assuming $product->name is always set
+        $productWeight = isset($request->weight) ? $request->weight . 'Gsm' : '';
+        $categoryName = isset($category->category_name) ? $category->category_name : '';
 
+        $displayName = trim("$patternName $productName $productWeight $categoryName");
 
         $image = $this->saveImage($request);
         $product = Product::create([
             'id' => $key,
             'name' => $request->name,
+            'display_name' => $displayName,
             'product_for' => $request->product_for,
             'pattern_id' => $request->pattern_id,
             'productsizetype' => $request->productsizetype,
@@ -245,6 +254,22 @@ class ProductController extends Controller
         //
     }
 
+    public function getProductDetails(Request $request)
+    {
+        $product_id = $request->get('product_id');
+        $productQuentity = Inventory::where('product_id', $product_id)
+            ->whereNotNull('quantity')
+            ->get();
+        // return $productQuentity;
+
+        $sizes = $productQuentity->pluck('size')->unique()->toArray();
+        $colors = $productQuentity->pluck('color')->unique()->toArray();
+
+        return response()->json([
+            'sizes' => $sizes,
+            'colors' => $colors,
+        ]);
+    }
     /**
      * Show the form for editing the specified resource.
      */
@@ -329,10 +354,19 @@ class ProductController extends Controller
             // return response()->json(['errors' => $validator->errors()], 400);
             return redirect()->back()->withErrors($validator)->withInput();
         }
+        $pattern = Pattern::where('id', $product->pattern_id)->first();
+        $category = Category::where('id', $product->category_id)->first();
 
+        $patternName = isset($pattern->name) ? $pattern->name : '';
+        $productName = $request->name; // Assuming $product->name is always set
+        $productWeight = isset($request->weight) ? $product->weight . 'Gsm' : '';
+        $categoryName = isset($category->category_name) ? $category->category_name : '';
 
+        $displayName = trim("$patternName $productName $productWeight $categoryName");
+        // return $displayName;
         $product->update([
             'name' => $request->name,
+            'display_name' => $displayName,
             'product_for' => $request->product_for,
             'weight' => $request->weight,
             'gender' => $request->gender,
@@ -495,23 +529,54 @@ class ProductController extends Controller
 
     public function incrementQuantity(Request $request)
     {
+
+        //  return $request;
+        $productIds = [];
+        // Retrieve the existing product IDs array from the session
+        if (session()->has('product_ids')) {
+            $productIds = session('product_ids');
+
+            // Convert $productIds to an array if it's not already one
+            if (!is_array($productIds)) {
+                $productIds = [$productIds];
+            }
+        }
+        // Assuming $request->product_id is an array of product IDs
+        if ($request->has('productId')) {
+            // Get the product IDs from the request
+            $newProductIds = $request->productId;
+            // Convert $newProductIds to an array if it's not already one
+            if (!is_array($newProductIds)) {
+                $newProductIds = [$newProductIds];
+            }
+            // Merge the new product IDs with the existing ones and remove duplicates
+            $productIds = array_unique(array_merge($productIds, $newProductIds));
+        }
+        // Store the updated product IDs array back in the session
+        session(['product_ids' => $productIds]);
+
+        $input = ['product_id' => $request->productId, $request->newkey => $request->quantity];
+
         $cacheKey = session('cacheKey');
-        // return $request;
+        // return $input;
         $productId = $request->productId;
         // dd($productId);
         $productCacheKey = $cacheKey . '_' . $productId;
         // Retrieve cache data for the current product
         $cartProduct = cache()->get($productCacheKey);
-        $cachedDataInputValues = $cartProduct['input'];
+        // return $cartProduct;
+
+
         // return $cachedDataInputValues;
-        $cachedDataInputValues[$request->key] = $request->quantity;
-        $postData = [
-            'input' => $cachedDataInputValues,
-            'files' => $request->files->all(),
-            'cookies' => $request->cookies->all(),
-            // Add more data as needed
-        ];
-        cache()->put($productCacheKey, $postData, now()->addMinutes(1440));
+
+        // $postData = [
+        //     'input' => $cachedDataInputValues,
+        //     'files' => $request->files->all(),
+        //     'cookies' => $request->cookies->all(),
+        //     // Add more data as needed
+        // ];
+
+        // cache()->put($productCacheKey, $postData, now()->addMinutes(1440));
         $totalProduct = session('totalProduct');
         // return $totalProduct;
         // $requestInputValues = $request->input();
@@ -519,11 +584,43 @@ class ProductController extends Controller
             $totalProduct++;
             session(['totalProduct' => $totalProduct], 1440);
         }
+        if (isset($cartProduct)) {
+            $cachedDataInputValues = $cartProduct['input'];
+            if (isset($cachedDataInputValues[$request->key]) && $request->key != $request->newkey) {
+                $cachedDataInputValues[$request->newkey] = $request->quantity;
+            } else if ($request->key) {
+                $cachedDataInputValues[$request->key] = $request->quantity;
+            } else {
+                $cachedDataInputValues[$request->newkey] = $request->quantity;
+            }
+            //  return $request;
+
+
+            $postData = [
+                'input' => $cachedDataInputValues,
+                // 'files' => $request->files->all(),
+                // 'cookies' => $request->cookies->all(),
+                // Add more data as needed
+            ];
+            cache()->put($productCacheKey, $postData, now()->addMinutes(1440));
+        } else {
+            $postData = [
+                'input' => $input,
+                // 'files' => $request->files->all(),
+                // 'cookies' => $request->cookies->all(),
+                // Add more data as needed
+            ];
+            // Store the data in the cache
+            cache()->put($productCacheKey, $postData, now()->addMinutes(1440));
+        }
         return $totalProduct;
     }
 
     public function decrementQuantity(Request $request)
     {
+
+
+
         $cacheKey = session('cacheKey');
         // return $request;
         $productId = $request->productId;
@@ -533,7 +630,12 @@ class ProductController extends Controller
         $cartProduct = cache()->get($productCacheKey);
         $cachedDataInputValues = $cartProduct['input'];
         // return $cachedDataInputValues;
-        $cachedDataInputValues[$request->key] = $request->quantity;
+        if (isset($cachedDataInputValues[$request->key]) && $request->key != $request->newkey) {
+            unset($cachedDataInputValues[$request->key]);
+            $cachedDataInputValues[$request->newkey] = $request->quantity;
+        } else {
+            $cachedDataInputValues[$request->key] = $request->quantity;
+        }
         $postData = [
             'input' => $cachedDataInputValues,
             'files' => $request->files->all(),
@@ -550,8 +652,27 @@ class ProductController extends Controller
     }
 
 
+    public function searchProducts(Request $request)
+    {
+        $term = $request->get('term');
+        $products = Product::where('display_name', 'LIKE', '%' . $term . '%')->get();
+
+        $results = [];
+        foreach ($products as $product) {
+            $results[] = [
+                'id' => $product->id,
+                'label' => $product->display_name,
+                'value' => $product->display_name,
+                'price' => $product->price,
+            ];
+        }
+
+        return response()->json($results);
+    }
+
     public function saveCanvasMockup(Request $request)
     {
+        // dd($imageUrls);
         $request->validate([
             'imageFile' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048', // Example validation rules
         ]);
@@ -566,6 +687,49 @@ class ProductController extends Controller
         //     session(['imageCount' => $imageCount], 1440);
         // }
         // Check if the request contains the file
+
+
+        // foreach ($request->all() as $key => $value) {
+        //     if (strpos($key, 'imageURL_') === 0) {
+        //         // $imageUrls[] = $value;
+        //         // return $value;
+
+        //         // Get the file from the request
+        //         $imageFile = $value;
+        //         // Generate a unique filename
+        //         $filename = uniqid() . '.' . $imageFile->getClientOriginalExtension();
+        //         $directory = 'assets/product/images/canvasImage/logo-design/';
+        //         $imageUrl = $directory . $filename;
+        //         $imageFile->move($directory, $filename);
+        //         $sessionKey = 'design' . '_' . $request->product_id;
+        //         session()->put($sessionKey, $imageUrl);
+        //     }
+        // }
+
+        foreach ($request->all() as $key => $value) {
+            if (strpos($key, 'imageURL_') === 0) {
+
+                // Decode the base64 image
+                $data = explode(',', $value);
+                $imageData = base64_decode($data[1]);
+
+                // Generate a unique filename
+                $filename = uniqid() . '.png'; // Assuming all images are PNG
+                $directory = 'assets/product/images/canvasImage/logo-design/';
+                $filePath = public_path($directory . $filename);
+
+                // Save the file
+                file_put_contents($filePath, $imageData);
+
+                // Store the URL in the session
+                $imageUrl = $directory . $filename;
+                $sessionKey = 'design' . '_' . $request->product_id;
+                session()->push($sessionKey, $imageUrl);
+            }
+        }
+        return session()->get($sessionKey);
+
+
         if ($request->hasFile('imageFile')) {
             // Get the file from the request
             $imageFile = $request->file('imageFile');
@@ -614,10 +778,13 @@ class ProductController extends Controller
     }
     public function saveCanvasImage(Request $request)
     {
-
+        // session()->flush();
+        // return 'hello';
+        // return $request->product_id;
         // feathing all images to show in forntend
         $allSessionData = session()->all();
-        $productId = 2; // Predefined product id.
+        // return $allSessionData;
+        $productId = $request->product_id;
         $pattern = '/^texture.*_' . $productId . '$/';
         $matchingKeys = array_filter($allSessionData, function ($key) use ($pattern) {
             return preg_match($pattern, $key);
@@ -675,9 +842,17 @@ class ProductController extends Controller
     {
         $sessionKey = $request->cacheKey . '_' . $request->product_id;
         $textureData = session()->get($sessionKey);
-        unlink($textureData);
-
-        return response()->json(['message' => 'Image Deleted successfully', 'filename' => $sessionKey], 200);
+        // return $textureData;
+        // Check if the textureData is set and not empty
+        if ($textureData && file_exists($textureData)) {
+            if (unlink($textureData)) {
+                return response()->json(['message' => 'Image Deleted successfully', 'filename' => $sessionKey], 200);
+            } else {
+                return response()->json(['message' => 'Error deleting the file'], 500);
+            }
+        } else {
+            return response()->json(['message' => 'File does not exist', 'filename' => $textureData], 404);
+        }
     }
     private function saveImage($request)
     {
