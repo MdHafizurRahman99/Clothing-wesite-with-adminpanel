@@ -30,7 +30,7 @@ class HomeController extends Controller
      */
     public function store(Request $request)
     {
-
+// return $request;
         $data = $request->except('_token', 'total_price', 'product_id'); // Exclude CSRF token
         // return $data;
         $allValuesAreNull = empty(array_filter($data, function ($value) {
@@ -55,7 +55,7 @@ class HomeController extends Controller
             // return $inventory;
             if (!$inventory || $inventory->quantity < $quantity) {
                 // return back()->withErrors(['error' => "Insufficient stock for '$size - $color'. Please try to order"]);
-                return back()->with('data', $data)->withErrors(['error' => "We apologize, but there is currently limited stock available for '$size - $color'. Please adjust the quantity ."]);
+                return back()->with('data', $data)->withErrors(['error' => "We apologize, there is currently limited stock available for '$size - $color'. Please adjust the quantity ."]);
 
                 // Handle insufficient stock
             }
@@ -121,6 +121,8 @@ class HomeController extends Controller
             }
             session(['totalProduct' => $totalProduct], 1440);
         }
+                // return $totalProduct;
+
         // session()->forget('totalProduct');
         // session()->forget('product_ids');
         $cacheKey = session('cacheKey');
@@ -144,18 +146,20 @@ class HomeController extends Controller
                     $cachedDataInputValues[$key] += $value; // Add the request data value to the cached data value
                 }
             }
+
             $postData = [
                 'input' => $cachedDataInputValues,
-                'files' => $request->files->all(),
-                'cookies' => $request->cookies->all(),
+                // 'files' => $request->files->all(),
+                // 'cookies' => $request->cookies->all(),
                 // Add more data as needed
             ];
+            // return $postData;
             cache()->put($productCacheKey, $postData, now()->addMinutes(1440));
         } else {
             $postData = [
                 'input' => $request->input(),
-                'files' => $request->files->all(),
-                'cookies' => $request->cookies->all(),
+                // 'files' => $request->files->all(),
+                // 'cookies' => $request->cookies->all(),
                 // Add more data as needed
             ];
             // Store the data in the cache

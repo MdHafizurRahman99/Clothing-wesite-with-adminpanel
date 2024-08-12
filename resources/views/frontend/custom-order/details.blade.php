@@ -1,45 +1,68 @@
 @extends('layouts.frontend.master')
 
 @section('content')
-    <div class="container py-5">
-        <div class="row justify-content-center">
-            <div class="col-md-8">
-                <div class="card border-0 shadow-sm">
-                    <div class="card-header bg-primary text-white">
-                        <h3 class="mb-0">Order Details</h3>
-                    </div>
-                    <div class="card-body">
-                        <div class="form-group">
-                            <label for="name" class="form-label fw-bold">Name :</label>
-                            <span class="text-muted ms-2">{{ $order->name }}</span>
-                        </div>
-                        <div class="form-group">
-                            <label for="name" class="form-label fw-bold">Company Name:</label>
-                            <span class="text-muted ms-2">{{ $order->company_name }}</span>
-                        </div>
-                        <div class="form-group">
-                            <label for="email" class="form-label fw-bold">Email :</label>
-                            <span class="text-muted ms-2">{{ $order->email }}</span>
-                        </div>
-                        <div class="form-group">
-                            <label for="phone" class="form-label fw-bold">Phone Number :</label>
-                            <span class="text-muted ms-2">{{ $order->phone }}</span>
-                        </div>
-                        <div class="form-group">
-                            <label for="clothing_type" class="form-label fw-bold">Type of Clothing :</label>
-                            <span class="text-muted ms-2">{{ $order->clothing_type }}</span>
-                        </div>
-                        <div class="form-group">
-                            <label for="specific_preferences" class="form-label fw-bold">Specific Preferences</label>
-                            <textarea id="specific_preferences" name="specific_preferences" class="form-control {{ $errors->has('specific_preferences') ? 'is-invalid' : '' }}" rows="3" disabled>{{ $order->specific_preferences }}</textarea>
-                        </div>
-                        <div class="text-center mt-4">
-                            <button onclick="goBack()" class="btn btn-primary btn-lg px-5">Go Back</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+    <div class="container">
+        <h1>Custom Order Details</h1>
+        <a href="{{ route('custom-order.index') }}" class="btn btn-primary mb-3">Back to List</a>
+        <table class="table table-bordered">
+            {{-- <tr>
+                <th>ID</th>
+                <td>{{ $order->id }}</td>
+            </tr> --}}
+            <tr>
+                <th>Target</th>
+                <td>{{ $order->target }}</td>
+            </tr>
+            <tr>
+                <th>Category</th>
+                <td>{{ $order->category }}</td>
+            </tr>
+            <tr>
+                <th>Subcategory</th>
+                <td>{{ $order->subcategory }}</td>
+            </tr>
+            <tr>
+                <th>Looking For</th>
+                <td>{{ implode(', ', json_decode($order->looking_for)) }}</td>
+            </tr>
+            <tr>
+                <th>Additional Services</th>
+                <td>{{ implode(', ', json_decode($order->additional_services)) }}</td>
+            </tr>
+            <tr>
+                <th>Inspiration Images</th>
+                <td>
+                    {{-- @dd($images) --}}
+                    @foreach($images as $image)
+                        <img src="{{ asset( $image->image_url) }}" alt="Inspiration Image" width="100">
+                    @endforeach
+                </td>
+            </tr>
+            <tr>
+                <th>Number of Products</th>
+                <td>{{ $order->number_of_products }}</td>
+            </tr>
+            <tr>
+                <th>Quantity per Product</th>
+                <td>{{ $order->quantity_per_model }}</td>
+            </tr>
+            <tr>
+                <th>Project Budget</th>
+                <td>{{ $order->project_budget }}</td>
+            </tr>
+            <tr>
+                <th>Sample Delivery Date</th>
+                <td>{{ $order->sample_delivery_date }}</td>
+            </tr>
+            <tr>
+                <th>Production Delivery Date</th>
+                <td>{{ $order->production_delivery_date }}</td>
+            </tr>
+            <tr>
+                <th>Project Description</th>
+                <td>{{ $order->project_description }}</td>
+            </tr>
+        </table>
     </div>
 @endsection
 

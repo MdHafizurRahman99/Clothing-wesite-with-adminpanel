@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('product_id');
             $table->string('type')->nullable();
+            $table->string('color')->nullable();
             $table->string('image_url');
             $table->timestamps();
         });

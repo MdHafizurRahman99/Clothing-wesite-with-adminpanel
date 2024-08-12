@@ -13,6 +13,8 @@ class Order extends Model
         'order_date',
         'total_price',
         'sub_total',
+        'payment_status',// processing, shipped, delivered
+        'order_status',
         'delivery_option_id',
     ];
 }

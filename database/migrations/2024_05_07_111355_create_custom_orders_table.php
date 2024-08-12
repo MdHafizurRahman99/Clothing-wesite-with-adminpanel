@@ -14,11 +14,26 @@ return new class extends Migration
         Schema::create('custom_orders', function (Blueprint $table) {
             $table->id();
             $table->string('user_id');
-            $table->string('name');
-            $table->string('email');
-            $table->string('phone')->nullable();
-            $table->string('clothing_type');
-            $table->text('specific_preferences')->nullable();
+            $table->string('target');
+            $table->string('category');
+            $table->string('subcategory')->nullable();
+            $table->string('looking_for');
+            $table->string('additional_services')->nullable();
+            $table->string('number_of_products');
+            $table->string('quantity_per_model');
+            $table->string('project_budget');
+            $table->string('sample_delivery_date');
+            $table->string('production_delivery_date');
+            $table->text('project_description')->nullable();
+            $table->string('payment_status')->default('Pending');
+            $table->string('user_id');
+
+            // $table->string('user_id');
+            // $table->string('name');
+            // $table->string('email');
+            // $table->string('phone')->nullable();
+            // $table->string('clothing_type');
+            // $table->text('specific_preferences')->nullable();
             $table->timestamps();
         });
     }

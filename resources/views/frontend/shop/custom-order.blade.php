@@ -1,233 +1,889 @@
-{{-- @extends('layouts.frontend.master')
-@section('content')
-    <div class="container py-5">
-        <div class="row justify-content-center">
-            <div class="col-md-8">
-                <div class="card">
-                    <div class="card-header bg-primary text-white">
-                        <h3 class="mb-0">Didn't find what you wanted? Please Submit This form.</h3>
-                    </div>
-                    <div class="card-body">
-                        <form action="{{ route('custom-order.store') }}" method="POST" enctype="multipart/form-data">
-                            @csrf
-                            <div class="form-group">
-                                <label for="name" class="form-label">Name <span class="text-danger">*</span></label>
-                                <input type="text" id="name" name="name"
-                                    class="form-control {{ $errors->has('name') ? 'is-invalid' : '' }}"
-                                    value="{{ old('name') }}" required>
-                                @error('name')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-                            <div class="form-group">
-                                <label for="company_name" class="form-label">Company Name </label>
-                                <input type="text" id="company_name" name="company_name"
-                                    class="form-control {{ $errors->has('company_name') ? 'is-invalid' : '' }}"
-                                    value="{{ old('company_name') }}" required>
-                                @error('company_name')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-                            <div class="form-group">
-                                <label for="email" class="form-label">Email <span class="text-danger">*</span></label>
-                                <input type="email" id="email" name="email"
-                                    class="form-control {{ $errors->has('email') ? 'is-invalid' : '' }}"
-                                    value="{{ old('email') }}" required>
-                                @error('email')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-                            <div class="form-group">
-                                <label for="phone" class="form-label">Phone Number</label>
-                                <input type="tel" id="phone" name="phone"
-                                    class="form-control {{ $errors->has('phone') ? 'is-invalid' : '' }}"
-                                    value="{{ old('phone') }}">
-                                @error('phone')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-                            <div class="form-group">
-                                <label for="clothing_type" class="form-label">Type of Clothing <span
-                                        class="text-danger">*</span></label>
-                                <select id="clothing_type" name="clothing_type"
-                                    class="form-control {{ $errors->has('clothing_type') ? 'is-invalid' : '' }}" required>
-                                    <option value="">Select an option</option>
-                                    <option value="Shirts" {{ old('clothing_type') == 'Shirts' ? 'selected' : '' }}>Shirts
-                                    </option>
-                                    <option value="Pants" {{ old('clothing_type') == 'Pants' ? 'selected' : '' }}>Pants
-                                    </option>
-                                    <option value="Dresses" {{ old('clothing_type') == 'Dresses' ? 'selected' : '' }}>
-                                        Dresses</option>
-                                    <option value="Outerwear" {{ old('clothing_type') == 'Outerwear' ? 'selected' : '' }}>
-                                        Outerwear</option>
-                                    <option value="Accessories"
-                                        {{ old('clothing_type') == 'Accessories' ? 'selected' : '' }}>Accessories</option>
-                                    <option value="Other" {{ old('clothing_type') == 'Other' ? 'selected' : '' }}>Other
-                                        (please specify)</option>
-                                </select>
-                                @error('clothing_type')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-                            <div class="form-group">
-                                <label for="specific_preferences" class="form-label">Specific Preferences </label>
-                                <textarea id="specific_preferences" name="specific_preferences"
-                                    class="form-control {{ $errors->has('specific_preferences') ? 'is-invalid' : '' }}" rows="3">{{ old('specific_preferences') }}</textarea>
-                                @error('specific_preferences')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-                            @if (!auth()->check())
-                                <div class="form-group">
-                                    <label for="password" class="form-label"> Password <span class="text-danger">(Not
-                                            required if you allready have an account with this email.)</span></label>
-                                    <input type="password" id="password" name="password"
-                                        class="form-control {{ $errors->has('password') ? 'is-invalid' : '' }}"
-                                        value="{{ old('password') }}">
-                                    @error('password')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
-                                </div>
-                                <div class="form-group">
-                                    <label for="password_confirmation" class="form-label">Confirm Password <span
-                                            class="text-danger"></span></label>
-                                    <input type="password" id="password_confirmation" name="password_confirmation"
-                                        class="form-control {{ $errors->has('password_confirmation') ? 'is-invalid' : '' }}"
-                                        value="{{ old('password_confirmation') }}">
-
-                                </div>
-                            @endif
-                            <div class="text-center">
-                                <button type="submit" class="btn btn-primary">Submit</button>
-                            </div>
-                        </form>
-
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-@endsection --}}
 @extends('layouts.frontend.master')
-@section('content')
-<div class="container py-5">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card">
-                <div class="card-header bg-primary text-white">
-                    <h3 class="mb-0">Didn't find what you wanted? Please Submit This form.</h3>
-                </div>
-                <div class="card-body">
-                    <form action="{{ route('custom-order.store') }}" method="POST" enctype="multipart/form-data">
-                        @csrf
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="name" class="form-label">Name <span class="text-danger">*</span></label>
-                                    <input type="text" id="name" name="name" class="form-control" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="email" class="form-label">Email <span class="text-danger">*</span></label>
-                                    <input type="email" id="email" name="email" class="form-control" required>
-                                    <div id="email-feedback" class="text-danger"></div>
-                                </div>
-                                {{-- <div class="form-group">
-                                    <label for="clothing_type" class="form-label">Type of Clothing <span class="text-danger">*</span></label>
-                                    <select id="clothing_type" name="clothing_type[]" multiple class="form-control" required>
-                                        <option value="">Select an option</option>
-                                        <option value="Shirts">Shirts</option>
-                                        <option value="Pants">Pants</option>
-                                        <option value="Dresses">Dresses</option>
-                                        <option value="Outerwear">Outerwear</option>
-                                        <option value="Accessories">Accessories</option>
-                                        <option value="Other">Other (please specify)</option>
-                                    </select>
-                                </div> --}}
-                                <div class="form-group">
-                                    <label class="form-label">Type of Clothing <span class="text-danger">*</span></label>
-                                    <div>
-                                        <input type="checkbox" id="shirts" name="clothing_type[]" value="Shirts">
-                                        <label for="shirts">Shirts</label><br>
-                                        <input type="checkbox" id="pants" name="clothing_type[]" value="Pants">
-                                        <label for="pants">Pants</label><br>
-                                        <input type="checkbox" id="dresses" name="clothing_type[]" value="Dresses">
-                                        <label for="dresses">Dresses</label><br>
-                                        <input type="checkbox" id="outerwear" name="clothing_type[]" value="Outerwear">
-                                        <label for="outerwear">Outerwear</label><br>
-                                        <input type="checkbox" id="accessories" name="clothing_type[]" value="Accessories">
-                                        <label for="accessories">Accessories</label><br>
-                                        <input type="checkbox" id="other" name="clothing_type[]" value="Other">
-                                        <label for="other">Other (please specify)</label><br>
-                                    </div>
-                                </div>
+@section('css')
+    <style>
+        .form {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 1100px;
+            margin: 20px auto;
+            padding: 20px;
+            background: #F9FAFB;
+        }
 
-                                <div id="other_clothing_type_div" class="form-group hidden">
-                                    <label for="other_clothing_type" class="form-label">Please specify</label>
-                                    <input type="text" id="other_clothing_type" name="other_clothing_type" class="form-control">
-                                </div>
-                                <div class="form-group" id="password-fields" style="display: none;">
-                                    <label for="password" class="form-label">Password <span class="text-danger"> (Please enter password that will to make an account.)</span></label>
-                                    <input type="password" id="password" name="password" class="form-control">
-                                </div>
-                                <div class="form-group" id="password-confirmation-field" style="display: none;">
-                                    <label for="password_confirmation" class="form-label">Confirm Password</label>
-                                    <input type="password" id="password_confirmation" name="password_confirmation" class="form-control">
-                                </div>
-                                <div id="login-message" class="text-danger" style="display: none;">Please log in.</div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="company_name" class="form-label">Company Name</label>
-                                    <input type="text" id="company_name" name="company_name" class="form-control">
-                                </div>
-                                <div class="form-group">
-                                    <label for="phone" class="form-label">Phone Number</label>
-                                    <input type="tel" id="phone" name="phone" class="form-control">
-                                </div>
-                                <div class="form-group">
-                                    <label for="specific_preferences" class="form-label">Specific Preferences</label>
-                                    <textarea id="specific_preferences" name="specific_preferences" class="form-control" rows="3"></textarea>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="text-center">
-                            <button type="submit" class="btn btn-primary">Submit</button>
-                        </div>
-                    </form>
+
+
+        h1 {
+            font-size: 24px;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 10px;
+            /* text-align: left; */
+
+        }
+
+        input[type="text"],
+        input[type="number"],
+        select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: .875rem;
+        }
+
+        .icon-group {
+            display: flex;
+            gap: 20px;
+        }
+
+        .icon {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            opacity: 0.6;
+            transition: opacity 0.3s;
+        }
+
+        .icon:hover,
+        .icon.selected {
+            opacity: 1;
+        }
+
+        .icon span {
+            margin-top: 5px;
+            font-size: 14px;
+        }
+
+        .file-upload {
+            border: 2px dashed #ddd;
+            border-radius: 4px;
+            padding: 20px;
+            text-align: center;
+            color: #888;
+        }
+
+        /*
+                        button {
+                            background: #000000;
+                            color: #fff;
+                            border: none;
+                            padding: 12px 20px;
+                            font-size: 18px;
+                            border-radius: 4px;
+                            cursor: pointer;
+                            transition: background 0.3s;
+                        }
+
+                        button:hover {
+                            background: #000000;
+                        } */
+
+        .file-upload {
+            border: 2px dashed #ddd;
+            border-radius: 4px;
+            padding: 20px;
+            text-align: center;
+            color: #888;
+            cursor: pointer;
+            transition: border-color 0.3s;
+        }
+
+        .file-upload:hover {
+            border-color: #000000;
+        }
+
+        .file-upload-text {
+            color: #000000;
+            text-decoration: underline;
+            cursor: pointer;
+        }
+
+        #preview-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .preview-image {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 4px;
+        }
+
+        /* Reset some default styles */
+        /* Reset some default styles */
+        body,
+        h1,
+        label,
+        input,
+        select,
+        textarea,
+        button {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* General body styling */
+        /* body {
+                                            font-family: 'Arial', sans-serif;
+                                            background-color: #f4f7f6;
+                                            display: flex;
+                                            justify-content: center;
+                                            align-items: center;
+                                            min-height: 100vh;
+                                            margin: 0;
+                                        } */
+
+        /* Container for the form */
+        .form-container {
+            width: 60%;
+            background: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+            transition: box-shadow 0.3s ease;
+        }
+
+        /* Header style */
+        h1 {
+            margin-bottom: 20px;
+            font-size: 28px;
+            color: #333;
+            /* text-align: left; */
+        }
+
+        /* Form style */
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        /* Form group styling */
+        .form-group {
+            margin-bottom: 20px;
+            /* width: 28rem; */
+        }
+
+        .form-input {
+            width: 28rem;
+        }
+        .form-textarea {
+            width: 100%;
+        }
+
+        /* Label styling */
+        label {
+            font-weight: bold;
+            margin-bottom: 8px;
+            display: block;
+            color: #555;
+            /* text-align: left; */
+        }
+
+        /* Input, select, textarea styling */
+        input[type="text"],
+        input[type="number"],
+        input[type="date"],
+        select,
+        textarea,
+        input[type="file"] {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        input[type="text"]:focus,
+        input[type="number"]:focus,
+        input[type="date"]:focus,
+        select:focus,
+        textarea:focus,
+        input[type="file"]:focus {
+            border-color: #000000;
+            box-shadow: 0 0 8px rgba(0, 123, 255, 0.2);
+            outline: none;
+        }
+
+        /* Icon group styling */
+        .icon-group {
+            display: flex;
+            gap: 10px;
+            width: 100%;
+            /* justify-content: space-between; */
+        }
+
+        .icon {
+            flex: 1;
+            max-width: 100px;
+            /* Ensuring uniform width */
+            text-align: center;
+            padding: 10px;
+            background: #f4f7f6;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.3s ease, transform 0.3s ease;
+        }
+
+        .icon input:checked+label {
+            background: #000000;
+            color: white;
+            transform: scale(1.05);
+        }
+
+        .icon label {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 10px;
+            border-radius: 6px;
+        }
+
+        .icon-emoji {
+            font-size: 24px;
+        }
+
+        .icon-text {
+            margin-top: 5px;
+            font-size: 14px;
+        }
+
+        .label-width {
+            width: 5rem;
+        }
+
+        .label-width-6 {
+            width: 6rem;
+        }
+
+        /* Button styling */
+        button {
+            padding: 15px;
+            background-color: #757575;
+            color: rgb(255, 255, 255);
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #000000;
+            transform: scale(1.02);
+        }
+
+        /* Responsive design for smaller screens */
+        @media (max-width: 768px) {
+            .form-container {
+                width: 90%;
+            }
+
+            .icon-group {
+                flex-direction: column;
+            }
+
+            .icon {
+                max-width: none;
+                /* Remove width constraint for better stacking */
+            }
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            font-weight: bold;
+        }
+
+        .form-row {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .form-row .form-group {
+            flex: 1;
+            margin-right: 1rem;
+        }
+
+        .form-row .form-group:last-child {
+            margin-right: 0;
+        }
+    </style>
+@endsection
+
+@section('content')
+    <div class="form ">
+        <form class="quotation-form" action="{{ route('custom-order.store') }}" method="POST"
+            enctype="multipart/form-data">
+            @csrf
+            <h1>Request for Custom Order</h1>
+
+            @if ($errors->any())
+                <div class="alert alert-danger">
+                    <ul>
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+            {{-- <div class="form-group">
+                <label for="project-name">Project name *</label>
+                <input type="text" id="project-name" name="project_name" placeholder="Please enter project name" value="{{ old('project_name') }}" required>
+            </div> --}}
+
+            <div class="form-group form-input">
+                <label>Target *</label>
+                <div class="icon-group" id="target-group">
+                    <div class="icon">
+                        <input type="radio" name="target" value="Women" id="target-women" hidden
+                            {{ old('target') == 'Women' ? 'checked' : '' }}>
+                        <label class="label-width" for="target-women">
+                            <span class="icon-emoji">👤</span>
+                            <span class="icon-text">Women</span>
+                        </label>
+                    </div>
+                    <div class="icon">
+                        <input type="radio" name="target" value="Unisex" id="target-unisex" hidden
+                            {{ old('target', 'Unisex') == 'Unisex' ? 'checked' : '' }}>
+                        <label class="label-width" for="target-unisex">
+                            <span class="icon-emoji">👤</span>
+                            <span class="icon-text">Unisex</span>
+                        </label>
+                    </div>
+                    <div class="icon">
+                        <input type="radio" name="target" value="Men" id="target-men" hidden
+                            {{ old('target') == 'Men' ? 'checked' : '' }}>
+                        <label class="label-width" for="target-men">
+                            <span class="icon-emoji">👤</span>
+                            <span class="icon-text">Men</span>
+                        </label>
+                    </div>
+                    <div class="icon">
+                        <input type="radio" name="target" value="Kids" id="target-kids" hidden
+                            {{ old('target') == 'Kids' ? 'checked' : '' }}>
+                        <label class="label-width" for="target-kids">
+                            <span class="icon-emoji">👤</span>
+                            <span class="icon-text">Kids</span>
+                        </label>
+                    </div>
+                </div>
+                @error('target')
+                    <p class="text-danger">{{ $message }}</p>
+                @enderror
+            </div>
+
+            <div class="form-group form-input">
+                <label>Category *</label>
+                <div class="icon-group" id="category-group">
+                    <div class="icon">
+                        <input type="radio" name="category" value="Clothes" id="category-clothes" hidden
+                            {{ old('category', 'Clothes') == 'Clothes' ? 'checked' : '' }}>
+                        <label class="label-width-6" for="category-clothes">
+                            <span class="icon-emoji">👕</span>
+                            <span class="icon-text">Clothes</span>
+                        </label>
+                    </div>
+                    {{-- <div class="icon">
+                        <input type="radio" name="category" value="Bags" id="category-bags" hidden {{ old('category') == 'Bags' ? 'checked' : '' }}>
+                        <label class="label-width-6" for="category-bags">
+                            <span class="icon-emoji">👜</span>
+                            <span class="icon-text">Bags</span>
+                        </label>
+                    </div> --}}
+                    <div class="icon">
+                        <input type="radio" name="category" value="Accessories" id="category-accessories" hidden
+                            {{ old('category') == 'Accessories' ? 'checked' : '' }}>
+                        <label class="label-width-6" for="category-accessories">
+                            <span class="icon-emoji">👓</span>
+                            <span class="icon-text">Accessories</span>
+                        </label>
+                    </div>
+                    {{-- <div class="icon">
+                        <input type="radio" name="category" value="Shoes" id="category-shoes" hidden {{ old('category') == 'Shoes' ? 'checked' : '' }}>
+                        <label class="label-width-6" for="category-shoes">
+                            <span class="icon-emoji">👟</span>
+                            <span class="icon-text">Shoes</span>
+                        </label>
+                    </div> --}}
+                    <div class="icon">
+                        <input type="radio" name="category" value="Outerwear" id="category-outerwear" hidden
+                            {{ old('category') == 'Outerwear' ? 'checked' : '' }}>
+                        <label class="label-width-6" for="category-outerwear">
+                            <span class="icon-emoji">🧥</span>
+                            <span class="icon-text">Outerwear</span>
+                        </label>
+                    </div>
+                </div>
+                @error('category')
+                    <p class="text-danger">{{ $message }}</p>
+                @enderror
+            </div>
+
+            <div class="form-group form-input">
+                <label for="subcategory">Subcategory *</label>
+                <select id="subcategory" name="subcategory" required>
+                    <option value="">Select subcategory</option>
+                    <option value="shirts" {{ old('subcategory') == 'shirts' ? 'selected' : '' }}>Shirts</option>
+                    <option value="pants" {{ old('subcategory') == 'pants' ? 'selected' : '' }}>Pants</option>
+                </select>
+                @error('subcategory')
+                    <p class="text-danger">{{ $message }}</p>
+                @enderror
+            </div>
+
+            <div class="form-group form-input">
+                <label>What are you looking for? *</label>
+                <div class="icon-group">
+                    <div class="icon">
+                        <input type="checkbox" name="looking_for[]" value="Only Prototypes & Samples"
+                            id="production-prototype" hidden
+                            {{ is_array(old('looking_for')) && in_array('Only Prototypes & Samples', old('looking_for')) ? 'checked' : '' }}>
+                        <label for="production-prototype">
+                            <span class="icon-emoji">📋</span>
+                            <span class="icon-text"> Only Prototypes & Samples</span>
+                        </label>
+                    </div>
+                    <div class="icon">
+                        <input type="checkbox" name="looking_for[]" value="Production Bulk" id="production-bulk" hidden
+                            {{ is_array(old('looking_for')) && in_array('Production Bulk', old('looking_for')) ? 'checked' : '' }}>
+                        <label for="production-bulk">
+                            <span class="icon-emoji">📋</span>
+                            <span class="icon-text"> Production Bulk</span>
+                        </label>
+                    </div>
+                </div>
+                @error('looking_for')
+                    <p class="text-danger">{{ $message }}</p>
+                @enderror
+            </div>
+
+            <div class="form-group form-input">
+                <label>Are you looking for additional services?</label>
+                <div class="icon-group">
+                    <div class="icon">
+                        <input type="checkbox" name="additional_services[]" value="Design & Tech Pack"
+                            id="production-design" hidden
+                            {{ is_array(old('additional_services')) && in_array('Design & Tech Pack', old('additional_services')) ? 'checked' : '' }}>
+                        <label class="label-width-6" for="production-design">
+                            <span class="icon-emoji">📐</span>
+                            <span class="icon-text"> Design & Tech Pack</span>
+                        </label>
+                    </div>
+                    <div class="icon">
+                        <input type="checkbox"name="additional_services[]" value="Raw material sourcing"
+                            id="production-material" hidden
+                            {{ is_array(old('additional_services')) && in_array('Raw material sourcing', old('additional_services')) ? 'checked' : '' }}>
+                        <label class="label-width-6" for="production-material">
+                            <span class="icon-emoji">🧵</span>
+                            <span class="icon-text"> Raw material sourcing</span>
+                        </label>
+                    </div>
+                </div>
+                @error('additional_services')
+                    <p class="text-danger">{{ $message }}</p>
+                @enderror
+            </div>
+
+            <div class="form-group form-input">
+                <label for="inspiration-images">Upload inspiration images of your product *</label>
+                <div class="file-upload" id="file-upload">
+                    <input type="file" id="inspiration-images" name="inspiration_images[]" multiple accept="image/*"
+                        style="display: none;">
+                    <p>Drag and drop some files here, or <span class="file-upload-text">click to select files</span></p>
+                    <div id="preview-container"></div>
+                </div>
+                @error('inspiration_images')
+                    <p class="text-danger">{{ $message }}</p>
+                @enderror
+            </div>
+
+            <div class="form-row">
+                <div class="form-group form-input">
+                    <label for="products">Number of products *</label>
+                    <input type="number" id="products" name="number_of_products" class="form-control"
+                        value="{{ old('number_of_products') }}" required>
+                </div>
+                @error('number_of_products')
+                    <p class="text-danger">{{ $message }}</p>
+                @enderror
+                <div class="form-group form-input">
+                    <label for="quantity">Quantity per product *</label>
+                    <input type="number" id="quantity" name="quantity_per_product" class="form-control"
+                        value="{{ old('quantity_per_product') }}" required>
+                </div>
+                @error('quantity_per_product')
+                    <p class="text-danger">{{ $message }}</p>
+                @enderror
+            </div>
+
+            <div class="form-group form-input">
+                <label for="budget">Project budget *</label>
+                <select id="budget" name="project_budget" class="form-control" required>
+                    <option value="">Select a production budget</option>
+                    <option value="1000-5000" {{ old('project_budget') == '1000-5000' ? 'selected' : '' }}>$1,000 - $5,000
+                    </option>
+                    <option value="5000-10000" {{ old('project_budget') == '5000-10000' ? 'selected' : '' }}>$5,000 -
+                        $10,000</option>
+                </select>
+                @error('project_budget')
+                    <p class="text-danger">{{ $message }}</p>
+                @enderror
+            </div>
+
+            <div class="form-row">
+                <div class="form-group form-input">
+                    <label for="sample-date">Sample Delivery dates *</label>
+                    <select id="sample-date" name="sample_delivery_date" class="form-control" required>
+                        <option value="">Select range for sample</option>
+                        <option value="2-4weeks" {{ old('sample_delivery_date') == '2-4weeks' ? 'selected' : '' }}>2-4
+                            weeks</option>
+                        <option value="4-6weeks" {{ old('sample_delivery_date') == '4-6weeks' ? 'selected' : '' }}>4-6
+                            weeks</option>
+                    </select>
+                    @error('sample_delivery_date')
+                        <p class="text-danger">{{ $message }}</p>
+                    @enderror
+                </div>
+                <div class="form-group form-input">
+                    <label for="production-date">Production Delivery dates *</label>
+                    <select id="production-date" name="production_delivery_date" class="form-control" required>
+                        <option value="">Select range for production</option>
+                        <option value="4-6weeks" {{ old('production_delivery_date') == '4-6weeks' ? 'selected' : '' }}>4-6
+                            weeks</option>
+                        <option value="6-8weeks" {{ old('production_delivery_date') == '6-8weeks' ? 'selected' : '' }}>6-8
+                            weeks</option>
+                    </select>
+                    @error('production_delivery_date')
+                        <p class="text-danger">{{ $message }}</p>
+                    @enderror
                 </div>
             </div>
-        </div>
+            <div class="form-group form-textarea">
+                <label for="project-description">Tell us more about you, your project, and your particular support needs
+                    *</label>
+                <textarea id="project-description" name="project_description" class="form-control" rows="4" required>{{ old('project_description') }}</textarea>
+                @error('project_description')
+                    <p class="text-danger">{{ $message }}</p>
+                @enderror
+            </div>
+            <button type="submit">Submit Request</button>
+        </form>
+
+        {{-- <form class="quotation-form" action="{{ route('custom-order.store') }}" method="POST"
+            enctype="multipart/form-data">
+            @csrf
+            <h1>Request for Custom Order</h1>
+
+
+
+            <div class="form-group">
+                <label>Target *</label>
+                <div class="icon-group" id="target-group">
+                    <div class="icon">
+                        <input type="radio" name="target" value="Women" id="target-women" hidden>
+                        <label class="label-width" for="target-women">
+                            <span class="icon-emoji">👤</span>
+                            <span class="icon-text">Women</span>
+                        </label>
+                    </div>
+                    <div class="icon">
+                        <input type="radio" name="target" value="Unisex" id="target-unisex" hidden checked>
+                        <label class="label-width" for="target-unisex">
+                            <span class="icon-emoji">👤</span>
+                            <span class="icon-text">Unisex</span>
+                        </label>
+                    </div>
+                    <div class="icon">
+                        <input type="radio" name="target" value="Men" id="target-men" hidden>
+                        <label class="label-width" for="target-men">
+                            <span class="icon-emoji">👤</span>
+                            <span class="icon-text">Men</span>
+                        </label>
+                    </div>
+                    <div class="icon">
+                        <input type="radio" name="target" value="Kids" id="target-kids" hidden>
+                        <label class="label-width" for="target-kids">
+                            <span class="icon-emoji">👤</span>
+                            <span class="icon-text">Kids</span>
+                        </label>
+                    </div>
+                </div>
+                @error('target')
+                    <p class="text-danger">{{ $message }}</p>
+                @enderror
+            </div>
+
+            <div class="form-group">
+                <label>Category *</label>
+                <div class="icon-group" id="category-group">
+                    <div class="icon">
+                        <input type="radio" name="category" value="Clothes" id="category-clothes" hidden checked>
+                        <label class="label-width-6" for="category-clothes">
+                            <span class="icon-emoji">👕</span>
+                            <span class="icon-text">Clothes</span>
+                        </label>
+                    </div>
+
+                    <div class="icon">
+                        <input type="radio" name="category" value="Accessories" id="category-accessories" hidden>
+                        <label class="label-width-6" for="category-accessories">
+                            <span class="icon-emoji">👓</span>
+                            <span class="icon-text">Accessories</span>
+                        </label>
+                    </div>
+
+                    <div class="icon">
+                        <input type="radio" name="category" value="Outerwear" id="category-outerwear" hidden>
+                        <label class="label-width-6" for="category-outerwear">
+                            <span class="icon-emoji">🧥</span>
+                            <span class="icon-text">Outerwear</span>
+                        </label>
+                    </div>
+                </div>
+                @error('category')
+                    <p class="text-danger">{{ $message }}</p>
+                @enderror
+            </div>
+
+            <div class="form-group">
+                <label for="subcategory">Subcategory *</label>
+                <select id="subcategory" name="subcategory" required>
+                    <option value="">Select subcategory</option>
+                    <option value="shirts">Shirts</option>
+                    <option value="pants">Pants</option>
+                </select>
+                @error('subcategory')
+                    <p class="text-danger">{{ $message }}</p>
+                @enderror
+            </div>
+
+            <div class="form-group">
+                <label>What are you looking for? *</label>
+                <div class="icon-group">
+                    <div class="icon">
+                        <input type="checkbox" name="looking_for[]" value="Only Prototypes & Samples"
+                            id="production-prototype" hidden>
+                        <label for="production-prototype">
+                            <span class="icon-emoji">📋</span>
+                            <span class="icon-text"> Only Prototypes & Samples</span>
+                        </label>
+                    </div>
+                    <div class="icon">
+                        <input type="checkbox" name="looking_for[]" value="Production Bulk" id="production-bulk" hidden>
+                        <label for="production-bulk">
+                            <span class="icon-emoji">📋</span>
+                            <span class="icon-text"> Production Bulk</span>
+                        </label>
+                    </div>
+                </div>
+                @error('looking_for')
+                    <p class="text-danger">{{ $message }}</p>
+                @enderror
+            </div>
+
+            <div class="form-group">
+                <label>Are you looking for additional services?</label>
+                <div class="icon-group">
+                    <div class="icon">
+                        <input type="checkbox" name="additional_services[]" value="Design & Tech Pack"
+                            id="production-design" hidden>
+                        <label class="label-width-6" for="production-design">
+                            <span class="icon-emoji">📐</span>
+                            <span class="icon-text"> Design & Tech Pack</span>
+                        </label>
+                    </div>
+                    <div class="icon">
+                        <input type="checkbox"name="additional_services[]" value="Raw material sourcing"
+                            id="production-material" hidden>
+                        <label class="label-width-6" for="production-material">
+                            <span class="icon-emoji">🧵</span>
+                            <span class="icon-text"> Raw material sourcing</span>
+                        </label>
+                    </div>
+                </div>
+                @error('additional_services')
+                    <p class="text-danger">{{ $message }}</p>
+                @enderror
+            </div>
+
+            <div class="form-group">
+                <label for="inspiration-images">Upload inspiration images of your product *</label>
+                <div class="file-upload" id="file-upload">
+                    <input type="file" id="inspiration-images" name="inspiration_images[]" multiple accept="image/*"
+                        style="display: none;">
+                    <p>Drag and drop some files here, or <span class="file-upload-text">click to select files</span></p>
+                    <div id="preview-container"></div>
+                </div>
+                @error('inspiration_images')
+                    <p class="text-danger">{{ $message }}</p>
+                @enderror
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="products">Number of products *</label>
+                    <input type="number" id="products" name="number_of_products" class="form-control" required>
+                </div>
+                @error('number_of_products')
+                    <p class="text-danger">{{ $message }}</p>
+                @enderror
+                <div class="form-group">
+                    <label for="quantity">Quantity per product *</label>
+                    <input type="number" id="quantity" name="quantity_per_product" class="form-control" required>
+                </div>
+                @error('quantity_per_product')
+                    <p class="text-danger">{{ $message }}</p>
+                @enderror
+            </div>
+
+            <div class="form-group">
+                <label for="budget">Project budget *</label>
+                <select id="budget" name="project_budget" class="form-control" required>
+                    <option value="">Select a production budget</option>
+                    <option value="1000-5000">$1,000 - $5,000</option>
+                    <option value="5000-10000">$5,000 - $10,000</option>
+                </select>
+                @error('project_budget')
+                    <p class="text-danger">{{ $message }}</p>
+                @enderror
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="sample-date">Sample Delivery dates *</label>
+                    <select id="sample-date" name="sample_delivery_date" class="form-control" required>
+                        <option value="">Select range for sample</option>
+                        <option value="2-4weeks">2-4 weeks</option>
+                        <option value="4-6weeks">4-6 weeks</option>
+                    </select>
+                    @error('sample_delivery_date')
+                        <p class="text-danger">{{ $message }}</p>
+                    @enderror
+                </div>
+                <div class="form-group">
+                    <label for="production-date">Production Delivery dates *</label>
+                    <select id="production-date" name="production_delivery_date" class="form-control" required>
+                        <option value="">Select range for production</option>
+                        <option value="4-6weeks">4-6 weeks</option>
+                        <option value="6-8weeks">6-8 weeks</option>
+                    </select>
+                    @error('production_delivery_date')
+                        <p class="text-danger">{{ $message }}</p>
+                    @enderror
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="project-description">Tell us more about you, your project, and your particular support needs
+                    *</label>
+                <textarea id="project-description" name="project_description" class="form-control" rows="4" required></textarea>
+                @error('project_description')
+                    <p class="text-danger">{{ $message }}</p>
+                @enderror
+            </div>
+            <button type="submit">Submit Request</button>
+        </form> --}}
     </div>
-</div>
 @endsection
 
 @section('js')
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const fileUpload = document.getElementById('file-upload');
+            const fileInput = document.getElementById('inspiration-images');
+            const previewContainer = document.getElementById('preview-container');
 
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script>
-    $(document).ready(function() {
-        $('#email').on('change', function() {
-            var email = $(this).val();
-            $.ajax({
-                url: '{{ route('check.email') }}',
-                type: 'POST',
-                data: {
-                    _token: '{{ csrf_token() }}',
-                    email: email
-                },
-                success: function(response) {
-                    if (response.exists) {
-                        $('#password-fields').hide();
-                        $('#password-confirmation-field').hide();
-                        $('#login-message').show();
+            fileUpload.addEventListener('click', () => {
+                fileInput.click();
+            });
+
+            fileUpload.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                fileUpload.style.borderColor = '#007bff';
+            });
+
+            fileUpload.addEventListener('dragleave', () => {
+                fileUpload.style.borderColor = '#ddd';
+            });
+
+            fileUpload.addEventListener('drop', (e) => {
+                e.preventDefault();
+                fileUpload.style.borderColor = '#ddd';
+                handleFiles(e.dataTransfer.files);
+            });
+
+            fileInput.addEventListener('change', () => {
+                handleFiles(fileInput.files);
+            });
+
+            function handleFiles(files) {
+                previewContainer.innerHTML = '';
+                Array.from(files).forEach(file => {
+                    if (file.type.startsWith('image/')) {
+                        const reader = new FileReader();
+                        reader.onload = (e) => {
+                            const img = document.createElement('img');
+                            img.src = e.target.result;
+                            img.classList.add('preview-image');
+                            previewContainer.appendChild(img);
+                        };
+                        reader.readAsDataURL(file);
                     } else {
-                        $('#password-fields').show();
-                        $('#password-confirmation-field').show();
-                        $('#login-message').hide();
+                        console.warn('Skipping non-image file:', file.name);
                     }
+                });
+            }
+        });
+
+
+        document.querySelectorAll('#target-group .icon input').forEach((input) => {
+            input.addEventListener('change', () => {
+                document.querySelectorAll('#target-group .icon label').forEach((label) => {
+                    label.style.background = '#f4f7f6';
+                    label.style.color = 'black';
+                    label.style.transform = 'scale(1)';
+                });
+
+                if (input.checked) {
+                    input.nextElementSibling.style.background = '#000000';
+                    input.nextElementSibling.style.color = 'white';
+                    input.nextElementSibling.style.transform = 'scale(1.05)';
                 }
             });
         });
-    });
-</script>
+
+        document.querySelectorAll('#category-group .icon input').forEach((input) => {
+            input.addEventListener('change', () => {
+                document.querySelectorAll('#category-group .icon label').forEach((label) => {
+                    label.style.background = '#f4f7f6';
+                    label.style.color = 'black';
+                    label.style.transform = 'scale(1)';
+                });
+
+                if (input.checked) {
+                    input.nextElementSibling.style.background = '#000000';
+                    input.nextElementSibling.style.color = 'white';
+                    input.nextElementSibling.style.transform = 'scale(1.05)';
+                }
+            });
+        });
+    </script>
 @endsection

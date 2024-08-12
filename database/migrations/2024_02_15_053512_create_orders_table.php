@@ -17,6 +17,8 @@ return new class extends Migration
             $table->dateTime('order_date');
             $table->string('total_price');
             $table->string('sub_total');
+            $table->string('payment_status')->default('Pending');
+            $table->string('order_status')->default('Processing');
             $table->unsignedBigInteger('delivery_option_id');
             $table->timestamps();
         });

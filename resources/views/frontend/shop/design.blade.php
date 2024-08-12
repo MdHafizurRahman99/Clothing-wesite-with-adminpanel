@@ -33,11 +33,12 @@
                 <div class="h-100 bg-light p-30">
                     <div id="canvasContainer">
                         <h3>Canvas</h3>
-                        @php
-                            $product_id = 1;
-                        @endphp
+                        {{-- <dd>Product : {{$product_id}}</dd> --}}
+                        {{-- @php
+                            $product_id = session('product_id');
+                        @endphp --}}
 
-                        <input type="hidden" class="product-id" value="{{ $product_id }}" name="product_id">
+
 
                         <canvas id="canvas" width="600" height="600" style="border: 1px solid #000000"></canvas>
 
@@ -52,7 +53,7 @@
                         {{-- <button id="clear">Clear</button> --}}
                     </div>
                     {{-- <img src="/app/storage/images/65daca0160274.jpg" alt="Uploaded Image"> --}}
-                    <h3>Additional Details</h3>
+                    {{-- <h3>Additional Details</h3>
                     <div class="d-flex mb-3">
                         <strong class="text-dark mr-3">Sizes:</strong>
                         <form>
@@ -118,10 +119,7 @@
                                 <label for="message">Details:</label>
                                 <textarea id="message"class="form-control" name="neck_level_details"></textarea>
                             </div>
-                            {{-- <div class="custom-control custom-radio custom-control-inline">
-                            <textarea name="neck_level_details" id="" cols="30" rows="2"
-                                placeholder="Enter the Neck Level Details."></textarea>
-                        </div> --}}
+
                         </form>
 
                     </div>
@@ -141,15 +139,10 @@
                                 <textarea id="message" class="form-control" name="swing_tag_details"></textarea>
                             </div>
                             <div class="custom-control custom-radio custom-control-inline">
-                                {{-- <input type="text" class="form-control bg-secondary border-0 text-center"
-                                id="swing_tag-2" name="swing_tag"> --}}
-
-                                {{-- <textarea name="swing_tag_details" id="" cols="30" rows="2"
-                                placeholder="Enter the Neck Level Details."></textarea> --}}
                             </div>
                         </form>
 
-                    </div>
+                    </div> --}}
 
 
 
@@ -157,75 +150,170 @@
             </div>
 
             <div class="col-md-5">
-                <div class="h-100 bg-light p-30">
+                <form action="{{ route('custom-product-design.store') }}" method="POST" enctype="multipart/form-data">
+                    @csrf
+                    <div class="h-100 bg-light p-30">
+                        <input type="hidden" class="product-id" value="{{ $product_id }}" name="product_id">
 
-                    <h4 class="mb-4">Design Your Product </h4>
-                    <div class="form-group">
-                        <label for="email">Select Logo/Design</label>
-                        <input type="file" class="form-control" id="email">
-                        <div class="d-flex mb-3">
-                            <strong class="text-dark mr-3">Position:</strong>
-                            <form>
-                                <div class="custom-control custom-radio custom-control-inline">
-                                    <input type="radio" class="custom-control-input" id="positon-1" name="positon"
-                                        value="center-chest">
-                                    <label class="custom-control-label" for="positon-1">Center chest</label>
-                                </div>
-                                <div class="custom-control custom-radio custom-control-inline">
-                                    <input type="radio" class="custom-control-input" id="positon-2" name="positon"
-                                        value="large-center">
-                                    <label class="custom-control-label" for="positon-2">Large center</label>
-                                </div>
-                                <div class="custom-control custom-radio custom-control-inline">
-                                    <input type="radio" class="custom-control-input" id="positon-3" name="positon"
-                                        value="left-chest">
-                                    <label class="custom-control-label" for="positon-3">Left chest</label>
-                                </div>
-                                <div class="custom-control custom-radio custom-control-inline">
-                                    <input type="radio" class="custom-control-input" id="positon-4" name="positon"
-                                        value="full-back">
-                                    <label class="custom-control-label" for="positon-4">Full back</label>
-                                </div>
-
-                            </form>
+                        <h3>Additional Details</h3>
+                        <div class="form-group">
+                            <label for="message">Design Details:</label>
+                            <textarea id="message" cols="30" rows="3" class="form-control" name="design_details"></textarea>
                         </div>
-                    </div>
-                    <div class="form-group">
-                        <div class="col-md-6">
-                            <label for="height">Height</label>
-                            <input type="text" class="form-control" id="height">
-                        </div>
-                        <div class="col-md-6">
-                            <label for="width">Width</label>
-                            <input type="text" class="form-control" id="width">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="message">Details:</label>
-                        <textarea id="message" cols="30" rows="3" class="form-control" name="description"></textarea>
-                    </div>
-
-                    <div class="d-flex align-items-center mb-4 pt-2">
-                        <div class="input-group quantity mr-3" style="width: 130px;">
-                            <div class="input-group-btn">
-                                <button class="btn btn-primary btn-minus">
-                                    <i class="fa fa-minus"></i>
-                                </button>
+                        {{-- <div class="d-flex mb-3">
+                        <strong class="text-dark mr-3">Sizes:</strong>
+                        <form>
+                            <div class="custom-control custom-radio custom-control-inline">
+                                <input type="radio" class="custom-control-input" id="size-1" name="size">
+                                <label class="custom-control-label" for="size-1">XS</label>
                             </div>
-                            <input type="text" class="form-control bg-secondary border-0 text-center" value="1">
-                            <div class="input-group-btn">
-                                <button class="btn btn-primary btn-plus">
-                                    <i class="fa fa-plus"></i>
-                                </button>
+                            <div class="custom-control custom-radio custom-control-inline">
+                                <input type="radio" class="custom-control-input" id="size-2" name="size">
+                                <label class="custom-control-label" for="size-2">S</label>
+                            </div>
+                            <div class="custom-control custom-radio custom-control-inline">
+                                <input type="radio" class="custom-control-input" id="size-3" name="size">
+                                <label class="custom-control-label" for="size-3">M</label>
+                            </div>
+                            <div class="custom-control custom-radio custom-control-inline">
+                                <input type="radio" class="custom-control-input" id="size-4" name="size">
+                                <label class="custom-control-label" for="size-4">L</label>
+                            </div>
+                            <div class="custom-control custom-radio custom-control-inline">
+                                <input type="radio" class="custom-control-input" id="size-5" name="size">
+                                <label class="custom-control-label" for="size-5">XL</label>
+                            </div>
+                        </form>
+                    </div> --}}
+                        {{-- <div class="d-flex mb-4">
+                        <strong class="text-dark mr-3">Colors:</strong>
+                        <form>
+                            <div class="custom-control custom-radio custom-control-inline">
+                                <input type="radio" class="custom-control-input" id="color-1" name="color">
+                                <label class="custom-control-label" for="color-1">Black</label>
+                            </div>
+                            <div class="custom-control custom-radio custom-control-inline">
+                                <input type="radio" class="custom-control-input" id="color-2" name="color">
+                                <label class="custom-control-label" for="color-2">White</label>
+                            </div>
+                            <div class="custom-control custom-radio custom-control-inline">
+                                <input type="radio" class="custom-control-input" id="color-3" name="color">
+                                <label class="custom-control-label" for="color-3">Red</label>
+                            </div>
+                            <div class="custom-control custom-radio custom-control-inline">
+                                <input type="radio" class="custom-control-input" id="color-4" name="color">
+                                <label class="custom-control-label" for="color-4">Blue</label>
+                            </div>
+                            <div class="custom-control custom-radio custom-control-inline">
+                                <input type="radio" class="custom-control-input" id="color-5" name="color">
+                                <label class="custom-control-label" for="color-5">Green</label>
+                            </div>
+                        </form>
+                    </div> --}}
+                        <div class="d-flex mb-4">
+                            <strong class="text-dark mr-3">Neck level?</strong>
+                            <div class="custom-control custom-radio custom-control-inline">
+                                <input type="radio" class="custom-control-input" id="neck_level-1" name="neck_level"
+                                    value="Yes">
+                                <label class="custom-control-label" for="neck_level-1">Yes</label>
+                            </div>
+                            <div class="custom-control custom-radio custom-control-inline">
+                                <input type="radio" class="custom-control-input" id="neck_level-2" name="neck_level"
+                                    value="No">
+                                <label class="custom-control-label" for="neck_level-2">No</label>
                             </div>
                         </div>
-                        <a href="{{ route('shop.product-cart') }}" class="btn btn-primary px-3">
-                            <i class="fa fa-shopping-cart mr-1"></i> Add to Cart
-                        </a>
-                    </div>
-                </div>
+                        <div class="form-group">
+                            <label for="message">Neck level Details:</label>
+                            <textarea id="message"class="form-control" name="neck_level_details"></textarea>
+                        </div>
+                        <div class="d-flex mb-4">
+                            <strong class="text-dark mr-3">Swing Tag?</strong>
+                            <div class="custom-control custom-radio custom-control-inline">
+                                <input type="radio" class="custom-control-input" id="swing_tag-1" name="swing_tag"
+                                    value="Yes">
+                                <label class="custom-control-label" for="swing_tag-1">Yes</label>
+                            </div>
+                            <div class="custom-control custom-radio custom-control-inline">
+                                <input type="radio" class="custom-control-input" id="swing_tag-2" name="swing_tag"
+                                    value="No">
+                                <label class="custom-control-label" for="swing_tag-2">No</label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="message">Swing Tag Details:</label>
+                            <textarea id="message" class="form-control" name="swing_tag_details"></textarea>
+                        </div>
+
+                        {{-- <h4 class="mb-4">Design Your Product </h4> --}}
+                        {{-- <div class="form-group">
+                            <label for="email">Select Logo/Design</label>
+                            <input type="file" class="form-control" id="email" name="design">
+                            <div class="d-flex mb-3" >
+                                <strong class="text-dark m-3">Position:</strong>
+                                <div style="font-size: 16px!important;">
+
+                                    <div class="custom-control custom-radio custom-control-inline mt-3" >
+                                        <input type="radio" class="custom-control-input" id="positon-1" name="positon"
+                                            value="center-chest">
+                                        <label class="custom-control-label" for="positon-1">Center chest</label>
+                                    </div>
+                                    <div class="custom-control custom-radio custom-control-inline mt-3" >
+                                        <input type="radio" class="custom-control-input" id="positon-2" name="positon"
+                                            value="large-center">
+                                        <label class="custom-control-label" for="positon-2">Large center</label>
+                                    </div>
+                                    <div class="custom-control custom-radio custom-control-inline mt-3" >
+                                        <input type="radio" class="custom-control-input" id="positon-3" name="positon"
+                                            value="left-chest">
+                                        <label class="custom-control-label" for="positon-3">Left chest</label>
+                                    </div>
+                                    <div class="custom-control custom-radio custom-control-inline mt-3" >
+                                        <input type="radio" class="custom-control-input" id="positon-4" name="positon"
+                                            value="full-back">
+                                        <label class="custom-control-label" for="positon-4">Full back</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div> --}}
+                        {{-- <div class="form-group">
+                            <div class="col-md-6">
+                                <label for="height">Height</label>
+                                <input type="text" class="form-control" id="height" name="height">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="width">Width</label>
+                                <input type="text" class="form-control" id="width" name="width">
+                            </div>
+                        </div> --}}
+
+
+
+                        <div class="d-flex align-items-center mb-4 pt-2">
+                            {{-- <div class="input-group quantity mr-3" style="width: 130px;">
+                                    <div class="input-group-btn">
+                                        <button class="btn btn-primary btn-minus">
+                                            <i class="fa fa-minus"></i>
+                                        </button>
+                                    </div>
+                                    <input type="text" class="form-control bg-secondary border-0 text-center" value="1">
+                                    <div class="input-group-btn">
+                                        <button class="btn btn-primary btn-plus">
+                                            <i class="fa fa-plus"></i>
+                                        </button>
+                                    </div>
+                                </div> --}}
+                            {{-- <a href="{{ route('shop.product-cart') }}" class="btn btn-primary px-3">
+                                    <i class="fa fa-shopping-cart mr-1"></i>
+                                    Next
+                                </a> --}}
+                            <button type="submit" class="btn btn-primary px-3">Next</button>
+                        </div>
+                </form>
+
             </div>
         </div>
+    </div>
 
     </div>
 @endsection
@@ -403,29 +491,34 @@
                 .then(blob => {
                     var productIdInput = document.querySelector('.product-id');
                     var productId = productIdInput.value;
+                    var fileInput = document.getElementById('logoInput');
+                    // console.log(productId);
+                    // var productId = productIdInput.value;
                     // Create FormData object
                     let formData = new FormData();
                     formData.append('product_id', productId);
                     formData.append('imageFile', blob, 'image.jpg');
 
                     // Send image file to backend
-                    $.ajax({
-                        url: "{{ route('save-canvas-image') }}",
-                        method: 'POST',
-                        data: formData,
-                        processData: false, // Prevent jQuery from processing the data
-                        contentType: false, // Prevent jQuery from setting contentType
-                        headers: {
-                            'X-CSRF-TOKEN': "{{ csrf_token() }}" // Include the CSRF token in the headers
-                        },
-                        success: function(data) {
-                            console.log(data);
-                        },
-                        error: function(xhr, status, error) {
-                            console.error(error);
-                            // Handle errors or display an error message to the user.
-                        }
-                    });
+                    // $.ajax({
+                    //     url: "{{ route('save-canvas-image') }}",
+                    //     method: 'POST',
+                    //     data: formData,
+                    //     processData: false, // Prevent jQuery from processing the data
+                    //     contentType: false, // Prevent jQuery from setting contentType
+                    //     headers: {
+                    //         'X-CSRF-TOKEN': "{{ csrf_token() }}" // Include the CSRF token in the headers
+                    //     },
+                    //     success: function(data) {
+                    //         // console.log(data);
+                    //         fileInput.value = '';
+                    //         // alert('Mockup save successfully.')
+                    //     },
+                    //     error: function(xhr, status, error) {
+                    //         console.error(error);
+                    //         // Handle errors or display an error message to the user.
+                    //     }
+                    // });
                 })
                 .catch(error => {
                     console.error('Error converting data URL to Blob:', error);
@@ -449,6 +542,7 @@
         document.getElementById('logoInput').addEventListener('change', function(e) {
             var file = e.target.files[0];
             var reader = new FileReader();
+            // console.log(reader);
             reader.onload = function(event) {
                 var imageURL = event.target.result;
                 // console.log(imageURL);
@@ -460,33 +554,33 @@
         // Function to delete selected object
         function deleteSelected() {
             var activeObject = canvas.getActiveObject();
-
+            console.log(activeObject);
             if (activeObject) {
                 var cacheKey = activeObject.cacheKey;
 
                 var productIdInput = document.querySelector('.product-id');
                 var productId = productIdInput.value;
 
-                $.ajax({
-                    url: "{{ route('delete-canvas-image') }}",
-                    method: 'POST',
-                    data: {
-                        product_id: productId,
-                        cacheKey: cacheKey,
-                    },
-                    headers: {
-                        'X-CSRF-TOKEN': "{{ csrf_token() }}" // Include the CSRF token in the headers
-                    },
-                    success: function(data) {
-                        var cartBadgeValue = data;
-                        $('#cartBadge').text(cartBadgeValue);
-                        console.log(data);
-                    },
-                    error: function(xhr, status, error) {
-                        console.error(error);
-                        // Handle errors or display an error message to the user.
-                    }
-                });
+                // $.ajax({
+                //     url: "{{ route('delete-canvas-image') }}",
+                //     method: 'POST',
+                //     data: {
+                //         product_id: productId,
+                //         cacheKey: cacheKey,
+                //     },
+                //     headers: {
+                //         'X-CSRF-TOKEN': "{{ csrf_token() }}" // Include the CSRF token in the headers
+                //     },
+                //     success: function(data) {
+                //         var cartBadgeValue = data;
+                //         $('#cartBadge').text(cartBadgeValue);
+                //         console.log(data);
+                //     },
+                //     error: function(xhr, status, error) {
+                //         console.error(error);
+                //         // Handle errors or display an error message to the user.
+                //     }
+                // });
                 // console.log("Cache Key of Active Object:", cacheKey);
                 // console.log(activeObject);
                 canvas.remove(activeObject);
@@ -516,16 +610,26 @@
             link.href = canvas.toDataURL({
                 format: 'png'
             });
+            var images = canvas.getObjects('image').map(function(img) {
+                return img.getSrc();
+            });
+            console.log(images);
             // console.log(imageURL);
             fetch(imageURL)
                 .then(res => res.blob())
                 .then(blob => {
                     var productIdInput = document.querySelector('.product-id');
                     var productId = productIdInput.value;
+
                     // Create FormData object
                     let formData = new FormData();
                     formData.append('product_id', productId);
                     formData.append('imageFile', blob, 'image.jpg');
+
+                    // Append all image URLs used in the canvas
+                    images.forEach((imageSrc, index) => {
+                        formData.append(`imageURL_${index + 1}`, imageSrc);
+                    });
 
                     // Send image file to backend
                     $.ajax({
@@ -539,6 +643,8 @@
                         },
                         success: function(data) {
                             console.log(data);
+                            alert('Mockup save successfully.')
+
                         },
                         error: function(xhr, status, error) {
                             console.error(error);

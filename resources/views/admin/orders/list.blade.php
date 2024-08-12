@@ -31,10 +31,11 @@
                                     <th>User Name</th>
                                     <th>Order Date</th>
                                     <th>Total Amount</th>
+                                    <th>Payment Status</th>
+                                    <th>Order Status</th>
                                     @if (Auth::user()->can('order.edit') || Auth::user()->can('order.delete'))
                                         <th>Action</th>
                                     @endif
-
                                 </tr>
                             </thead>
                             {{-- <tfoot>
@@ -66,9 +67,15 @@
                                         <td>
                                             <p class="p-2"> {{ $order->total_price }}</p>
                                         </td>
+                                        <td>
+                                            <p class="p-2"> {{ $order->payment_status }}</p>
+                                        </td>
+                                        <td>
+                                            <p class="p-2"> {{ $order->order_status }}</p>
+                                        </td>
                                         @if (Auth::user()->can('order.edit') || Auth::user()->can('order.delete'))
                                             <td>
-                                                @if (Auth::user()->can('order.edit'))
+                                                {{-- @if (Auth::user()->can('order.edit'))
                                                     <a href="{{ route('order.edit', ['order' => $order->id]) }}">
                                                         <input class="btn btn-warning" type="button" value="Edit">
                                                     </a>
@@ -76,12 +83,11 @@
                                                 @if (Auth::user()->can('order.delete'))
                                                     <form action="{{ route('order.destroy', ['order' => $order->id]) }}"
                                                         method="POST">
-                                                        {{-- @method('DELETE') --}}
                                                         @csrf
                                                         <input class="my-2 btn btn-danger" type="submit" value="Delete"
                                                             onclick="return confirm('Do you want to delete this client request!')">
                                                     </form>
-                                                @endif
+                                                @endif --}}
                                             </td>
                                         @endif
 

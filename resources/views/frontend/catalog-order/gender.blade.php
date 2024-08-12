@@ -85,7 +85,7 @@
         <div class="row px-xl-5 pb-3 justify-content-center">
             @php
             $genders=['Man','Women','Kids','Unisex']
-            @endphp
+            @endphpz
             @foreach ($genders as $gender)
             @if ($products->where('gender', $gender)->isNotEmpty())
             <div class="col-lg-3 col-md-4 col-sm-6 pb-1 mt-2">

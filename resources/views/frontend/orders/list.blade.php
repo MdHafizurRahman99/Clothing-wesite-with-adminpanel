@@ -31,6 +31,8 @@
                             {{-- <th>Order Id</th> --}}
                             <th>Order Date</th>
                             <th>Total Amount</th>
+                            <th>Payment Status</th>
+                            <th>Order Status</th>
                             <th>Action</th>
                         </tr>
                     </thead>
@@ -56,10 +58,19 @@
                                 <td class="align-middle">
                                     <p class="p-2"> {{ $order->total_price }}</p>
                                 </td>
+                                <td class="align-middle">
+                                    <p class="p-2"> {{ $order->payment_status }}</p>
+                                </td>
+                                <td class="align-middle">
+                                    <p class="p-2"> {{ $order->order_status }}</p>
+                                </td>
 
                                 <td class="align-middle">
                                     <a href="{{ route('order.show', ['order' => $order->id]) }}">
                                         <input class="btn btn-warning" type="button" value="Details">
+                                    </a>
+                                    <a href="{{ route('cart.reorder', ['order' => $order->id]) }}">
+                                        <input class="btn btn-warning" type="button" value="Re-order">
                                     </a>
                                     {{-- <form action="{{ route('order.destroy', ['order' => $order->id]) }}" method="POST">
                                         @csrf
@@ -79,6 +90,20 @@
 @endsection
 
 @section('js')
+<script>
+    //to disable initial ordering
+
+$(document).ready(function() {
+    $('#dataTable').DataTable({
+        "order": [], // Disable initial ordering
+        "columnDefs": [{
+                "orderable": false,
+                "targets": [4]
+            } // Disable ordering on the Action column
+        ]
+    });
+});
+</script>
     <!-- Page level plugins -->
     <script src="{{ asset('vendor/datatables/jquery.dataTables.min.js') }}"></script>
     <script src="{{ asset('vendor/datatables/dataTables.bootstrap4.min.js') }}"></script>

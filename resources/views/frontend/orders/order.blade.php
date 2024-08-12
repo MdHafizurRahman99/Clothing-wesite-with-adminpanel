@@ -1,7 +1,8 @@
 @extends('layouts.frontend.master')
 @section('content')
+
     <!-- Breadcrumb Start -->
-    <div class="container-fluid">
+    {{-- <div class="container-fluid">
         <div class="row px-xl-5">
             <div class="col-12">
                 <nav class="breadcrumb bg-light mb-30">
@@ -11,7 +12,8 @@
                 </nav>
             </div>
         </div>
-    </div>
+    </div> --}}
+
     <!-- Breadcrumb End -->
 
 
@@ -24,7 +26,8 @@
                         <tr>
                             <th>Products</th>
                             <th>Base Price</th>
-                            <th>Size&color</th>
+                            <th>Size</th>
+                            <th>color</th>
                             <th>Quantity</th>
                         </tr>
                     </thead>
@@ -54,24 +57,21 @@
                                     $size = $details->size; // Extract size from key
                                     $color = $details->color; // Extract color from key
                                     $product = App\Models\Product::find($details->product_id);
-                                    $pattern = App\Models\Pattern::find($product->pattern_id);
-                                    $category = App\Models\Category::find($product->category_id);
+
                                 @endphp
                                 <tr>
-
                                     <td class="align-middle"><img src="{{ asset('frontend/') }}/img/product-2.jpg"
-                                            alt="" style="width: 50px;">
+                                            alt="" style="width: 50px; fornt-size:12">
                                         <a class="h6 text-decoration-none text-truncate"
-                                            href="{{ route('shop.details', ['id' => $product->id]) }}">{{ isset($pattern->name) ? $pattern->name : '' }}
-                                            {{ $product->name }}
-                                            {{ isset($product->weight) ? $product->weight . 'Gsm' : '' }}
-                                            {{ isset($category->category_name) ? $category->category_name : '' }}</a>
+                                            href="{{ route('shop.details', ['id' => $product->id]) }}">
+                                            {{ $product->display_name }}
+                                        </a>
                                     </td>
                                     <td class="align-middle">${{ $product->price }}</td>
-                                    <td class="align-middle">{{ $size }} ({{ $color }})</td>
+                                    <td class="align-middle">{{ $size }} </td>
+                                    <td class="align-middle">{{ $color }}</td>
                                     <td class="align-middle">
                                         <div class="input-group quantity mx-auto" style="width: 100px;">
-
 
                                             {{-- <span> {{ $details->quantity }}</span> --}}
                                             <input type="text" readonly

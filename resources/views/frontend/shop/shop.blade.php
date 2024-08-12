@@ -2,7 +2,7 @@
 
 @section('content')
     <!-- Breadcrumb Start -->
-    <div class="container-fluid">
+    {{-- <div class="container-fluid">
         <div class="row px-xl-5">
             <div class="col-12">
                 <nav class="breadcrumb bg-light mb-30">
@@ -12,7 +12,7 @@
                 </nav>
             </div>
         </div>
-    </div>
+    </div> --}}
     <!-- Breadcrumb End -->
 
 
@@ -217,8 +217,8 @@
                     @if (isset($products))
                         @foreach ($products as $product)
                             <div class="col-lg-4 col-md-6 col-sm-6 pb-1">
-                                <a href="{{ route('shop.details', ['id' => $product->id]) }}">
-                                    <div class="product-container product-item bg-light mb-4">
+                                <div class="product-container product-item bg-light mb-4">
+                                    <a href="{{ route('shop.details', ['id' => $product->id]) }}">
                                         <div class="product-img position-relative overflow-hidden">
                                             <img class="img-fluid w-100"
                                                 src="{{ isset($product->image) ? asset($product->image) : asset('assets/product/images/image.png') }}"
@@ -251,19 +251,19 @@
                                             </a>
                                             <div class="d-flex align-items-center justify-content-center mt-2">
                                                 {{-- <h5>$123.00</h5>
-                                    <h6 class="text-muted ml-2"><del>$123.00</del></h6> --}}
+                                                    <h6 class="text-muted ml-2"><del>$123.00</del></h6> --}}
                                             </div>
                                             {{-- <div class="d-flex align-items-center justify-content-center mb-1">
-                                    <small class="fa fa-star text-primary mr-1"></small>
-                                    <small class="fa fa-star text-primary mr-1"></small>
-                                    <small class="fa fa-star text-primary mr-1"></small>
-                                    <small class="fa fa-star text-primary mr-1"></small>
-                                    <small class="fa fa-star-half-alt text-primary mr-1"></small>
-                                    <small>(99)</small>
-                                </div> --}}
+                                                <small class="fa fa-star text-primary mr-1"></small>
+                                                <small class="fa fa-star text-primary mr-1"></small>
+                                                <small class="fa fa-star text-primary mr-1"></small>
+                                                <small class="fa fa-star text-primary mr-1"></small>
+                                                <small class="fa fa-star-half-alt text-primary mr-1"></small>
+                                                <small>(99)</small>
+                                            </div> --}}
                                         </div>
-                                    </div>
-                                </a>
+                                    </a>
+                                </div>
                             </div>
                         @endforeach
                     @else

@@ -4,11 +4,13 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\BotManController;
 use App\Http\Controllers\BusinessController;
 use App\Http\Controllers\BusniessProfileController;
+use App\Http\Controllers\CartController;
 use App\Http\Controllers\CatalogOrderController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\ClientRequestController;
 use App\Http\Controllers\ColorController;
+use App\Http\Controllers\CustomDesignController;
 use App\Http\Controllers\CustomOrderController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\InventoryController;
@@ -24,9 +26,12 @@ use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SalesRepresentativeController;
 use App\Http\Controllers\ShopController;
 use App\Http\Controllers\StaffController;
+use App\Http\Controllers\GalleryImageController;
 use App\Http\Controllers\ShiftController;
 use App\Http\Controllers\StaffScheduleController;
+use App\Http\Controllers\StripeController;
 use App\Http\Controllers\TryTestController;
+use App\Http\Controllers\UserProfileController;
 use App\Models\StaffSchedule;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
@@ -42,7 +47,11 @@ use Illuminate\Support\Facades\Auth;
 */
 
 //clothing shop
+Route::get("/stripe-success", [StripeController::class,"success"])->name("stripe-success");
+Route::get("/stripe-cancel", [StripeController::class,"cancel"])->name("stripe-cancel");
+
 Route::middleware('mailverified')->group(function () {
+
 
     Route::get('/', function () {
         // return view('layouts.frontend.master');
@@ -56,16 +65,20 @@ Route::middleware('mailverified')->group(function () {
     //dropzone
     Route::post('projects/media', [ProjectsController::class, 'storeMedia'])->name('projects.storeMedia');
     Route::post('save-dropzone-image', [ProductController::class, 'dropzoneImage'])->name('save-dropzone-image');
+    Route::get('/search-products', [ProductController::class, 'searchProducts'])->name('search-products');
+    Route::get('/get-product-details', [ProductController::class, 'getProductDetails'])->name('get-product-details');
+
 
 
     Route::resource('buy-bulk', MerchandiseController::class);
+
     Route::resource('custom-order', CustomOrderController::class);
     Route::post('/check-email', [CustomOrderController::class, 'checkEmail'])->name('check.email');
 
     Route::resource('catalog-order', CatalogOrderController::class);
-
-    Route::resource('order', OrderController::class);
     Route::match(['get', 'post'], '/botman', [BotManController::class, 'handle']);
+    Route::resource('custom-product-design', CustomDesignController::class);
+
     Route::resource('home', HomeController::class);
     Route::resource('shop', ShopController::class);
     Route::get('shop/products/{category_id}/{gender}/', [ShopController::class, 'products'])->name('shop.products');
@@ -74,6 +87,10 @@ Route::middleware('mailverified')->group(function () {
     Route::get('/product-cart', [ShopController::class, 'productCart'])->name('shop.product-cart');
     Route::get('/custom-design', [ShopController::class, 'customDesign'])->name('shop.custom-design');
     // Route::get('/custom-order', [ShopController::class, 'customOrder'])->name('shop.custom-order');
+
+    Route::post('/add-to-cart', [CartController::class, 'addToCart'])->name('cart.add');
+    Route::get('/reorder/{order}', [CartController::class, 'reorder'])->name('cart.reorder');
+
 
     Route::get('/product-checkout', [ShopController::class, 'productCheckout'])->name('shop.product-checkout');
     // Route::get('/dashboard', function () {
@@ -101,6 +118,11 @@ Route::get('/dashboard', function () {
 // })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
+
+    Route::resource('order', OrderController::class);
+
+    Route::resource('user-profile', UserProfileController::class);
+
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
@@ -232,6 +254,11 @@ Route::middleware('auth')->group(function () {
     Route::post('staffschedule/update', [StaffScheduleController::class, 'update'])->name('staffschedule.update')->middleware('permission:staffschedule.edit');
     Route::get('staffschedule/index', [StaffScheduleController::class, 'index'])->name('staffschedule.index')->middleware('permission:staffschedule.view');
     Route::post('staffschedule/destroy/{id}', [StaffScheduleController::class, 'destroy'])->name('staffschedule.destroy')->middleware('permission:staffschedule.delete');
+
+    Route::resource('gallery-images', GalleryImageController::class);
+    Route::get('gallery-images/create/{product_id}', [GalleryImageController::class, 'createimages'])->name('gallery-images.createimages');
+    Route::post('save-gallery-image', [GalleryImageController::class, 'galleryImage'])->name('save-gallery-image');
+
 });
 
 // use for test

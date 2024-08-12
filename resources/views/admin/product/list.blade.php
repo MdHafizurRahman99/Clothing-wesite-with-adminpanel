@@ -55,6 +55,7 @@
                         <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                             <thead>
                                 <tr>
+                                    <th>Product Display on</th>
                                     <th>Product Name</th>
                                     <th>Product Pattern</th>
                                     @if (Auth::user()->can('product.edit') || Auth::user()->can('product.delete'))
@@ -78,44 +79,58 @@
                                 @foreach ($products as $product)
                                     <tr>
                                         <td>
+                                            <p class="p-2"> {{ $product->product_for }}</p>
+                                        </td>
+                                        <td>
                                             <p class="p-2"> {{ $product->name }}</p>
                                         </td>
                                         @php
                                             $pattern = App\Models\Pattern::where('id', $product->pattern_id)->first();
                                         @endphp
-                                        @if(isset($pattern->name))
-                                        <td>
-                                            <p class="p-2"> {{ $pattern->name }}</p>
-                                        </td>
-                                        @else
-                                        <td>
-                                        </td>
-                                        @endif  
-                                       
-                                        @if (Auth::user()->can('product.edit') || Auth::user()->can('product.delete'))
+                                        @if (isset($pattern->name))
                                             <td>
-                                                @if (Auth::user()->can('product.edit'))
-                                                    <a href="{{ route('product.edit', ['product' => $product->id]) }}">
-                                                        <input class="btn btn-warning" type="button" value="Edit">
-                                                    </a>
-                                                @endif
-                                                @if (Auth::user()->can('product.delete'))
-                                                    <form
-                                                        action="{{ route('product.destroy', ['product' => $product->id]) }}"
-                                                        method="POST">
-                                                        @method('DELETE')
-                                                        @csrf
-                                                        <input class="my-2 btn btn-danger" type="submit" value="Delete"
-                                                            onclick="return confirm('Do you want to delete this Product!')">
-                                                    </form>
-                                                @endif
+                                                <p class="p-2"> {{ $pattern->name }}</p>
+                                            </td>
+                                        @else
+                                            <td>
                                             </td>
                                         @endif
 
+
+
+                                        @if (Auth::user()->can('product.edit') || Auth::user()->can('product.delete'))
+                                            <td class="d-flex justify-content-start">
+                                                <div class="btn-group" role="group" aria-label="Action buttons">
+                                                    @if (Auth::user()->can('product.edit'))
+                                                        <a href="{{ route('product.edit', ['product' => $product->id]) }}"
+                                                            class="btn btn-warning btn-sm m-1">Edit</a>
+                                                    @endif
+
+                                                    <a href="{{ route('gallery-images.createimages', ['product_id' => $product->id]) }}"
+                                                        class="btn btn-warning btn-sm m-1">Add Gallery Images</a>
+                                                        <a
+                                                        href="{{ route('product.inventories', ['product_id' => $product->id]) }}">
+                                                        <input class="btn btn-warning btn-sm m-1" type="button" value="View Inventory">
+                                                    </a>
+                                                    @if (Auth::user()->can('product.delete'))
+                                                    <form
+                                                        action="{{ route('product.destroy', ['product' => $product->id]) }}"
+                                                        method="POST" class="d-inline">
+                                                        @method('DELETE')
+                                                        @csrf
+                                                        <button type="submit" class="btn btn-danger btn-sm m-1"
+                                                            onclick="return confirm('Do you want to delete this Product!')">Delete</button>
+                                                    </form>
+                                                @endif
+                                                </div>
+                                            </td>
+                                        @endif
+
+
+
+
                                     </tr>
                                 @endforeach
-
-
                             </tbody>
                         </table>
                     </div>

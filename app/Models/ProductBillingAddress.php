@@ -9,8 +9,11 @@ class ProductBillingAddress extends Model
 {
     use HasFactory;
     protected $fillable = [
+
+        "order_id",
         'first_name',
         'last_name',
+        'company_name',
         'email',
         'mobile',
         'address',
@@ -18,5 +21,6 @@ class ProductBillingAddress extends Model
         'city',
         'state',
         'zip_code',
+        'ship_to_different_address',
     ];
 }

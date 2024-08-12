@@ -13,8 +13,10 @@ return new class extends Migration
     {
         Schema::create('product_billing_addresses', function (Blueprint $table) {
             $table->id();
+            $table->string('order_id');
             $table->string('first_name');
             $table->string('last_name');
+            $table->string('company_name')->nullable();
             $table->string('email');
             $table->string('mobile');
             $table->string('address');
@@ -22,6 +24,7 @@ return new class extends Migration
             $table->string('city');
             $table->string('state');
             $table->string('zip_code');
+            $table->string('ship_to_different_address')->nullable();
             $table->timestamps();
         });
     }

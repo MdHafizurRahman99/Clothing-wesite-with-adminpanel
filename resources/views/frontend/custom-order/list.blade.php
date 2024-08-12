@@ -24,8 +24,19 @@
                     <thead class="thead-dark">
                         <tr>
                             {{-- <th>Order Id</th> --}}
+                            {{-- <th>ID</th> --}}
+                            <th>Target</th>
+                            <th>Category</th>
+                            {{-- <th>Subcategory</th> --}}
+                            <th>Looking For</th>
+                            {{-- <th>Additional Services</th> --}}
+                            {{-- <th>Number of Products</th> --}}
+                            {{-- <th>Quantity per Product</th> --}}
+                            <th>Project Budget</th>
+                            <th>Sample Delivery Date</th>
+                            <th>Production Delivery Date</th>
+                            <th>Project Description</th>
                             <th>Order Date</th>
-                            <th>Clothing Type</th>
                             <th>Action</th>
                         </tr>
                     </thead>
@@ -43,14 +54,25 @@
 
                         @foreach ($orders as $order)
                             <tr>
+                                {{-- <td>{{ $order->id }}</td> --}}
+                                <td>{{ $order->target }}</td>
+                                <td>{{ $order->category }}</td>
+                                {{-- <td>{{ $order->subcategory }}</td> --}}
+                                <td>{{ implode(', ', json_decode($order->looking_for)) }}</td>
+                                {{-- <td>{{ implode(', ', json_decode($order->additional_services)) }}</td> --}}
+
+                                {{-- <td>{{ $order->number_of_products }}</td> --}}
+                                {{-- <td>{{ $order->quantity_per_product }}</td> --}}
+                                <td>{{ $order->project_budget }}</td>
+                                <td>{{ $order->sample_delivery_date }}</td>
+                                <td>{{ $order->production_delivery_date }}</td>
+                                <td>{{ $order->project_description }}</td>
                                 <td class="align-middle">
                                     <p class="p-2">
                                         {{ \Carbon\Carbon::parse($order->created_at)->format('M d, Y h:i A') }}</p>
 
                                 </td>
-                                <td class="align-middle">
-                                    <p class="p-2"> {{ $order->clothing_type }}</p>
-                                </td>
+
 
                                 <td class="align-middle">
                                     <a href="{{ route('custom-order.show', ['custom_order' => $order->id]) }}">
