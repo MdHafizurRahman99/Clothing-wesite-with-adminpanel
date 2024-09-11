@@ -9,10 +9,13 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Traits\HasRoles;
+use Cmgmyr\Messenger\Traits\Messagable;
+
 
 class User extends Authenticatable implements MustVerifyEmail
 {
-    use HasApiTokens, HasFactory, Notifiable, HasRoles;
+
+    use HasApiTokens, HasFactory, Notifiable, HasRoles,Messagable;
 
     /**
      * The attributes that are mass assignable.

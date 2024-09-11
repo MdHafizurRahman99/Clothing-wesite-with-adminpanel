@@ -146,6 +146,12 @@
                             <div class="dropdown-menu dropdown-menu-left" aria-labelledby="navbarDropdown">
                                 <a class="dropdown-item" href="{{route('user-profile.show',['user_profile'=>auth()->user()->id])}}">My Profile</a>
                                 <a class="dropdown-item" href="{{ route('order.index') }}">Orders</a>
+                                <a class="dropdown-item" href="{{ route('messages.index') }}">Inbox
+                                    <?php $count = Auth::user()->newThreadsCount(); ?>
+                                    @if($count > 0)
+                                        <span class="label label-danger" style="color: red;">{{ $count }}</span>
+                                    @endif</a>
+                                <a class="dropdown-item" href="{{ route('messages.outbox') }}">Outbox</a>
 
                                 <a class="dropdown-item" href="{{ route('custom-order.index') }}">Custom Orders</a>
                                 <div class="dropdown-divider"></div>

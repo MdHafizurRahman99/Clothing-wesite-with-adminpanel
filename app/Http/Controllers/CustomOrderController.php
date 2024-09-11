@@ -78,7 +78,7 @@ class CustomOrderController extends Controller
             // Retrieve the authenticated user's email
             $email = auth()->user()->email;
         } else {
-            return redirect('login')->with('message','Please login.');
+            return redirect('login')->with('message', 'Please login.');
         }
         // return $email;
         // dd(auth()->user()->email);
@@ -161,7 +161,7 @@ class CustomOrderController extends Controller
 
             }
         }
-            Mail::to($email)->send(new MailCustomOrder());
+        Mail::to($email)->send(new MailCustomOrder());
 
         return redirect()->route('home')->with('message', 'Product Custom Order created successfully.');
 
@@ -287,7 +287,7 @@ class CustomOrderController extends Controller
     {
         return view('frontend.custom-order.details', [
             'order' => $customOrder,
-            'images'=>CustomOrderImage::where('custom_order_id',$customOrder->id)->get()
+            'images' => CustomOrderImage::where('custom_order_id', $customOrder->id)->get()
         ]);
     }
 

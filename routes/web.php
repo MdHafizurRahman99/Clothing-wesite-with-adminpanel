@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\AdminOrderController;
 use App\Http\Controllers\BotManController;
 use App\Http\Controllers\BusinessController;
 use App\Http\Controllers\BusniessProfileController;
@@ -32,6 +33,7 @@ use App\Http\Controllers\StaffScheduleController;
 use App\Http\Controllers\StripeController;
 use App\Http\Controllers\TryTestController;
 use App\Http\Controllers\UserProfileController;
+use App\Http\Controllers\MessagesController;
 use App\Models\StaffSchedule;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
@@ -47,8 +49,8 @@ use Illuminate\Support\Facades\Auth;
 */
 
 //clothing shop
-Route::get("/stripe-success", [StripeController::class,"success"])->name("stripe-success");
-Route::get("/stripe-cancel", [StripeController::class,"cancel"])->name("stripe-cancel");
+Route::get("/stripe-success", [StripeController::class, "success"])->name("stripe-success");
+Route::get("/stripe-cancel", [StripeController::class, "cancel"])->name("stripe-cancel");
 
 Route::middleware('mailverified')->group(function () {
 
@@ -119,7 +121,21 @@ Route::get('/dashboard', function () {
 
 Route::middleware('auth')->group(function () {
 
+
+    Route::get('messages', [MessagesController::class, 'index'])->name('messages.index');
+    Route::get('messages/outbox', [MessagesController::class, 'outbox'])->name('messages.outbox');
+    Route::get('messages/create', [MessagesController::class, 'create'])->name('messages.create');
+    Route::get('messages/{id}',  [MessagesController::class, 'show'])->name('messages.show');
+    Route::post('messages',  [MessagesController::class, 'store'])->name('messages.store');
+    Route::post('messages/update/{id}',  [MessagesController::class, 'update'])->name('messages.update');
+    Route::post('messages/{id}/reply',  [MessagesController::class, 'reply'])->name('messages.reply');
+
+    Route::get('/autocomplete', [MessagesController::class, 'autocomplete'])->name('autocomplete');
+
     Route::resource('order', OrderController::class);
+    Route::resource('admin-order', AdminOrderController::class);
+    Route::post('/order/{orderId}/update-status', [AdminOrderController::class, 'updateOrderStatus']);
+
 
     Route::resource('user-profile', UserProfileController::class);
 
@@ -258,7 +274,6 @@ Route::middleware('auth')->group(function () {
     Route::resource('gallery-images', GalleryImageController::class);
     Route::get('gallery-images/create/{product_id}', [GalleryImageController::class, 'createimages'])->name('gallery-images.createimages');
     Route::post('save-gallery-image', [GalleryImageController::class, 'galleryImage'])->name('save-gallery-image');
-
 });
 
 // use for test

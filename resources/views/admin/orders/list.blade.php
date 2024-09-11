@@ -75,12 +75,12 @@
                                         </td>
                                         @if (Auth::user()->can('order.edit') || Auth::user()->can('order.delete'))
                                             <td>
-                                                {{-- @if (Auth::user()->can('order.edit'))
-                                                    <a href="{{ route('order.edit', ['order' => $order->id]) }}">
+                                                @if (Auth::user()->can('order.edit'))
+                                                    <a href="{{ route('admin-order.edit', ['admin_order'=> $order->id]) }}">
                                                         <input class="btn btn-warning" type="button" value="Edit">
                                                     </a>
                                                 @endif
-                                                @if (Auth::user()->can('order.delete'))
+                                                {{-- @if (Auth::user()->can('order.delete'))
                                                     <form action="{{ route('order.destroy', ['order' => $order->id]) }}"
                                                         method="POST">
                                                         @csrf

@@ -587,7 +587,10 @@ class ProductController extends Controller
         if (isset($cartProduct)) {
             $cachedDataInputValues = $cartProduct['input'];
             if (isset($cachedDataInputValues[$request->key]) && $request->key != $request->newkey) {
+
                 $cachedDataInputValues[$request->newkey] = $request->quantity;
+                unset($cachedDataInputValues[$request->key]);
+
             } else if ($request->key) {
                 $cachedDataInputValues[$request->key] = $request->quantity;
             } else {
@@ -598,10 +601,8 @@ class ProductController extends Controller
 
             $postData = [
                 'input' => $cachedDataInputValues,
-                // 'files' => $request->files->all(),
-                // 'cookies' => $request->cookies->all(),
-                // Add more data as needed
             ];
+
             cache()->put($productCacheKey, $postData, now()->addMinutes(1440));
         } else {
             $postData = [

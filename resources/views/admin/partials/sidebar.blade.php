@@ -240,7 +240,7 @@
             <div class="bg-white py-2 collapse-inner rounded">
                 {{-- <h6 class="collapse-header">Custom Components:</h6> --}}
 
-                <a class="collapse-item" href="{{ route('order.index') }}"> Orders </a>
+                <a class="collapse-item" href="{{ route('admin-order.index') }}"> Orders </a>
 
                 <a class="collapse-item" href="{{ route('custom-order.index') }}"> Custom Order </a>
                 {{-- <a class="collapse-item" href="cards.html">Cards</a> --}}

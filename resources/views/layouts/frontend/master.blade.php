@@ -19,6 +19,12 @@
     <!-- Libraries Stylesheet -->
     <link href="{{ asset('frontend') }}/lib/animate/animate.min.css" rel="stylesheet">
     <link href="{{ asset('frontend') }}/lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
+       <!-- jQuery -->
+<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+
+<!-- jQuery UI -->
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
     <style>
         /* Navigation Bar */
         .navbar {
@@ -128,7 +134,7 @@
 
 
     <!-- JavaScript Libraries -->
-    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    {{-- <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script> --}}
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
     <script src="{{ asset('frontend') }}/lib/easing/easing.min.js"></script>
     <script src="{{ asset('frontend') }}/lib/owlcarousel/owl.carousel.min.js"></script>

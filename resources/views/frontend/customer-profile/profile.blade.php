@@ -163,19 +163,19 @@
             <div class="form-group row">
                 <label for="companyName" class="col-sm-3 col-form-label">Company Name:</label>
                 <div class="col-sm-9">
-                    <input type="text" class="form-control" id="companyName" value="{{ $userProfile->company_name }}" disabled>
+                    <input type="text" class="form-control" id="companyName" value="{{ $userProfile->company_name ?? '' }}" disabled>
                 </div>
             </div>
             <div class="form-group row">
                 <label for="mobile" class="col-sm-3 col-form-label">Mobile:</label>
                 <div class="col-sm-9">
-                    <input type="text" class="form-control" id="mobile" value="{{ $userProfile->mobile }}" disabled>
+                    <input type="text" class="form-control" id="mobile" value="{{ $userProfile->mobile ?? '' }}" disabled>
                 </div>
             </div>
             <div class="form-group row">
                 <label for="fax" class="col-sm-3 col-form-label">Fax:</label>
                 <div class="col-sm-9">
-                    <input type="text" class="form-control" id="fax" value="{{ $userProfile->fax }}" disabled>
+                    <input type="text" class="form-control" id="fax" value="{{ $userProfile->fax ?? '' }}" disabled>
                 </div>
             </div>
         </form>
@@ -187,80 +187,81 @@
             <div class="form-group row">
                 <label for="billingAddress1" class="col-sm-3 col-form-label">Street Address 1:</label>
                 <div class="col-sm-9">
-                    <input type="text" class="form-control" id="billingAddress1" value="{{ $userProfile->billing_address1 }}" disabled>
+                    <input type="text" class="form-control" id="billingAddress1" value="{{ $userProfile->billing_address1 ?? '' }}" disabled>
                 </div>
             </div>
             <div class="form-group row">
                 <label for="billingAddress2" class="col-sm-3 col-form-label">Street Address 2:</label>
                 <div class="col-sm-9">
-                    <input type="text" class="form-control" id="billingAddress2" value="{{ $userProfile->billing_address2 }}" disabled>
+                    <input type="text" class="form-control" id="billingAddress2" value="{{ $userProfile->billing_address2 ?? '' }}" disabled>
                 </div>
             </div>
             <div class="form-group row">
                 <label for="billingCity" class="col-sm-3 col-form-label">City:</label>
                 <div class="col-sm-9">
-                    <input type="text" class="form-control" id="billingCity" value="{{ $userProfile->billing_city }}" disabled>
+                    <input type="text" class="form-control" id="billingCity" value="{{ $userProfile->billing_city ?? '' }}" disabled>
                 </div>
             </div>
             <div class="form-group row">
                 <label for="billingState" class="col-sm-3 col-form-label">State:</label>
                 <div class="col-sm-9">
-                    <input type="text" class="form-control" id="billingState" value="{{ $userProfile->billing_state }}" disabled>
+                    <input type="text" class="form-control" id="billingState" value="{{ $userProfile->billing_state ?? '' }}" disabled>
                 </div>
             </div>
             <div class="form-group row">
                 <label for="billingPostcode" class="col-sm-3 col-form-label">Postcode:</label>
                 <div class="col-sm-9">
-                    <input type="text" class="form-control" id="billingPostcode" value="{{ $userProfile->billing_postcode }}" disabled>
+                    <input type="text" class="form-control" id="billingPostcode" value="{{ $userProfile->billing_postcode ?? '' }}" disabled>
                 </div>
             </div>
             <div class="form-group row">
                 <label for="billingCountry" class="col-sm-3 col-form-label">Country:</label>
                 <div class="col-sm-9">
-                    <input type="text" class="form-control" id="billingCountry" value="{{ $userProfile->billing_country }}" disabled>
+                    <input type="text" class="form-control" id="billingCountry" value="{{ $userProfile->billing_country ?? '' }}" disabled>
                 </div>
             </div>
         </form>
     </div>
 
-    @if (!$userProfile->same_as_billing)
+{{-- @dd($userProfile->same_as_billing) --}}
+@if (empty($userProfile->same_as_billing) || $userProfile->same_as_billing != true)
         <div class="profile-section">
             <h3><i class="fas fa-truck"></i> Shipping Address</h3>
             <form>
                 <div class="form-group row">
                     <label for="shippingAddress1" class="col-sm-3 col-form-label">Street Address 1:</label>
                     <div class="col-sm-9">
-                        <input type="text" class="form-control" id="shippingAddress1" value="{{ $userProfile->shipping_address1 }}" disabled>
+                        <input type="text" class="form-control" id="shippingAddress1" value="{{ $userProfile->shipping_address1 ?? '' }}" disabled>
                     </div>
                 </div>
                 <div class="form-group row">
                     <label for="shippingAddress2" class="col-sm-3 col-form-label">Street Address 2:</label>
                     <div class="col-sm-9">
-                        <input type="text" class="form-control" id="shippingAddress2" value="{{ $userProfile->shipping_address2 }}" disabled>
+                        <input type="text" class="form-control" id="shippingAddress2" value="{{ $userProfile->shipping_address2 ?? '' }}" disabled>
                     </div>
                 </div>
                 <div class="form-group row">
                     <label for="shippingCity" class="col-sm-3 col-form-label">City:</label>
                     <div class="col-sm-9">
-                        <input type="text" class="form-control" id="shippingCity" value="{{ $userProfile->shipping_city }}" disabled>
+                        <input type="text" class="form-control" id="shippingCity" value="{{ $userProfile->shipping_city ?? '' }}" disabled>
                     </div>
                 </div>
                 <div class="form-group row">
                     <label for="shippingState" class="col-sm-3 col-form-label">State:</label>
                     <div class="col-sm-9">
-                        <input type="text" class="form-control" id="shippingState" value="{{ $userProfile->shipping_state }}" disabled>
+                        <input type="text" class="form-control" id="shippingState" value="{{ $userProfile->shipping_state ?? '' }}" disabled>
                     </div>
                 </div>
                 <div class="form-group row">
                     <label for="shippingPostcode" class="col-sm-3 col-form-label">Postcode:</label>
                     <div class="col-sm-9">
-                        <input type="text" class="form-control" id="shippingPostcode" value="{{ $userProfile->shipping_postcode }}" disabled>
+                        <input type="text" class="form-control" id="shippingPostcode" value="{{ $userProfile->shipping_postcode ?? '' }}" disabled>
                     </div>
                 </div>
                 <div class="form-group row">
                     <label for="shippingCountry" class="col-sm-3 col-form-label">Country:</label>
                     <div class="col-sm-9">
-                        <input type="text" class="form-control" id="shippingCountry" value="{{ $userProfile->shipping_country }}" disabled>
+                        <input type="text" class="form-control" id="shippingCountry" value="{{ $userProfile->shipping_country ?? '' }}" disabled>
                     </div>
                 </div>
             </form>
@@ -273,26 +274,26 @@
             <div class="form-group row">
                 <label for="primaryPaymentMethod" class="col-sm-3 col-form-label">Primary Payment Method:</label>
                 <div class="col-sm-9">
-                    <input type="text" class="form-control" id="primaryPaymentMethod" value="{{ $userProfile->primary_payment_method }}" disabled>
+                    <input type="text" class="form-control" id="primaryPaymentMethod" value="{{ $userProfile->primary_payment_method ?? '' }}" disabled>
                 </div>
             </div>
             {{-- <div class="form-group row">
                 <label for="terms" class="col-sm-3 col-form-label">Terms:</label>
                 <div class="col-sm-9">
-                    <input type="text" class="form-control" id="terms" value="{{ $userProfile->terms }}" disabled>
+                    <input type="text" class="form-control" id="terms" value="{{ $userProfile->terms ?? '' }}" disabled>
                 </div>
             </div>
 
             <div class="form-group row">
                 <label for="discount" class="col-sm-3 col-form-label">Discount:</label>
                 <div class="col-sm-9">
-                    <input type="text" class="form-control" id="discount" value="{{ $userProfile->discount }}" disabled>
+                    <input type="text" class="form-control" id="discount" value="{{ $userProfile->discount ?? '' }}" disabled>
                 </div>
             </div>
             <div class="form-group row">
                 <label for="customerType" class="col-sm-3 col-form-label">Customer Type:</label>
                 <div class="col-sm-9">
-                    <input type="text" class="form-control" id="customerType" value="{{ $userProfile->customer_type }}" disabled>
+                    <input type="text" class="form-control" id="customerType" value="{{ $userProfile->customer_type ?? '' }}" disabled>
                 </div>
             </div> --}}
         </form>

@@ -1,6 +1,10 @@
 @extends('layouts.frontend.master')
 @section('css')
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+
+    <style>
+
+    </style>
 @endsection
 @section('content')
     <!-- Breadcrumb Start -->
@@ -117,7 +121,7 @@
                                                 </td>
                                                 {{-- <td class="align-middle">{{ $quantity }}</td> --}}
                                                 <td class="align-middle">
-                                                    <div class="input-group quantity mx-auto" style="width: 100px;">
+                                                    <div class="input-group quantity mx-auto" style="width: max-content;">
                                                         <input type="hidden" class="product-id"
                                                             value="{{ $product_id }}" name="product_id">
                                                         <input type="hidden" class="key" value="{{ $key }}"
@@ -137,12 +141,13 @@
                                                                 <i class="fa fa-plus"></i>
                                                             </button>
                                                         </div>
+                                                        <div class="input-group-btn">
+                                                            <button class="btn btn-sm btn-danger btn-delete mx-2">
+                                                                <i class="fa fa-trash-alt"></i>
+                                                            </button>
+                                                        </div>
                                                     </div>
-                                                </td>
-                                                {{-- <td class="align-middle">$150</td> --}}
-                                                {{-- <td class="align-middle"><button class="btn btn-sm btn-danger"><i
-                                                            class="fa fa-times"></i></button></td> --}}
-                                                <!-- Add more columns for other product details as needed -->
+
                                             </tr>
                                         @endif
                                     @endforeach
@@ -310,9 +315,6 @@
                                 </a>
                             @endif
                             {{-- <button class="btn btn-block btn-primary font-weight-bold my-3 py-3">Proceed To Checkout</button> --}}
-
-
-
                         </div>
                     </div>
                 @endif
@@ -495,6 +497,118 @@
                 // quantityInput.val(productId);
                 // console.log(quantity);
                 // Make the AJAX request to increment the quantity
+                if (size && color) {
+
+                    $.ajax({
+                        url: "{{ route('increment-quantity') }}",
+                        method: 'POST',
+                        data: {
+                            key: key,
+                            newkey: newkey,
+                            productId: productId,
+                            quantity: quantity,
+                        },
+                        headers: {
+                            'X-CSRF-TOKEN': "{{ csrf_token() }}" // Include the CSRF token in the headers
+                        },
+                        success: function(data) {
+                            // Update the cart badge value
+                            $('#cartBadge').text(data);
+
+                            // Optionally, reload the page after a short delay
+                            setTimeout(function() {
+                                location.reload();
+                            }, 1000);
+                        },
+                        error: function(xhr, status, error) {
+                            console.error(error);
+                            // Handle errors or display an error message to the user.
+                        }
+                    });
+                } else {
+                    // Optionally, you can provide feedback to the user if size, color, or quantity is not selected or quantity is 0
+                    console.warn("Please select size, color.");
+                }
+            }
+            function deleteProduct(element) {
+                var parentRow = $(element).closest('tr');
+                var size = parentRow.find('.size option:selected').val();
+                var color = parentRow.find('.color option:selected').val();
+                var key = parentRow.find('.key').val();
+                var productId = parentRow.find('.product-id').val();
+                var quantity = 0;
+                var newkey = `${size}_${color}`;
+
+                if (size && color) {
+
+                    $.ajax({
+                        url: "{{ route('increment-quantity') }}",
+                        method: 'POST',
+                        data: {
+                            key: key,
+                            newkey: newkey,
+                            productId: productId,
+                            quantity: quantity,
+                        },
+                        headers: {
+                            'X-CSRF-TOKEN': "{{ csrf_token() }}" // Include the CSRF token in the headers
+                        },
+                        success: function(data) {
+                            // Update the cart badge value
+                            $('#cartBadge').text(data);
+
+                            // Optionally, reload the page after a short delay
+                            setTimeout(function() {
+                                location.reload();
+                            }, 1000);
+                        },
+                        error: function(xhr, status, error) {
+                            console.error(error);
+                            // Handle errors or display an error message to the user.
+                        }
+                    });
+                } else {
+                    // Optionally, you can provide feedback to the user if size, color, or quantity is not selected or quantity is 0
+                    console.warn("Please select size, color.");
+                }
+            }
+
+            function addNewproduct(element) {
+                // Find the closest quantity container
+                // var quantityContainer = $(element).closest('.quantity');
+
+                // Find the product ID input within the quantity container
+                // var productId = quantityContainer.find('.product-id').val();
+                // var key = quantityContainer.find('.key').val();
+
+                // Find the parent row
+                var parentRow = $(element).closest('tr');
+
+                // Select the size and color within the same parent row
+                var size = parentRow.find('.size option:selected').val();
+                var color = parentRow.find('.color option:selected').val();
+                var key = parentRow.find('.key').val();
+                var productId = parentRow.find('.product-id').val();
+                var quantity = parentRow.find('.quantity-input').val();
+
+                // Create the new key
+                var newkey = `${size}_${color}`;
+
+                // Find the quantity input within the quantity container
+                // var quantityInput = quantityContainer.find('.quantity-input');
+
+                // Get the current quantity
+                // var quantity = parseInt(quantityInput.val());
+
+                // If the element is the plus button, increment the quantity
+                // if ($(element).hasClass('btn-plus')) {
+                //     quantity++;
+                // }
+
+                // Update the quantity input value
+                // quantityInput.val(productId);
+                // console.log(quantity);
+                // Make the AJAX request to increment the quantity
                 if (size && color && quantity != 0) {
 
                     $.ajax({
@@ -525,9 +639,10 @@
                     });
                 } else {
                     // Optionally, you can provide feedback to the user if size, color, or quantity is not selected or quantity is 0
-                    console.warn("Please select size, color, and ensure quantity is greater than 0.");
+                    console.warn("Please select size, color .");
                 }
             }
+
 
             // Attach click event to the plus button
             $(document).on('click', '.btn-plus', function() {
@@ -552,11 +667,16 @@
                     updateQuantity(this);
                 }
             });
+            $(document).on('click', '.btn-delete', function() {
+
+                        deleteProduct(this);
+
+            });
 
             // Attach change event to the size and color select elements
             $(document).on('change', '.size, .color', function() {
                 // console.log('hello');
-                updateQuantity(this);
+                addNewproduct(this);
             });
         });
 

@@ -1,92 +1,6 @@
-@extends('layouts.frontend.master')
-
-@section('css')
-    <style>
-        .order-process {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-        }
-
-        .progressbar {
-            list-style: none;
-            padding: 0;
-            display: flex;
-            justify-content: space-between;
-            width: 100%;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .progressbar li {
-            width: calc(100% / 14);
-            /* Evenly distributing space */
-            text-align: center;
-            position: relative;
-            font-size: 12px;
-            color: #999;
-            font-weight: 600;
-        }
-
-        .progressbar li:before {
-            content: '';
-            width: 20px;
-            height: 20px;
-            border: 2px solid #999;
-            display: block;
-            text-align: center;
-            margin: 0 auto 10px auto;
-            border-radius: 50%;
-            background-color: #fff;
-            line-height: 20px;
-            /* Center content inside the circle */
-        }
-
-        .progressbar li:after {
-            content: '';
-            position: absolute;
-            width: 100%;
-            height: 2px;
-            background-color: #999;
-            top: 10px;
-            left: -50%;
-            z-index: -1;
-        }
-
-        .progressbar li:first-child:after {
-            content: none;
-        }
-
-        .progressbar li.completed:before {
-            background-color: #0d6efd;
-            border-color: #0d6efd;
-            color: white;
-            content: '\2713';
-            /* Check mark */
-            line-height: 18px;
-            /* Align the checkmark inside the circle */
-            font-size: 16px;
-        }
-
-        .progressbar li.in-progress:before {
-            background-color: #ffc107;
-            /* In-progress color */
-            border-color: #ffc107;
-        }
-
-        .progressbar li.active+li:after {
-            background-color: #0d6efd;
-        }
-
-        .order-process-title {
-            text-align: center;
-            /* Center text horizontally */
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-    </style>
+@extends('layouts.admin.master')
+@section('title')
+    Order Details
 @endsection
 
 @section('content')
@@ -165,7 +79,7 @@
 
                                             {{-- <span> {{ $details->quantity }}</span> --}}
                                             <input type="text" readonly
-                                                class="form-control form-control-sm bg-secondary border-0 text-center quantity-input"
+                                                class="form-control form-control-sm  border-0 text-center quantity-input"
                                                 value="{{ $details->quantity }}">
 
                                         </div>
@@ -184,8 +98,7 @@
                 </table>
             </div>
             <div class="col-lg-4">
-                <h5 class="section-title position-relative text-uppercase mb-3"><span
-                        class="bg-secondary pr-3">Summary</span></h5>
+                <h5 class="section-title position-relative text-uppercase mb-3"><span class=" pr-3">Summary</span></h5>
                 <div class="bg-light p-30 mb-5">
                     <div class="border-bottom pb-2">
                         <div class="d-flex justify-content-between mb-3">
@@ -214,8 +127,6 @@
                 </div>
             </div>
             <div class="container-fluid mt-4">
-                <h5 class="order-process-title text-uppercase mb-3"><span class="bg-secondary pr-3">Order Process</span>
-                </h5>
                 @php
                     $steps = [
                         'Order Submitted',
@@ -236,17 +147,20 @@
                     ];
 
                     // Determine the index of the current step
-                    $currentStepIndex = array_search($order->order_status, $steps);
+
                 @endphp
-                <div class="order-process">
-                    <ul class="progressbar">
-                        @foreach($steps as $index => $step)
-                        <li class="{{ $index < $currentStepIndex ? 'completed' : ($index == $currentStepIndex ? 'in-progress' : '') }}">
+
+
+                <h5 class=" text-uppercase mb-3"><span class=" pr-3">Change Order Process</span>
+                </h5>
+                <select name="order_status" class="order_status" data-order-id="{{ $order->id }}">
+                    @foreach ($steps as $step)
+                        <option value="{{ $step }}" {{ $step == $order->order_status ? 'selected' : '' }}>
                             {{ $step }}
-                        </li>
+                        </option>
                     @endforeach
-                    </ul>
-                </div>
+                </select>
+
             </div>
 
         </div>
@@ -255,114 +169,68 @@
     <!-- Cart End -->
 @endsection
 
-
-{{-- @section('js')
-    document.addEventListener("DOMContentLoaded", function() {
-    var currentStep = 5; // Replace this with the actual current step index (1-based)
-    var totalSteps = document.querySelectorAll(".progress-steps .step").length;
-    var progressPercentage = (currentStep / totalSteps) * 100;
-
-    document.querySelector("#orderProgress .progress-bar").style.width = progressPercentage + "%";
-
-    var steps = document.querySelectorAll(".progress-steps .step");
-for (var i = 0; i < currentStep; i++) { steps[i].classList.add("active"); } }); @endsection  --}}
-{{-- @section('js')
+@section('js')
     <script>
-        // Handle plus button click
-        $('.btn-plus').click(function() {
-            // Find the closest quantity container
-            var quantityContainer = $(this).closest('.quantity');
+        $(document).ready(function() {
 
-            // Find the product ID input within the quantity container
-            var productId = quantityContainer.find('.product-id').val();
-            var key = quantityContainer.find('.key').val();
+            function updateStatus(element) {
 
-            // Find the quantity input within the quantity container
-            var quantityInput = quantityContainer.find('.quantity-input');
-
-            // Increment the quantity
-            var quantity = parseInt(quantityInput.val());
-            quantity++;
-            quantityInput.val(quantity);
-
-            // console.log(productId, quantity);
-            $.ajax({
-                url: "{{ route('increment-quantity') }}",
-                method: 'POSt',
-                data: {
-                    key: key,
-                    productId: productId,
-                    quantity: quantity,
-                },
-                headers: {
-                    'X-CSRF-TOKEN': "{{ csrf_token() }}" // Include the CSRF token in the headers
-                },
-                success: function(data) {
-                    var cartBadgeValue = data;
-                    $('#cartBadge').text(cartBadgeValue);
-                    setTimeout(function() {
-                        location.reload();
-                    }, 1000);
-                    // console.log(data);
-                },
-                error: function(xhr, status, error) {
-                    console.error(error);
-                    // Handle errors or display an error message to the user.
-                }
-            });
-        });
-
-        // Handle minus button click
-        $('.btn-minus').click(function() {
-            var quantityContainer = $(this).closest('.quantity');
-
-            // Find the product ID input within the quantity container
-            var productId = quantityContainer.find('.product-id').val();
-            var key = quantityContainer.find('.key').val();
-
-            // Find the quantity input within the quantity container
-            var quantityInput = quantityContainer.find('.quantity-input');
-
-            // Increment the quantity
-            var quantity = parseInt(quantityInput.val());
-            // quantity++;
-            // quantityInput.val(quantity);
-
-            // console.log(productId, key);
-            var quantity = parseInt(quantityInput.val());
-            if (quantity > 0) {
-                // console.log('hello');
-                quantity--;
-                // console.log(productId, quantity, key);
-
-                quantityInput.val(quantity);
-                var csrfToken = $('meta[name="csrf-token"]').attr('content');
-                // Send AJAX request to update cache and totalProduct
+                var orderStatus = $(element).val(); // Get the selected value
+                var orderId = $(element).data('order-id'); // Get the order ID.
+                // console.log(orderId);
                 $.ajax({
-                    url: "{{ route('decrement-quantity') }}",
-                    method: 'POSt',
+                    url: `/order/${orderId}/update-status`, // Replace with your route URL
+                    method: 'POST',
                     data: {
-                        key: key,
-                        productId: productId,
-                        quantity: quantity,
+                        order_status: orderStatus,
                     },
                     headers: {
                         'X-CSRF-TOKEN': "{{ csrf_token() }}" // Include the CSRF token in the headers
                     },
                     success: function(data) {
-                        var cartBadgeValue = data;
-                        $('#cartBadge').text(cartBadgeValue);
-                        setTimeout(function() {
-                            location.reload();
-                        }, 1000);
-                        // console.log(data);
+                        alert("Order status updated successfully!");
+
+                        // console.log(data.success);
+                        // Optionally, display a success message or update the UI
                     },
                     error: function(xhr, status, error) {
-                        console.error(error);
-                        // Handle errors or display an error message to the user.
+                        console.error(xhr.responseText);
+                        // Optionally, display an error message to the user
                     }
                 });
+
+
+                // $.ajax({
+                //     url: "{{ route('increment-quantity') }}",
+                //     method: 'POST',
+                //     data: {
+                //         key: key,
+                //         newkey: newkey,
+                //         productId: productId,
+                //         quantity: quantity,
+                //     },
+                //     headers: {
+                //         'X-CSRF-TOKEN': "{{ csrf_token() }}" // Include the CSRF token in the headers
+                //     },
+                //     success: function(data) {
+                //         // Update the cart badge value
+                //         $('#cartBadge').text(data);
+
+                //         // Optionally, reload the page after a short delay
+                //         setTimeout(function() {
+                //             location.reload();
+                //         }, 1000);
+                //     },
+                //     error: function(xhr, status, error) {
+                //         console.error(error);
+                //         // Handle errors or display an error message to the user.
+                //     }
+                // });
+
             }
+            $(document).on('change', '.order_status', function() {
+                updateStatus(this);
+            });
         });
     </script>
-@endsection --}}
+@endsection
