@@ -210,6 +210,22 @@
             </div>
         </li>
     @endif
+    @if (Auth::user()->can('product.view'))
+        <li class="nav-item">
+            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseProductSize"
+                aria-expanded="true" aria-controls="collapseProductSize">
+                <span>Product sizes</span>
+            </a>
+            <div id="collapseProductSize" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+                <div class="bg-white py-2 collapse-inner rounded">
+                    {{-- <h6 class="collapse-header">Custom Components:</h6> --}}
+                    @if (Auth::user()->can('product.add'))
+                        <a class="collapse-item" href="{{ route('productSize.index') }}">sizes</a>
+                    @endif
+                </div>
+            </div>
+        </li>
+    @endif
 
     @if (Auth::user()->can('product.view'))
         <li class="nav-item">
@@ -229,25 +245,41 @@
         </li>
     @endif
 
+
     @if (Auth::user()->can('order.view'))
-    <hr class="sidebar-divider">
-    <li class="nav-item">
-        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseOrders"
-            aria-expanded="true" aria-controls="collapseOrders">
-            <span>Orders</span>
-        </a>
-        <div id="collapseOrders" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
-            <div class="bg-white py-2 collapse-inner rounded">
-                {{-- <h6 class="collapse-header">Custom Components:</h6> --}}
+        <hr class="sidebar-divider">
+        <li class="nav-item">
+            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseOrders"
+                aria-expanded="true" aria-controls="collapseOrders">
+                <span>Orders</span>
+            </a>
+            <div id="collapseOrders" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+                <div class="bg-white py-2 collapse-inner rounded">
+                    {{-- <h6 class="collapse-header">Custom Components:</h6> --}}
 
-                <a class="collapse-item" href="{{ route('admin-order.index') }}"> Orders </a>
+                    <a class="collapse-item" href="{{ route('admin-order.index') }}"> Orders </a>
 
-                <a class="collapse-item" href="{{ route('custom-order.index') }}"> Custom Order </a>
-                {{-- <a class="collapse-item" href="cards.html">Cards</a> --}}
+                    <a class="collapse-item" href="{{ route('custom-order.index') }}"> Custom Order </a>
+                    {{-- <a class="collapse-item" href="cards.html">Cards</a> --}}
+                </div>
             </div>
-        </div>
-    </li>
-@endif
+        </li>
+    @endif
+    @if (Auth::user()->can('contact_us.view'))
+        <hr class="sidebar-divider">
+        <li class="nav-item">
+            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsecontact_us"
+                aria-expanded="true" aria-controls="collapsecontact_us">
+                <span>Contact Us Forms</span>
+            </a>
+            <div id="collapsecontact_us" class="collapse" aria-labelledby="headingTwo"
+                data-parent="#accordionSidebar">
+                <div class="bg-white py-2 collapse-inner rounded">
+                    <a class="collapse-item" href="{{ route('contact-us.index') }}"> Contact us </a>
+                </div>
+            </div>
+        </li>
+    @endif
 
     @if (Auth::user()->can('permission.view'))
         <hr class="sidebar-divider">
@@ -256,7 +288,8 @@
                 aria-expanded="true" aria-controls="collapsePermission">
                 <span>Permission</span>
             </a>
-            <div id="collapsePermission" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+            <div id="collapsePermission" class="collapse" aria-labelledby="headingTwo"
+                data-parent="#accordionSidebar">
                 <div class="bg-white py-2 collapse-inner rounded">
                     {{-- <h6 class="collapse-header">Custom Components:</h6> --}}
                     @if (Auth::user()->can('permission.add'))
@@ -291,8 +324,9 @@
 
     @if (Auth::user()->can('roles_permission.view'))
         <li class="nav-item">
-            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseRolesPermissions"
-                aria-expanded="true" aria-controls="collapseRolesPermissions">
+            <a class="nav-link collapsed" href="#" data-toggle="collapse"
+                data-target="#collapseRolesPermissions" aria-expanded="true"
+                aria-controls="collapseRolesPermissions">
                 <span>Roles Permissions</span>
             </a>
             <div id="collapseRolesPermissions" class="collapse" aria-labelledby="headingTwo"

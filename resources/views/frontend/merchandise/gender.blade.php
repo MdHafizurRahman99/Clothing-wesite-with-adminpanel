@@ -21,6 +21,8 @@
             align-items: center;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             transition: box-shadow 0.3s ease;
+            margin: 50px;
+
         }
 
         .gender-image {
@@ -58,6 +60,7 @@
             align-items: center;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             transition: box-shadow 0.3s ease;
+            margin: 50px;
         }
 
         .gender-image {
@@ -80,31 +83,35 @@
 @section('content')
     <!-- Categories Start -->
     <div class="container-fluid pt-5">
-        <h2 class="section-title position-relative text-uppercase mx-xl-5 mb-4"><span
-                class="bg-secondary pr-3">Select</span></h2>
+        <h2 class="section-title position-relative text-uppercase mx-xl-5 mb-4"><span class="bg-secondary pr-3">Select</span>
+        </h2>
         <div class="row px-xl-5 pb-3 justify-content-center">
             @php
-            $genders=['Man','Women','Kids','Unisex']
+                $genders = ['Man', 'Women', 'Kids', 'Unisex'];
             @endphp
             @foreach ($genders as $gender)
-            @if ($products->where('gender', $gender)->isNotEmpty())
-            <div class="col-lg-3 col-md-4 col-sm-6 pb-1 mt-2">
-                <a class="gender-link" href="{{ route('shop.products', ['product_for'=>'Buy Blank','category_id' => $category_id, 'gender' => $gender]) }}">
-                    <div class="gender-image-container">
-                        @if($gender=='Man')
-                        <img class="img-fluid gender-image" src="{{asset('frontend/img/Gender images/Man.png')}}" alt="{{ $gender }}">
-                        @elseif($gender=='Women')
-                        <img class="img-fluid gender-image" src="{{asset('frontend/img/Gender images/women.png')}}" alt="{{ $gender }}">
-                        @elseif($gender=='Kids')
-                        <img class="img-fluid gender-image" src="{{asset('frontend/img/Gender images/kids.png')}}" alt="{{ $gender }}">
-                        @elseif($gender=='Unisex')
-                        <img class="img-fluid gender-image" src="" alt="{{ $gender }}">
-                        @endif
+                @if ($products->where('gender', $gender)->isNotEmpty())
+                    {{-- <div class="col-lg-3 col-md-4 col-sm-6 pb-1 mt-2"> --}}
+                    <a class="gender-link"
+                        href="{{ route('shop.products', ['product_for' => 'Buy Blank', 'category_id' => $category_id, 'gender' => $gender]) }}">
+                        <div class="gender-image-container">
+                            @if ($gender == 'Man')
+                                <img class="img-fluid gender-image" src="{{ asset('frontend/img/Gender images/Man.png') }}"
+                                    alt="{{ $gender }}">
+                            @elseif($gender == 'Women')
+                                <img class="img-fluid gender-image"
+                                    src="{{ asset('frontend/img/Gender images/women.png') }}" alt="{{ $gender }}">
+                            @elseif($gender == 'Kids')
+                                <img class="img-fluid gender-image" src="{{ asset('frontend/img/Gender images/kids.png') }}"
+                                    alt="{{ $gender }}">
+                            @elseif($gender == 'Unisex')
+                                <img class="img-fluid gender-image" src="" alt="{{ $gender }}">
+                            @endif
 
-                    </div>
-                </a>
-            </div>
-        @endif
+                        </div>
+                    </a>
+                    {{-- </div> --}}
+                @endif
             @endforeach
         </div>
         {{-- <div class="row px-xl-5 pb-3 justify-content-center">

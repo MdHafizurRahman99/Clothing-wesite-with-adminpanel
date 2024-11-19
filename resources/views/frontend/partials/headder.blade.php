@@ -104,9 +104,9 @@
                     <li class="nav-item {{ Route::is('home') ? 'active' : '' }}">
                         <a class="nav-link" href="{{ route('home') }}">Home</a>
                     </li>
-                    <li class="nav-item {{ Route::is('buy-bulk.index') ? 'active' : '' }}">
+                    {{-- <li class="nav-item {{ Route::is('buy-bulk.index') ? 'active' : '' }}">
                         <a class="nav-link" href="{{ route('buy-bulk.index') }}">Buy Blank</a>
-                    </li>
+                    </li> --}}
                     <li class="nav-item {{ Route::is('catalog-order.index') ? 'active' : '' }}">
                         <a class="nav-link" href="{{ route('catalog-order.index') }}">Order Form Catalog</a>
                     </li>
@@ -119,8 +119,8 @@
                     <li class="nav-item {{ Route::is('about_us') ? 'active' : '' }}">
                         <a class="nav-link" href="#">About Us</a>
                     </li>
-                    <li class="nav-item {{ Route::is('contact_us') ? 'active' : '' }}">
-                        <a class="nav-link" href="#">Contact Us</a>
+                    <li class="nav-item {{ Route::is('contact') ? 'active' : '' }}">
+                        <a class="nav-link" href=" {{route('contact') }} ">Contact Us</a>
                     </li>
                 </ul>
                 <ul class="navbar-nav ml-auto">

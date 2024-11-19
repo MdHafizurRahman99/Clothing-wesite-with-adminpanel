@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Color;
+use App\Models\Product;
 use App\Models\ProductImage;
 use Illuminate\Http\Request;
 
@@ -26,12 +27,16 @@ class GalleryImageController extends Controller
     }
     public function createimages($product_id)
     {
-        // return $product_id;
+        $product = Product::findOrFail($product_id);
+        $colors = $product->colors;
+
+
+        // return $colors;
         return view(
             'admin.product.gallery-images.create',
             [
                 'product_id' => $product_id,
-                'colors' => Color::orderBy('id','asc')->get()
+                'colors' => $colors
             ]
         );
         //

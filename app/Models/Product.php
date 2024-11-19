@@ -15,6 +15,10 @@ class Product extends Model
         'id',
         'name',
         'display_name',
+        'size',
+        'customcolor',
+        'minimum_order',
+        'minimum_time_required',
         'product_for',
         'pattern_id',
         'productsizetype',
@@ -22,7 +26,19 @@ class Product extends Model
         'gender',
         'category_id',
         'image',
+        'design_image_front_side',
+        'design_image_back_side',
         'price',
         'description',
     ];
+
+    public function sizeDetails()
+    {
+        return $this->hasMany(ProductSizeDetail::class);
+    }
+
+    public function colors() {
+        return $this->belongsToMany(Color::class, 'product_colors', 'product_id', 'color_id');
+    }
+
 }

@@ -21,6 +21,7 @@
             align-items: center;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             transition: box-shadow 0.3s ease;
+            margin: 50px;
         }
 
         .category-image {
@@ -80,19 +81,20 @@
 @section('content')
     <!-- Categories Start -->
     <div class="container-fluid pt-5">
-        <h2 class="section-title position-relative text-uppercase mx-xl-5 mb-4"><span
-                class="bg-secondary pr-3">Categories</span></h2>
+        <h2 class="section-title position-relative text-uppercase mx-xl-5 mb-4">
+            {{-- <span class="bg-secondary pr-3">Categories</span> --}}
+            </h2>
         <div class="row px-xl-5 pb-3 justify-content-center">
             @foreach ($categories as $category)
                 @if ($products->where('category_id', $category->id)->where('product_for', 'Order Form Catalog')->isNotEmpty())
-                    <div class="col-lg-3 col-md-4 col-sm-6 pb-1 mt-2">
+                    {{-- <div class="col-lg-3 col-md-4 col-sm-6 pb-1 mt-2"> --}}
                         <a class="category-link" href="{{ route('shop.show', ['product_for'=>'Order Form Catalog','shop' => $category->id]) }}">
                             <div class="category-image-container">
                                 <img class="img-fluid category-image" src="{{ asset($category->image) }}"
                                     alt="{{ $category->category_name }}">
                             </div>
                         </a>
-                    </div>
+                    {{-- </div> --}}
                 @endif
             @endforeach
         </div>

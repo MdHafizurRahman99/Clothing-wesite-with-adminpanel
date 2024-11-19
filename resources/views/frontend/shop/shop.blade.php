@@ -142,7 +142,7 @@
 
 
             <!-- Shop Product Start -->
-            <div class="col-lg-9 col-md-8">
+            <div class="col-lg-12 col-md-12">
                 <div class="row pb-3">
                     {{-- <div class="col-12 pb-1">
                         <div class="d-flex align-items-center justify-content-between mb-4">
@@ -216,7 +216,7 @@
                     </div> --}}
                     @if (isset($products))
                         @foreach ($products as $product)
-                            <div class="col-lg-4 col-md-6 col-sm-6 pb-1">
+                            <div class="col-lg-3 col-md-4 col-sm-6 pb-1">
                                 <div class="product-container product-item bg-light mb-4">
                                     <a href="{{ route('shop.details', ['id' => $product->id]) }}">
                                         <div class="product-img position-relative overflow-hidden">
@@ -234,20 +234,21 @@
                                                         class="fa fa-search"></i></a>
                                             </div> --}}
                                         </div>
-                                        @php
+                                        {{-- @php
                                             $pattern = App\Models\Pattern::where('id', $product->pattern_id)->first();
                                             $category = App\Models\Category::where(
                                                 'id',
                                                 $product->category_id,
                                             )->first();
-                                        @endphp
+                                        @endphp --}}
                                         <div class=" product-name text-center py-4 ">
                                             <a class="h6 text-decoration-none "
                                                 href="{{ route('shop.details', ['id' => $product->id]) }}">
-                                                {{ isset($pattern->name) ? $pattern->name : '' }}
+                                                {{ $product->display_name }}
+                                                {{-- {{ isset($pattern->name) ? $pattern->name : '' }}
                                                 {{ $product->name }}
                                                 {{ isset($product->weight) ? $product->weight . 'Gsm' : '' }}
-                                                {{ isset($category->category_name) ? $category->category_name : '' }}
+                                                {{ isset($category->category_name) ? $category->category_name : '' }} --}}
                                             </a>
                                             <div class="d-flex align-items-center justify-content-center mt-2">
                                                 {{-- <h5>$123.00</h5>

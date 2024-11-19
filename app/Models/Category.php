@@ -12,5 +12,7 @@ class Category extends Model
         'category_name',
         'description',
         'image',
+        'front_image',
+        'back_image',
     ];
 }

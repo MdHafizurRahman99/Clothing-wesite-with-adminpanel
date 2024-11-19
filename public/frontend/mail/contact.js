@@ -15,13 +15,15 @@ $(function () {
             $this.prop("disabled", true);
 
             $.ajax({
-                url: "contact.php",
+                url: "/contact-us/send",
                 type: "POST",
                 data: {
                     name: name,
                     email: email,
                     subject: subject,
-                    message: message
+                    message: message,
+                    _token: '{{ csrf_token() }}'
+
                 },
                 cache: false,
                 success: function () {

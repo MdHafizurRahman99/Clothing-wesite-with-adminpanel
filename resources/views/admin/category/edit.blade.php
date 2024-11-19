@@ -105,15 +105,48 @@
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label for="work">Category Image:</label>
-                                        <img src="{{ asset($category->image) }}" alt="Thumbnail Image" id="thumbnail"
+                                        <img src="{{ asset($category->image) }}" alt="Thumbnail Image"
                                             class="thumbnail">
                                     </div>
                                 </div>
+
                                 <div class="form-group">
                                     <label for="image">Upload an Image to Change Previous one </label>
                                     <input required type="file" id="image" name="category_image"
                                         class="form-control">
                                     @error('category_image')
+                                        <p class="text-danger">{{ $message }}</p>
+                                    @enderror
+
+                                </div>
+                                <h4 class="heading pb-2">Design Images</h4>
+                                <div class="col-md-4">
+                                    <label >Front Side:</label>
+                                    <div class="form-group">
+                                        <img src="{{ asset($category->front_image) }}" alt=" Image"
+                                            class="thumbnail">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="image">Upload a png </label>
+                                    <input required type="file" id="image" name="front_image"
+                                        class="form-control">
+                                    @error('front_image')
+                                        <p class="text-danger">{{ $message }}</p>
+                                    @enderror
+                                </div>
+                                <div class="col-md-4">
+                                    <label >Back Side:</label>
+                                    <div class="form-group">
+                                        <img src="{{ asset($category->back_image) }}" alt=" Image"
+                                            class="thumbnail">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="image">Upload a png </label>
+                                    <input required type="file" id="image" name="back_image"
+                                        class="form-control">
+                                    @error('back_image')
                                         <p class="text-danger">{{ $message }}</p>
                                     @enderror
                                 </div>

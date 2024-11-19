@@ -62,10 +62,10 @@ class CartController extends Controller
         if (!$inventory || $inventory->quantity < $request->quantity) {
             // return back()->withErrors(['error' => "Insufficient stock for '$size - $color'. Please try to order"]);
             // return back()->withErrors(['error' => "We apologize, but there is currently limited stock available for '$request->size - $request->color'. Please adjust the quantity ."]);
-            return response()->json([
-                'error' => true,
-                'message' => "We apologize, there is currently Insufficient stock available for '{$request->size} - {$request->color}'. Please adjust the quantity."
-            ], 400);
+                return response()->json([
+                    'error' => true,
+                    'message' => "We apologize, there is currently Insufficient stock available for '{$request->size} - {$request->color}'. Please adjust the quantity."
+                ], 400);
         }
 
 
@@ -146,9 +146,14 @@ class CartController extends Controller
                 if ($key === 'product_id') {
                     continue;
                 }
-                // Check if the key exists in the cached data array
+                // Check if the key exists in the cached data array and handle it properly
                 if (!is_null($value) && is_numeric($value)) {
-                    $cachedDataInputValues[$key] += $value; // Add the request data value to the cached data value
+                    if (isset($cachedDataInputValues[$key])) {
+                        $cachedDataInputValues[$key] += $value; // Add the request data value to the cached data value
+                    } else {
+                        // Initialize the key if it doesn't exist
+                        $cachedDataInputValues[$key] = $value;
+                    }
                 }
             }
             $postData = [
@@ -186,11 +191,13 @@ class CartController extends Controller
         ]);
         //
     }
+
+
     public function reorder($order)
     {
         // Cache::flush();
         // session()->flush();
-// return 'hello';
+        // return 'hello';
         $orderDetails = OrderDetail::where('order_id', $order)->get();
         foreach ($orderDetails as $orderDetail) {
             // return $orderDetails;
@@ -210,15 +217,15 @@ class CartController extends Controller
             // Assuming $orderDetail->product_id is an array of product IDs
             // if ($orderDetail->product_id) {
 
-                // Get the product IDs from the orderDetail
-                $newProductIds = $orderDetail->product_id;
-                // return $newProductIds;
-                // Convert $newProductIds to an array if it's not already one
-                if (!is_array($newProductIds)) {
-                    $newProductIds = [$newProductIds];
-                }
-                // Merge the new product IDs with the existing ones and remove duplicates
-                $productIds = array_unique(array_merge($productIds, $newProductIds));
+            // Get the product IDs from the orderDetail
+            $newProductIds = $orderDetail->product_id;
+            // return $newProductIds;
+            // Convert $newProductIds to an array if it's not already one
+            if (!is_array($newProductIds)) {
+                $newProductIds = [$newProductIds];
+            }
+            // Merge the new product IDs with the existing ones and remove duplicates
+            $productIds = array_unique(array_merge($productIds, $newProductIds));
             // }
             session(['product_ids' => $productIds]);
 
@@ -227,7 +234,7 @@ class CartController extends Controller
             // return session('product_ids');
             $totalProduct = session('totalProduct');
             // return $totalProduct;
-            $input=[];
+            $input = [];
             $input = ['product_id' => $orderDetail->product_id, $orderDetail->size . '_' . $orderDetail->color => $orderDetail->quantity];
             // return $input;
 
@@ -275,10 +282,10 @@ class CartController extends Controller
                         continue;
                     }
                     if ($key === 'S_DarkGoldenRod') {
-                    // return $value;
-                                // return $cachedDataInputValues;
+                        // return $value;
+                        // return $cachedDataInputValues;
 
-                }
+                    }
                     // return $orderDetailInputValues;
                     // Check if the key exists in the cached data array
                     if (!is_null($value) && is_numeric($value)) {
@@ -294,8 +301,7 @@ class CartController extends Controller
                     // Add more data as needed
                 ];
                 cache()->put($productCacheKey, $postData, now()->addMinutes(1440));
-            }
-            else {
+            } else {
 
                 $postData = [
                     'input' => $input,
@@ -312,8 +318,8 @@ class CartController extends Controller
         // Retrieve cached data
         // $cachedData = cache()->get($productCacheKey);
         // return $cachedData;
-                    // return $totalProduct;
-                    // return $productIds;
+        // return $totalProduct;
+        // return $productIds;
 
         return redirect()->route('shop.product-cart')->with('message', 'Products added to cart successFully');
         // $request->session()->flash('message', 'Item added to cart successfully!');

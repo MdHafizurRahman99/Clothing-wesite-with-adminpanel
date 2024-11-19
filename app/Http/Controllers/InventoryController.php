@@ -66,12 +66,15 @@ class InventoryController extends Controller
                 $quantityArray[$size][$color] = $quantityValue;
             }
         }
+
+        $product = Product::findOrFail($product_id);
+        $colors = $product->colors;
         return view(
             'admin.product.inventory.create',
             [
                 'product' => Product::find($product_id),
                 'quentity' => $quantityArray,
-
+                'colors' => $colors
             ]
         );
 
@@ -103,9 +106,7 @@ class InventoryController extends Controller
         }
 
         // products weights
-
-
-
+        // dd($request);
         // $inventory = Inventory::create([
         //     'product_id' => $request->product_id,
         //     'size' => $request->size,
@@ -114,24 +115,26 @@ class InventoryController extends Controller
         //     'quantity' => $request->quantity,
         // ]);
         Inventory::where('product_id', $request->product_id)->delete();
-
+        $requestData = $request->except(['_token', 'product_id']); // Exclude _token and product_id
 
         // $suffixes = ['Aquamarine', 'DarkGoldenRod', 'Blue', 'Brown', 'Purple', 'White'];
-        foreach ($request->all() as $key => $value) {
+        foreach ($requestData as $key => $value) {
+            // Split the key to separate size and color
+            list($size, $color) = explode('_', $key);
             // return $key;
             // Check if the key starts with "XS_", "S_", "M_", "L_", or "XL_"
-            if (preg_match('/^(XS|S|M|L|XL)_(.+)$/', $key, $matches)) {
-                // dd($matches[1]);
-                // Extract size and color
-                $size = $matches[1];
-                $color = $matches[2];
-                $productQuuentity = Inventory::Create([
-                    'product_id' => $request->product_id,
-                    'size' => $size,
-                    'color' => $color,
-                    'quantity' => $value,
-                ]);
-            }
+            // if (preg_match('/^(XS|S|M|L|XL)_(.+)$/', $key, $matches)) {
+            // dd($matches[1]);
+            // Extract size and color
+            // $size = $matches[1];
+            // $color = $matches[2];
+            $productQuuentity = Inventory::Create([
+                'product_id' => $request->product_id,
+                'size' => $size,
+                'color' => $color,
+                'quantity' => $value,
+            ]);
+            // }
         }
 
 

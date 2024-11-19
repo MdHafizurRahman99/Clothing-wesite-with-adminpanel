@@ -21,6 +21,8 @@
             align-items: center;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             transition: box-shadow 0.3s ease;
+            margin: 50px;
+
         }
 
         .gender-image {
@@ -58,6 +60,8 @@
             align-items: center;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             transition: box-shadow 0.3s ease;
+            margin: 50px;
+
         }
 
         .gender-image {
@@ -85,10 +89,10 @@
         <div class="row px-xl-5 pb-3 justify-content-center">
             @php
             $genders=['Man','Women','Kids','Unisex']
-            @endphpz
+            @endphp
             @foreach ($genders as $gender)
             @if ($products->where('gender', $gender)->isNotEmpty())
-            <div class="col-lg-3 col-md-4 col-sm-6 pb-1 mt-2">
+            {{-- <div class="col-lg-3 col-md-4 col-sm-6 pb-1 mt-2"> --}}
                 <a class="gender-link" href="{{ route('shop.products', ['product_for'=>'Order Form Catalog','category_id' => $category_id, 'gender' => $gender]) }}">
                     <div class="gender-image-container">
                         @if($gender=='Man')
@@ -103,7 +107,7 @@
 
                     </div>
                 </a>
-            </div>
+            {{-- </div> --}}
         @endif
             @endforeach
         </div>

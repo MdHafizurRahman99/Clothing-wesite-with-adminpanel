@@ -11,6 +11,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\ClientRequestController;
 use App\Http\Controllers\ColorController;
+use App\Http\Controllers\ContactController;
 use App\Http\Controllers\CustomDesignController;
 use App\Http\Controllers\CustomOrderController;
 use App\Http\Controllers\HomeController;
@@ -34,6 +35,7 @@ use App\Http\Controllers\StripeController;
 use App\Http\Controllers\TryTestController;
 use App\Http\Controllers\UserProfileController;
 use App\Http\Controllers\MessagesController;
+use App\Http\Controllers\ProductSizeController;
 use App\Models\StaffSchedule;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
@@ -76,12 +78,14 @@ Route::middleware('mailverified')->group(function () {
 
     Route::resource('custom-order', CustomOrderController::class);
     Route::post('/check-email', [CustomOrderController::class, 'checkEmail'])->name('check.email');
-
     Route::resource('catalog-order', CatalogOrderController::class);
     Route::match(['get', 'post'], '/botman', [BotManController::class, 'handle']);
     Route::resource('custom-product-design', CustomDesignController::class);
 
     Route::resource('home', HomeController::class);
+    Route::get('/contact-us', [HomeController::class, 'contact'])->name('contact');
+    Route::post('/contact-us/send', [ContactController::class, 'sendContactForm'])->name('contact.send');
+
     Route::resource('shop', ShopController::class);
     Route::get('shop/products/{category_id}/{gender}/', [ShopController::class, 'products'])->name('shop.products');
 
@@ -166,6 +170,7 @@ Route::middleware('auth')->group(function () {
     Route::get('create/inventory/{product_id}', [InventoryController::class, 'createInventory'])->name('create.inventory')->middleware('permission:product.add');
     Route::get('product/inventories/{product_id}', [InventoryController::class, 'productInventories'])->name('product.inventories')->middleware('permission:product.add');
     Route::resource('inventory', InventoryController::class);
+    Route::resource('productSize', ProductSizeController::class);
 
     Route::get('product/create', [ProductController::class, 'create'])->name('product.create')->middleware('permission:product.add');
     Route::get('product/request', [ProductController::class, 'createRequest'])->name('product.request')->middleware('permission:product.view');
@@ -175,6 +180,9 @@ Route::middleware('auth')->group(function () {
     Route::get('product/index', [ProductController::class, 'index'])->name('product.index')->middleware('permission:product.view');
     Route::get('my-requests', [ProductController::class, 'userIndex'])->name('user.index')->middleware('permission:product.add');
     Route::delete('product/destroy/{product}', [ProductController::class, 'destroy'])->name('product.destroy')->middleware('permission:product.delete');
+
+    Route::get('contact-us/index', [ContactController::class, 'index'])->name('contact-us.index')->middleware('permission:contact_us.view');
+    Route::get('contact-us/show', [ContactController::class, 'show'])->name('contact-us.show')->middleware('permission:contact_us.view');
 
 
     Route::get('category/create', [CategoryController::class, 'create'])->name('category.create')->middleware('permission:category.add');

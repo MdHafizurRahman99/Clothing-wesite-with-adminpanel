@@ -131,18 +131,18 @@
 
 
         /*
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    .table-container {
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            display: inline-block;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            vertical-align: top;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            width: 100%;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    }
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        .table-container {
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                display: inline-block;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                vertical-align: top;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                width: 100%;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        }
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    .add-to-cart {
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        display: inline-block;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        vertical-align: top;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        margin-top: 5px;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        margin-left: calc(100% - 100px);
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    } */
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        .add-to-cart {
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            display: inline-block;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            vertical-align: top;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            margin-top: 5px;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            margin-left: calc(100% - 100px);
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        } */
     </style>
 @endsection
 @section('content')
@@ -211,7 +211,6 @@
 
                     <h3>
                         {{ $product->display_name }}
-
                     </h3>
                     {{-- <div class="d-flex mb-3">
                         <div class="text-primary mr-2">
@@ -224,11 +223,46 @@
                         <small class="pt-1">(99 Reviews)</small>
                     </div> --}}
                     {{-- <h3 class="font-weight-semi-bold mb-4">$150.00</h3> --}}
+
+                    @php
+                        // $sizes = ['XS', 'S', 'M', 'L', 'XL'];
+                        $sizes = $product->sizeDetails->keyBy('size');
+
+                        $existingSizeDetails = $product->sizeDetails->filter(function ($detail) {
+                            return $detail->height || $detail->weight;
+                        });
+                    @endphp
+
+                    @if ($existingSizeDetails->isNotEmpty())
+                        <div class="table-responsive">
+                            <table class="table table-bordered">
+                                <thead class="thead-light">
+                                    <tr>
+                                        <th>Size</th>
+                                        <th>Height (cm)</th>
+                                        <th>Width (cm)</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach ($existingSizeDetails as $sizeDetail)
+                                        <tr>
+                                            <td>{{ $sizeDetail->size }}</td>
+                                            <td>{{ $sizeDetail->height ?? 'N/A' }}</td>
+                                            <td>{{ $sizeDetail->weight ?? 'N/A' }}</td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    @else
+                        {{-- <p>No height or width data available.</p> --}}
+                    @endif
+
                     <a href="#tab-pane-2" id="descriptionButton">Description</a>
 
-                    <img data-scroll-to="#tab-pane-2" class="arrow-down"
+                    {{-- <img data-scroll-to="#tab-pane-2" class="arrow-down"
                         src="https://cdn11.bigcommerce.com/s-lqiq2tqil5/stencil/90a14080-f3cf-013c-939a-26a0343d0efa/e/bc1bcf60-d99c-013a-0c0c-0a826e8002bf/icons/icon-arrow-down.svg"
-                        alt="Arrow Down">
+                        alt="Arrow Down"> --}}
                     {{-- <p class="mb-4">{{ $product->description }}</p> --}}
                     <div class="form-group">
                         <label for="name">Product Discount Price on Quantity:</label>
@@ -281,15 +315,32 @@
                             <p class="text-danger">{{ $message }}</p>
                         @enderror
                     </div>
+
+                    @if (!empty($product->size))
+                        <div class="d-flex mb-3">
+                            <strong class="text-dark mr-3">Measurements:</strong>
+                            <label>{{ $product->size }}</label>
+                        </div>
+                    @endif
+
                     <div class="d-flex mb-3">
                         <strong class="text-dark mr-3">Sizes:</strong>
                         <form id="sizeForm">
-                            <div class="custom-control custom-radio custom-control-inline">
-                                <input type="radio" class="custom-control-input" id="size-1" name="size"
-                                    value="XS">
-                                <label class="custom-control-label" for="size-1">XS</label>
-                            </div>
-                            <div class="custom-control custom-radio custom-control-inline">
+                            @php
+                                $sizes = $product->sizeDetails->keyBy('size');
+                                $i = 1;
+                            @endphp
+                            @foreach ($sizes as $size)
+                                <div class="custom-control custom-radio custom-control-inline">
+                                    <input type="radio" class="custom-control-input" id="size-{{ $i }}"
+                                        name="size" value="{{ $size->size }}">
+                                    <label class="custom-control-label"
+                                        for="size-{{ $i }}">{{ $size->size }}</label>
+                                </div>
+                                @php $i++; @endphp
+                            @endforeach
+
+                            {{-- <div class="custom-control custom-radio custom-control-inline">
                                 <input type="radio" class="custom-control-input" id="size-2" name="size"
                                     value="S">
                                 <label class="custom-control-label" for="size-2">S</label>
@@ -308,7 +359,8 @@
                                 <input type="radio" class="custom-control-input" id="size-5" name="size"
                                     value="XL">
                                 <label class="custom-control-label" for="size-5">XL</label>
-                            </div>
+                            </div> --}}
+
                             <input type="hidden" id="productId" value="{{ $product->id }}">
                         </form>
                     </div>
@@ -389,19 +441,16 @@
                             ];
                         @endphp --}}
                         <div class="color-rows">
-                            @foreach ($colorImages as $key => $color)
-                                @if ($key != null)
-                                    {{-- @dd($key) --}}
-
-                                    <div class="color-cell" style="background-color: {{ $key }};"
-                                        onclick="selectColor('{{ $key }}')"></div>
+                            @foreach ($colors as $color)
+                                {{-- @foreach ($colorImages as $key => $color) --}}
+                                @if ($color->name != null)
+                                    {{-- @dd($color->name) --}}
+                                    <div class="color-cell" style="background-color: {{ $color->name }};"
+                                        onclick="selectColor('{{ $color->name }}')"></div>
                                 @endif
                             @endforeach
                         </div>
                     </div>
-
-
-
 
                     <div class="d-flex align-items-center mb-4 pt-2">
                         <div class="input-group quantity mr-3" style="width: 130px;">
@@ -422,6 +471,14 @@
                         </button>
                         <a href="#tab-pane-1" id="buyBulkButton" class="btn btn-primary px-3 m-2">
                             Buy Blank
+                        </a>
+                        @php
+                            session(['custom_design_product_id' => $product->id]);
+                        @endphp
+
+                        <a href="{{ route('shop.custom-design', ['product_id' => $product->id]) }}" id="buyBulkButton" class="btn btn-primary px-3 m-2">
+                            Design
+
                         </a>
 
 
@@ -528,10 +585,12 @@
                                 <!-- Rows and columns will be added dynamically by JavaScript -->
                             </table> --}}
                                 @php
-                                    $colors = ['Aquamarine', 'DarkGoldenRod', 'Blue', 'Brown', 'Purple', 'White'];
+                                    // $colors = ['Aquamarine', 'DarkGoldenRod', 'Blue', 'Brown', 'Purple', 'White'];
+                                    $colorNames = $colors->pluck('name')->toArray();
+
                                     $productPrice = 10;
                                 @endphp
-                                @if ($product->productsizetype == 1)
+                                {{-- @if ($product->productsizetype == 1)
                                     @php
                                         $sizes = ['XS', 'S', 'M', 'L', 'XL'];
                                     @endphp
@@ -539,20 +598,23 @@
                                     @php
                                         $sizes = ['8', '10', '12', '14', '18'];
                                     @endphp
-                                @endif
+                                @endif --}}
+                                @php
+                                    $sizes = $product->sizeDetails->keyBy('size');
+                                @endphp
                                 <table id="productTable">
                                     <thead>
                                         <tr>
                                             <th>Colour \ Size</th>
                                             @foreach ($sizes as $size)
-                                                <th>{{ $size }}</th>
+                                                <th>{{ $size->size }}</th>
                                             @endforeach
 
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <?php $data = session()->get('data'); ?>
-                                        @foreach ($colors as $color)
+                                        @foreach ($colorNames as $color)
                                             <tr>
                                                 <td>
                                                     <span class="color-circle"
@@ -561,29 +623,23 @@
                                                     {{ $color }}
                                                 </td>
 
-
-                                                {{-- @dd($data); --}}
+                                                {{-- <dd>{{ $quentity }}</dd> --}}
+                                                {{-- @dd($sizes); --}}
                                                 @foreach ($sizes as $size)
                                                     <td>
                                                         <input type="number"
-                                                            name="{{ $size }}_{{ $color }}"
-                                                            value="{{ isset($data[$size . '_' . $color]) ? $data[$size . '_' . $color] : '' }}"
-                                                            {{ isset($quentity[$size][$color]) && $quentity[$size][$color] > '0' ? '' : 'disabled' }}
-                                                            placeholder=" {{ isset($quentity[$size][$color]) ? $quentity[$size][$color] : '' }}">
+                                                            name="{{ $size->size }}_{{ $color }}"
+                                                            value="{{ isset($data[$size->size . '_' . $color]) ? $data[$size->size . '_' . $color] : '' }}"
+                                                            {{ isset($quentity[$size->size][$color]) && $quentity[$size->size][$color] > '0' ? '' : 'disabled' }}
+                                                            placeholder=" {{ isset($quentity[$size->size][$color]) ? $quentity[$size->size][$color] : '' }}">
                                                     </td>
                                                 @endforeach
                                             </tr>
                                         @endforeach
                                         <tr>
                                             <td>Total Price:</td>
-                                            @foreach ($sizes as $index => $size)
-                                                @if ($index < count($sizes) - 1)
-                                                    <td></td>
-                                                @endif
-                                            @endforeach
+                                            <td colspan="{{ count($sizes) - 1 }}"></td>
                                             <td>
-                                                {{-- <input type="hidden" readonly name="product_price"
-                                                    value="{{ $productPrice }}"> --}}
                                                 <input id="totalPrice" type="text" readonly name="total_price"
                                                     value="$0">
                                             </td>
@@ -958,7 +1014,14 @@
                         },
                         body: JSON.stringify(cartItem)
                     })
-                    .then(response => response.json())
+                    .then(response => {
+                        // if (!response.ok) {
+                        //     return response.text().then(text => {
+                        //         throw new Error(`Server Error: ${text}`);
+                        //     });
+                        // }
+                        return response.json();
+                    })
                     .then(data => {
                         console.log('Success:', data);
                         if (data.error == true) {
@@ -967,10 +1030,11 @@
                             window.location.href = data.redirect_url;
                         }
                     })
-                    .catch((error) => {
-                        console.error('Error:', error);
-                        alert(error.message);
-                    });
+                // .catch((error) => {
+                //     // console.error( data.error);
+
+                //     alert(error.message);
+                // });
             });
         });
     </script>
@@ -1056,28 +1120,53 @@
                     //     ]
                     // };
 
+                    // Retrieve images for the selected color
                     const imagesForSelectedColor = colorImages[selectedColor];
 
-                    // Clear existing carousel items
-                    carouselInner.innerHTML = '';
-                    // console.log(asset('/'));
-                    // Populate carousel with new set of images
-                    imagesForSelectedColor.forEach((imageUrl, index) => {
-                        const carouselItem = document.createElement('div');
-                        carouselItem.classList.add('carousel-item');
-                        if (index === 0) {
-                            carouselItem.classList.add('active');
-                        }
-                        const img = document.createElement('img');
-                        var baseURL = '/';
-                        imageUrl = `${baseURL}${imageUrl}`;
+                    // Check if imagesForSelectedColor is defined and is an array
+                    if (imagesForSelectedColor && imagesForSelectedColor.length > 0) {
+                        // Clear existing carousel items
+                        carouselInner.innerHTML = '';
 
-                        img.src = `${imageUrl}`;
-                        img.classList.add('w-100', 'h-100');
-                        img.alt = 'Image';
-                        carouselItem.appendChild(img);
-                        carouselInner.appendChild(carouselItem);
-                    });
+                        // Populate carousel with new set of images
+                        imagesForSelectedColor.forEach((imageUrl, index) => {
+                            const carouselItem = document.createElement('div');
+                            carouselItem.classList.add('carousel-item');
+
+                            if (index === 0) {
+                                carouselItem.classList.add('active');
+                            }
+
+                            const img = document.createElement('img');
+                            var baseURL = '/';
+                            imageUrl = `${baseURL}${imageUrl}`;
+
+                            img.src = `${imageUrl}`;
+                            img.classList.add('w-100', 'h-100');
+                            img.alt = 'Image';
+
+                            carouselItem.appendChild(img);
+                            carouselInner.appendChild(carouselItem);
+                        });
+                    } else {
+                        // Handle the case when no images are found for the selected color
+                        console.error(
+                            'No images found for the selected color or the colorImages object is undefined'
+                        );
+                        // Optionally display a default image or message
+                        // const defaultCarouselItem = document.createElement('div');
+                        // defaultCarouselItem.classList.add('carousel-item', 'active');
+
+                        // const defaultImg = document.createElement('img');
+                        // defaultImg.src = '/path/to/default/image.jpg'; // Path to your default image
+                        // defaultImg.classList.add('w-100', 'h-100');
+                        // defaultImg.alt = 'Default Image';
+
+                        // defaultCarouselItem.appendChild(defaultImg);
+                        // carouselInner.appendChild(defaultCarouselItem);
+                    }
+
+
                 });
             });
 

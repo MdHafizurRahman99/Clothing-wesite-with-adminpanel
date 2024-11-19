@@ -105,27 +105,31 @@
                                         $pattern = App\Models\Pattern::find($product->pattern_id);
                                     @endphp
                                     <span>{{ $pattern->name }}</span>
-                                   
+
                                     @error('name')
                                         <p class="text-danger">{{ $message }}</p>
                                     @enderror
                                 </div> --}}
 
-                                    @php
+                                    {{-- @php
                                         $colors = ['Aquamarine', 'DarkGoldenRod', 'Blue', 'Brown', 'Purple', 'White'];
-                                    @endphp
-                                    @if ($product->productsizetype == 2)
+                                    @endphp --}}
+                                    {{-- @if ($product->productsizetype == 2)
                                         @php
                                             $sizes = ['8', '10', '12', '14', '18'];
                                         @endphp
                                     @else
                                         @php
-                                            $sizes = ['XS', 'S', 'M', 'L', 'XL'];
+                                            $sizes = ['XS', 'S', 'M', 'L', 'XL','XXL'];
                                         @endphp
-                                    @endif
+                                    @endif --}}
+                                        @php
+                                            $sizes = $product->sizeDetails->keyBy('size');
+                                        @endphp
+                                        {{-- @dd($sizes) --}}
                                     {{-- <div class="form-group">
                                     <label for="product_pattern">Product Size</label>
-                                 
+
                                     <select class="form-control" name="size" id="product_pattern">
                                         <option value="">Select Option</option>
                                         @foreach ($sizes as $size)
@@ -155,15 +159,13 @@
 
                                     <div class="form-group">
                                         <label for="name">Product Quentity</label>
-                                        @php
-                                            $productPrice = 10;
-                                        @endphp
+
                                         <table id="productTable">
                                             <thead>
                                                 <tr>
                                                     <th>Colour\Size</th>
                                                     @foreach ($sizes as $size)
-                                                        <th>{{ $size }}</th>
+                                                        <th>{{ $size->size }}</th>
                                                     @endforeach
                                                 </tr>
                                             </thead>
@@ -173,14 +175,14 @@
                                                         <td>
                                                             {{-- <span class="color-circle"
                                                             style="background-color:{{ $color }}"></span> --}}
-                                                            {{ $color }}
+                                                            {{ $color->name }}
                                                         </td>
                                                         @foreach ($sizes as $size)
                                                             <td>
                                                                 <input type="text"
-                                                                    name="{{ $size }}_{{ $color }}"
-                                                                    value="{{ isset($quentity[$size][$color]) ? $quentity[$size][$color] : '' }}"
-                                                                    placeholder="{{ isset($quentity[$size][$color]) ? $quentity[$size][$color] : '' }}">
+                                                                    name="{{ $size->size }}_{{ $color->name }}"
+                                                                    value="{{ isset($quentity[$size->size][$color->name]) ? $quentity[$size->size][$color->name] : '' }}"
+                                                                    placeholder="{{ isset($quentity[$size->size][$color->name]) ? $quentity[$size->size][$color->name] : '' }}">
                                                             </td>
                                                         @endforeach
                                                     </tr>

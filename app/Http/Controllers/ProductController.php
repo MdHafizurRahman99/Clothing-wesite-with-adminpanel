@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
+use App\Models\Color;
 use App\Models\Inventory;
 use App\Models\Pattern;
 use App\Models\PriceRange;
@@ -13,6 +14,8 @@ use Illuminate\Support\Str;
 use App\Models\Product;
 use App\Models\ProductImage;
 use App\Models\ProductQuentity;
+use App\Models\ProductSize;
+use App\Models\ProductSizeDetail;
 use Illuminate\Support\Facades\Validator;
 
 class ProductController extends Controller
@@ -25,7 +28,8 @@ class ProductController extends Controller
         return view(
             'admin.product.list',
             [
-                'products' => Product::all(),
+                'products' =>  Product::orderBy('created_at', 'desc')->get(),
+                // 'products' => Product::all(),
             ]
         );
         //
@@ -40,9 +44,11 @@ class ProductController extends Controller
         // return $images;
         return view('admin.product.create', [
             'categories' => Category::all(),
-            'patterns' => Pattern::all()
+            'patterns' => Pattern::all(),
+            'colors' => Color::all(),
+            'sizetype1' => ProductSize::where('type', '1')->get(),
+            'sizetype2' => ProductSize::where('type', '2')->get(),
         ]);
-        //
     }
 
     /**
@@ -50,8 +56,9 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-
-
+        // return $request;
+        //$selectedColors = $request->input('colors', []);
+        // return $selectedColors;
         $validator = Validator::make($request->all(), [
             'name' => 'required',
             'category_id' => 'required',
@@ -113,12 +120,13 @@ class ProductController extends Controller
             // return response()->json(['errors' => $validator->errors()], 400);
             return redirect()->back()->withErrors($validator)->withInput();
         }
+
         // return $request;
         $category = Category::find($request->category_id);
 
-        $categoryName = $category->category_name; // Example category name
-        $productName = $request->name; // Example product name
-        $weight =  $request->weight; // Example weight
+        $categoryName = $category->category_name;
+        $productName = $request->name;
+        $weight =  $request->weight;
 
         // Function to extract first letters of words in a string
         function extractFirstLetters($string)
@@ -140,26 +148,68 @@ class ProductController extends Controller
         $category = Category::where('id', $request->category_id)->first();
 
         $patternName = isset($pattern->name) ? $pattern->name : '';
-        $productName = $request->name; // Assuming $product->name is always set
+        $productName = $request->name;
+        $gender = $request->gender;
         $productWeight = isset($request->weight) ? $request->weight . 'Gsm' : '';
         $categoryName = isset($category->category_name) ? $category->category_name : '';
 
-        $displayName = trim("$patternName $productName $productWeight $categoryName");
+        $displayName = trim("$gender $patternName $productName $productWeight $categoryName");
 
-        $image = $this->saveImage($request);
+        // $image = $this->saveImage($request);
+        $image = $this->saveImage($request->image);
+        $design_image_front_side = $this->saveDesignImage($request->design_image_front_side);
+        $design_image_back_side = $this->saveDesignImage($request->design_image_back_side);
         $product = Product::create([
             'id' => $key,
             'name' => $request->name,
             'display_name' => $displayName,
+            'customcolor' => $request->customcolor,
             'product_for' => $request->product_for,
             'pattern_id' => $request->pattern_id,
+            'size' => $request->size,
             'productsizetype' => $request->productsizetype,
             'weight' => $request->weight,
             'gender' => $request->gender,
             'category_id' => $request->category_id,
             'image' => $image,
+            'design_image_front_side' => $design_image_front_side,
+            'design_image_back_side' => $design_image_back_side,
             'description' => $request->description,
         ]);
+
+        if ($request->customcolor == 'Yes') {
+
+            $product->update(
+                [
+                    'minimum_order' => $request->minimum_order,
+                    'minimum_time_required' => $request->minimum_time_required,
+                ]
+            );
+        }
+
+        $sizes = $request->input('sizes', []);
+
+        foreach ($sizes as $size => $sizeData) {
+            // @dd($sizeData);
+            if (isset($sizeData['selected'])) {
+                ProductSizeDetail::updateOrCreate(
+                    [
+                        'product_id' => $product->id,
+                        'size' => $size,
+                    ],
+                    [
+                        'height' => $sizeData['height'],
+                        'weight' => $sizeData['weight'],
+                    ]
+                );
+            }
+        }
+
+        $selectedColors = $request->input('colors', []);
+
+        // Attach or sync the colors with the product
+        $product->colors()->sync($selectedColors);
+
 
         $images = session()->get('product_image');
         if (isset($images)) {
@@ -321,6 +371,10 @@ class ProductController extends Controller
             'prices' => $priceArray,
             'minQuantity' => $minQuantityArray,
             'maxQuantity' => $maxQuantityArray,
+            'colors' => Color::all(),
+            'sizetype1' => ProductSize::where('type', '1')->get(),
+            'sizetype2' => ProductSize::where('type', '2')->get(),
+
         ]);
     }
 
@@ -358,15 +412,21 @@ class ProductController extends Controller
         $category = Category::where('id', $product->category_id)->first();
 
         $patternName = isset($pattern->name) ? $pattern->name : '';
-        $productName = $request->name; // Assuming $product->name is always set
+        $productName = $request->name;
+        $gender = $request->gender;
+
         $productWeight = isset($request->weight) ? $product->weight . 'Gsm' : '';
         $categoryName = isset($category->category_name) ? $category->category_name : '';
+        $displayName = trim("$gender $patternName $productName $productWeight $categoryName");
 
-        $displayName = trim("$patternName $productName $productWeight $categoryName");
         // return $displayName;
         $product->update([
             'name' => $request->name,
             'display_name' => $displayName,
+            'size' => $request->size,
+            'customcolor' => $request->customcolor,
+            'minimum_order' => $request->minimum_order,
+            'minimum_time_required' => $request->minimum_time_required,
             'product_for' => $request->product_for,
             'weight' => $request->weight,
             'gender' => $request->gender,
@@ -376,14 +436,63 @@ class ProductController extends Controller
             'productsizetype' => $request->productsizetype,
         ]);
 
+        $sizes = $request->input('sizes', []);
+
+        foreach ($sizes as $size => $sizeData) {
+            if (isset($sizeData['selected'])) {
+                ProductSizeDetail::updateOrCreate(
+                    [
+                        'product_id' => $product->id,
+                        'size' => $size,
+                    ],
+                    [
+                        'height' => $sizeData['height'],
+                        'weight' => $sizeData['weight'],
+                    ]
+                );
+            } else {
+                // If a size is unchecked, remove it from the database
+                ProductSizeDetail::where('product_id', $product->id)
+                    ->where('size', $size)
+                    ->delete();
+            }
+        }
+        // Get the selected colors from the form
+        $selectedColors = $request->input('colors', []);
+
+        // Sync the selected colors with the product
+        $product->colors()->sync($selectedColors);
+
         if (isset($request->image)) {
             if (isset($product->image)) {
                 unlink($product->image);
             }
 
-            $image = $this->saveImage($request);
+            $image = $this->saveImage($request->image);
             $product->update([
                 'image' => $image,
+            ]);
+        }
+
+        if (isset($request->design_image_front_side)) {
+            if (isset($product->design_image_front_side)) {
+                unlink($product->design_image_front_side);
+            }
+
+            $design_image_front_side = $this->saveImage($request->design_image_front_side);
+            $product->update([
+                'design_image_front_side' => $design_image_front_side,
+            ]);
+        }
+
+        if (isset($request->design_image_back_side)) {
+            if (isset($product->design_image_back_side)) {
+                unlink($product->design_image_back_side);
+            }
+
+            $design_image_back_side = $this->saveImage($request->design_image_back_side);
+            $product->update([
+                'design_image_back_side' => $design_image_back_side,
             ]);
         }
 
@@ -590,7 +699,6 @@ class ProductController extends Controller
 
                 $cachedDataInputValues[$request->newkey] = $request->quantity;
                 unset($cachedDataInputValues[$request->key]);
-
             } else if ($request->key) {
                 $cachedDataInputValues[$request->key] = $request->quantity;
             } else {
@@ -677,39 +785,9 @@ class ProductController extends Controller
         $request->validate([
             'imageFile' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048', // Example validation rules
         ]);
-        // dd($request->product_id);
-        // $imageCount = session('imageCount');
-        // session()->forget('imageCount');
-        // if (is_null($imageCount)) {
-        //     $imageCount = 1;
-        //     session(['imageCount' => $imageCount], 1440);
-        // } else {
-        //     $imageCount++;
-        //     session(['imageCount' => $imageCount], 1440);
-        // }
-        // Check if the request contains the file
-
-
-        // foreach ($request->all() as $key => $value) {
-        //     if (strpos($key, 'imageURL_') === 0) {
-        //         // $imageUrls[] = $value;
-        //         // return $value;
-
-        //         // Get the file from the request
-        //         $imageFile = $value;
-        //         // Generate a unique filename
-        //         $filename = uniqid() . '.' . $imageFile->getClientOriginalExtension();
-        //         $directory = 'assets/product/images/canvasImage/logo-design/';
-        //         $imageUrl = $directory . $filename;
-        //         $imageFile->move($directory, $filename);
-        //         $sessionKey = 'design' . '_' . $request->product_id;
-        //         session()->put($sessionKey, $imageUrl);
-        //     }
-        // }
 
         foreach ($request->all() as $key => $value) {
             if (strpos($key, 'imageURL_') === 0) {
-
                 // Decode the base64 image
                 $data = explode(',', $value);
                 $imageData = base64_decode($data[1]);
@@ -724,11 +802,11 @@ class ProductController extends Controller
 
                 // Store the URL in the session
                 $imageUrl = $directory . $filename;
-                $sessionKey = 'design' . '_' . $request->product_id;
+                $sessionKey = 'design' . '_' . $request->side . '_' . $request->product_id;
                 session()->push($sessionKey, $imageUrl);
             }
         }
-        return session()->get($sessionKey);
+        // return session()->get($sessionKey);
 
 
         if ($request->hasFile('imageFile')) {
@@ -740,37 +818,36 @@ class ProductController extends Controller
             $imageUrl = $directory . $filename;
 
             $imageFile->move($directory, $filename);
-            // Store the file in the storage/app/public directory (or any other directory you prefer)
-            // $imageFile->storeAs('images/canvasImage/logo-design', $filename);
-            // Storage::disk('public')->put('images/canvasImage/logo-design' . $filename, $imageFile);
-            // Optionally, you can save the file path to the database or perform any other operations
-            // Example: You can save it to a model
-            // $image = new Image();
-            // $image->path = 'storage/images/' . $filename;
-            // $image->save();
 
-            $sessionKey = 'mockup' . '_' . $request->product_id;
 
-            $imageUrls = session()->get($sessionKey, []);
+            $sessionKey = 'mockup' . '_' . $request->side . '_' . $request->product_id;
+            // dd($request->side);
 
-            // $imageUrls[] = $imageUrl;
-            // // Store the updated array back into the session
-            // session()->put($sessionKey, $imageUrls);
-            if (isset($imageUrls)) {
-                $imageUrls[] = $imageUrl;
-                session()->put($sessionKey, $imageUrls);
-            } else {
-                $imageUrls = [];
-                $imageUrls[] = $imageUrl;
-                session()->put($sessionKey, $imageUrls);
+            $previousImageUrl = session()->get($sessionKey);
+
+            // Check if the file exists before attempting to delete
+            if ($previousImageUrl && file_exists($previousImageUrl)) {
+                unlink($previousImageUrl);
             }
 
 
+            // $imageUrls = session()->get($sessionKey, []);
+            // if (isset($imageUrls)) {
+            //     $imageUrls[] = $imageUrl;
+            //     session()->put($sessionKey, $imageUrls);
+            // } else {
+            //     $imageUrls = [];
+            //     $imageUrls[] = $imageUrl;
+            //     session()->put($sessionKey, $imageUrls);
+            // }
+            session()->put($sessionKey, $imageUrl);
 
-            // session()->put($sessionKey, $imageUrl);
-            // session(['totalProduct' => $totalProduct], 1440);
-            // Return a response
-            return response()->json(['message' => 'Image uploaded successfully', 'filename' => $filename], 200);
+            return $imageUrl;
+
+            // return session()->get($sessionKey,[]);
+
+
+            // return response()->json(['message' => 'Image uploaded successfully', 'filename' => $filename], 200);
         }
 
         // Return an error response if the file is not found
@@ -855,13 +932,30 @@ class ProductController extends Controller
             return response()->json(['message' => 'File does not exist', 'filename' => $textureData], 404);
         }
     }
-    private function saveImage($request)
+    // private function saveImage($request)
+    private function saveImage($image)
     {
-        $this->image = $request->file('image');
+        // $this->image = $request->file('image');
+        $this->image = $image;
         // dd($request);
         if ($this->image) {
             $this->imageName = rand() . '.' . $this->image->getClientOriginalExtension();
-            $this->directory = 'adminAsset/product-feature-image/';
+            $this->directory = 'adminAsset/product-image/feature-image/';
+            $this->imgUrl = $this->directory . $this->imageName;
+            $this->image->move($this->directory, $this->imageName);
+            return $this->imgUrl;
+        } else {
+            return $this->image;
+        }
+    }
+    private function saveDesignImage($image)
+    {
+        // $this->image = $request->file('image');
+        $this->image = $image;
+        // dd($request);
+        if ($this->image) {
+            $this->imageName = rand() . '.' . $this->image->getClientOriginalExtension();
+            $this->directory = 'adminAsset/product-image/design-image/';
             $this->imgUrl = $this->directory . $this->imageName;
             $this->image->move($this->directory, $this->imageName);
             return $this->imgUrl;

@@ -108,27 +108,24 @@
 
                                                     <a href="{{ route('gallery-images.createimages', ['product_id' => $product->id]) }}"
                                                         class="btn btn-warning btn-sm m-1">Add Gallery Images</a>
-                                                        <a
+                                                    <a
                                                         href="{{ route('product.inventories', ['product_id' => $product->id]) }}">
-                                                        <input class="btn btn-warning btn-sm m-1" type="button" value="View Inventory">
+                                                        <input class="btn btn-warning btn-sm m-1" type="button"
+                                                            value="View Inventory">
                                                     </a>
                                                     @if (Auth::user()->can('product.delete'))
-                                                    <form
-                                                        action="{{ route('product.destroy', ['product' => $product->id]) }}"
-                                                        method="POST" class="d-inline">
-                                                        @method('DELETE')
-                                                        @csrf
-                                                        <button type="submit" class="btn btn-danger btn-sm m-1"
-                                                            onclick="return confirm('Do you want to delete this Product!')">Delete</button>
-                                                    </form>
-                                                @endif
+                                                        <form
+                                                            action="{{ route('product.destroy', ['product' => $product->id]) }}"
+                                                            method="POST" class="d-inline">
+                                                            @method('DELETE')
+                                                            @csrf
+                                                            <button type="submit" class="btn btn-danger btn-sm m-1"
+                                                                onclick="return confirm('Do you want to delete this Product!')">Delete</button>
+                                                        </form>
+                                                    @endif
                                                 </div>
                                             </td>
                                         @endif
-
-
-
-
                                     </tr>
                                 @endforeach
                             </tbody>
@@ -144,6 +141,20 @@
 @endsection
 
 @section('js')
+    <script>
+        //to disable initial ordering
+
+        $(document).ready(function() {
+            $('#dataTable').DataTable({
+                "order": [], // Disable initial ordering
+                // "columnDefs": [{
+                //         "orderable": false,
+                //         "targets": [3]
+                //     } // Disable ordering on the Action column
+                // ]
+            });
+        });
+    </script>
     <!-- Page level plugins -->
     <script src="{{ asset('vendor/datatables/jquery.dataTables.min.js') }}"></script>
     <script src="{{ asset('vendor/datatables/dataTables.bootstrap4.min.js') }}"></script>

@@ -35,8 +35,9 @@ class CategoryController extends Controller
     {
         $rules = [
             'name' => 'required|string',
-            'category_image' => 'required|file|image|mimes:jpeg,png,jpg,gif,JPEG,PNG,JPG,GIF',
-
+            'category_image' => 'required|image',
+            'front_image' =>  'image|mimes:png',
+            'back_image' =>  'image|mimes:png',
         ];
 
         // Conditionally add validation rules for 'description' and 'image' only if they are present and not null
@@ -50,8 +51,11 @@ class CategoryController extends Controller
 
         $validatedData = $request->validate($rules);
 
+        $image = $this->saveImage($request->file('category_image'));
+        $front_image = $this->saveImage($request->file('front_image'));
+        $back_image = $this->saveImage($request->file('back_image'));
 
-        $image = $this->saveImage($request);
+        // $image = $this->saveImage($request);
 
         // return $image;
         // return $request;
@@ -60,6 +64,8 @@ class CategoryController extends Controller
                 'category_name' => $request->name,
                 'description' => $request->description,
                 'image' => $image,
+                'front_image' => $front_image,
+                'back_image' => $back_image,
             ]
         );
         return redirect()->route('category.index')->with('message', 'Category Added Successfully');
@@ -90,7 +96,7 @@ class CategoryController extends Controller
     public function update(Request $request, Category $category)
     {
         if ($request->category_image) {
-            $image = $this->saveImage($request);
+            $image = $this->saveImage($request->file('category_image'));
             if ($category->image) {
                 unlink($category->image);
             }
@@ -100,6 +106,30 @@ class CategoryController extends Controller
                 ]
             );
         }
+        if ($request->front_image) {
+            $front_image = $this->saveImage($request->file('front_image'));
+            if ($category->front_image) {
+                unlink($category->front_image);
+            }
+            $category->update(
+                [
+                    'front_image' => $front_image,
+                ]
+            );
+        }
+        if ($request->back_image) {
+            $back_image = $this->saveImage($request->file('back_image'));
+            if ($category->back_image) {
+                unlink($category->back_image);
+            }
+            $category->update(
+                [
+                    'back_image' => $back_image,
+                ]
+            );
+        }
+
+
         //
         $category->update(
             [
@@ -119,14 +149,21 @@ class CategoryController extends Controller
         if ($category->image) {
             unlink($category->image);
         }
+        if ($category->front_image) {
+            unlink($category->front_image);
+        }
+        if ($category->back_image) {
+            unlink($category->back_image);
+        }
 
         $category->delete();
         return back()->with('message', 'Category Deleted Successfully!');
     }
 
-    private function saveImage($request)
+    private function saveImage($image)
     {
-        $this->image = $request->file('category_image');
+        $this->image = $image;
+        // $this->image = $request->file('category_image');
         // dd($request);
         if ($this->image) {
             $this->imageName = rand() . '.' . $this->image->getClientOriginalExtension();

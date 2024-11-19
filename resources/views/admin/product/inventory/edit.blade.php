@@ -70,7 +70,7 @@
                                         </select>
                                     @else
                                         @php
-                                            $sizes = ['XS', 'S', 'M', 'L', 'XL'];
+                                            $sizes = ['XS', 'S', 'M', 'L', 'XL','XXL'];
                                         @endphp
                                         <select class="form-control" name="size" id="product_pattern">
                                             <option value="">Select Option</option>

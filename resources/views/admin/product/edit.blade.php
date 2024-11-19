@@ -26,6 +26,34 @@
 
 
     <style>
+        /* size style start */
+        .size-inputs-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .size-group {
+            flex: 1 1 calc(33% - 10px);
+            min-width: 250px;
+            background-color: #f9f9f9;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .size-details .form-control {
+            border-radius: 5px;
+        }
+
+        .size-group label {
+            font-size: 16px;
+        }
+
+        .size-group input[type="checkbox"] {
+            margin-right: 10px;
+        }
+
+        /* size style end */
+
         .underline-text {
             text-decoration: underline;
         }
@@ -155,8 +183,10 @@
                                 <div class="form-group">
                                     <label for="product_for">Product Display On</label>
                                     <select class="form-control" name="product_for" id="product_for">
-                                        <option {{ "Buy Blank" == $product->product_for ? 'selected' : '' }} value="Buy Blank">Buy Blank</option>
-                                        <option {{ "Order Form Catalog" == $product->product_for ? 'selected' : '' }} value="Order Form Catalog">Order Form Catalog</option>
+                                        <option {{ 'Buy Blank' == $product->product_for ? 'selected' : '' }}
+                                            value="Buy Blank">Buy Blank</option>
+                                        <option {{ 'Order Form Catalog' == $product->product_for ? 'selected' : '' }}
+                                            value="Order Form Catalog">Order Form Catalog</option>
                                     </select>
                                     @error('product_for')
                                         <p class="text-danger">{{ $message }}</p>
@@ -190,12 +220,57 @@
                                 <div class="form-group">
                                     <label for="gender">Gender</label>
                                     <select class="form-control" name="gender" id="gender">
-                                         <option {{ "Man" == $product->gender ? 'selected' : '' }} value="Man">Man</option>
-                                         <option {{ "Women" == $product->gender ? 'selected' : '' }} value="Women">Women</option>
-                                         <option {{ "Kids" == $product->gender ? 'selected' : '' }} value="Kids">Kids</option>
-                                         <option {{ "Unisex" == $product->gender ? 'selected' : '' }} value="Unisex">Unisex</option>
+                                        <option {{ 'Man' == $product->gender ? 'selected' : '' }} value="Man">Man
+                                        </option>
+                                        <option {{ 'Women' == $product->gender ? 'selected' : '' }} value="Women">Women
+                                        </option>
+                                        <option {{ 'Kids' == $product->gender ? 'selected' : '' }} value="Kids">Kids
+                                        </option>
+                                        <option {{ 'Unisex' == $product->gender ? 'selected' : '' }} value="Unisex">Unisex
+                                        </option>
                                     </select>
                                     @error('gender')
+                                        <p class="text-danger">{{ $message }}</p>
+                                    @enderror
+                                </div>
+                                <div class="form-group">
+                                    <label for="name">Custom color available?</label>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="customcolor" id="customcolor1" value="No"
+                                            {{ old('customcolor', $product->customcolor) == 'No' ? 'checked' : '' }} onclick="toggleCustomColorDetails(false)">
+                                        <label class="form-check-label" for="customcolor1">
+                                            No
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="customcolor" id="customcolor2" value="Yes"
+                                            {{ old('customcolor', $product->customcolor) == 'Yes' ? 'checked' : '' }} onclick="toggleCustomColorDetails(true)">
+                                        <label class="form-check-label" for="customcolor2">
+                                            Yes
+                                        </label>
+                                    </div>
+
+                                    <div id="customColorDetails" style="{{ old('customcolor', $product->customcolor) == 'Yes' ? '' : 'display: none;' }}">
+                                        <input type="text" name="minimum_order" id="minimumOrder" placeholder="Minimum Order Quantity(pcs)"
+                                            value="{{ old('minimum_order', $product->minimum_order) }}" class="form-control">
+                                        <input type="text" name="minimum_time_required" id="minimumTimeRequired" placeholder="Minimum Required Time(days)"
+                                            value="{{ old('minimum_time_required', $product->minimum_time_required) }}" class="form-control mt-2">
+                                    </div>
+                                </div>
+
+                                <script>
+                                    function toggleCustomColorDetails(show) {
+                                        const details = document.getElementById('customColorDetails');
+                                        details.style.display = show ? '' : 'none';
+                                    }
+                                </script>
+
+                                <div class="form-group">
+                                    <label for="size">Size(Height x width)</label>
+                                    <input required type="text" id="size" name="size"
+                                        value="{{ isset($product->size) ? $product->size : old('size') }}"
+                                        class="form-control" placeholder="e.g., 39 x 13 cm">
+                                    @error('size')
                                         <p class="text-danger">{{ $message }}</p>
                                     @enderror
                                 </div>
@@ -229,6 +304,105 @@
                                         </label>
                                     </div>
                                 </div>
+                                {{-- <div class="form-group" id="sizeInputsType1">
+                                    <label for="sizes" class="mb-2">Select Sizes</label>
+                                    @foreach ($sizetype1 as $size)
+                                        <div class="size-group border p-3 mb-3 rounded">
+                                            <div class="form-check form-check-inline">
+                                                <input type="checkbox" name="sizes[{{ $size->size }}][selected]"
+                                                    value="1" id="size{{ $size->size }}"
+                                                    class="form-check-input">
+                                                <label for="size{{ $size->size }}"
+                                                    class="form-check-label font-width-bold">{{ $size->size }}</label>
+                                            </div>
+                                            <div class="size-details mt-2">
+                                                <input type="number" name="sizes[{{ $size->size }}][height]"
+                                                    placeholder="Height (cm)" step="0.01" class="form-control mb-2">
+                                                <input type="number" name="sizes[{{ $size->size }}][weight]"
+                                                    placeholder="Width (cm)" step="0.01" class="form-control">
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                </div> --}}
+                                @php
+                                    // $sizes = ['XS', 'S', 'M', 'L', 'XL','XXL'];
+                                    $existingSizeDetails = $product->sizeDetails->keyBy('size');
+                                @endphp
+                                <div class="form-group" id="sizeInputsType1">
+                                    <label for="sizes" class="mb-2">Sizes</label>
+                                    <div id="sizeInputs" class="size-inputs-container">
+                                        @foreach ($sizetype1 as $size)
+                                            @php
+                                                $sizeDetail = $existingSizeDetails->get($size->size);
+                                            @endphp
+                                            <div class="size-group border p-3 mb-3 rounded">
+                                                <div class="form-check form-check-inline">
+                                                    <input type="checkbox" name="sizes[{{ $size->size }}][selected]"
+                                                        value="1" id="size{{ $size->size }}"
+                                                        class="form-check-input"
+                                                        {{ old("sizes.$size.selected", $sizeDetail ? 'checked' : '') }}>
+                                                    <label for="size{{ $size->size }}"
+                                                        class="form-check-label font-weight-bold">{{ $size->size }}</label>
+                                                </div>
+                                                <div class="size-details mt-2">
+                                                    <input type="number" name="sizes[{{ $size->size }}][height]"
+                                                        placeholder="Height (cm)" step="0.01"
+                                                        class="form-control mb-2"
+                                                        value="{{ old("sizes.$size.height", $sizeDetail->height ?? '') }}">
+                                                    <input type="number" name="sizes[{{ $size->size }}][weight]"
+                                                        placeholder="Width (cm)" step="0.01" class="form-control"
+                                                        value="{{ old("sizes.$size.weight", $sizeDetail->weight ?? '') }}">
+                                                </div>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                </div>
+                                <div class="form-group" id="sizeInputsType2">
+                                    <label for="sizes" class="mb-2">Sizes</label>
+                                    <div id="sizeInputs" class="size-inputs-container">
+                                        @foreach ($sizetype2 as $size)
+                                            @php
+                                                $sizeDetail = $existingSizeDetails->get($size->size);
+                                            @endphp
+                                            <div class="size-group border p-3 mb-3 rounded">
+                                                <div class="form-check form-check-inline">
+                                                    <input type="checkbox" name="sizes[{{ $size->size }}][selected]"
+                                                        value="1" id="size{{ $size->size }}"
+                                                        class="form-check-input"
+                                                        {{ old("sizes.$size.selected", $sizeDetail ? 'checked' : '') }}>
+                                                    <label for="size{{ $size->size }}"
+                                                        class="form-check-label font-weight-bold">{{ $size->size }}</label>
+                                                </div>
+                                                <div class="size-details mt-2">
+                                                    <input type="number" name="sizes[{{ $size->size }}][height]"
+                                                        placeholder="Height (cm)" step="0.01"
+                                                        class="form-control mb-2"
+                                                        value="{{ old("sizes.$size.height", $sizeDetail->height ?? '') }}">
+                                                    <input type="number" name="sizes[{{ $size->size }}][weight]"
+                                                        placeholder="Width (cm)" step="0.01" class="form-control"
+                                                        value="{{ old("sizes.$size.weight", $sizeDetail->weight ?? '') }}">
+                                                </div>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="colors">Select Colors</label>
+                                    <div class="d-flex flex-wrap">
+                                        @foreach ($colors as $color)
+                                            <div class="form-check mr-3" style="min-width: 150px;">
+                                                <input class="form-check-input" type="checkbox" name="colors[]"
+                                                    value="{{ $color->id }}" id="color{{ $color->id }}"
+                                                    {{ $product->colors->contains($color->id) ? 'checked' : '' }}>
+                                                <label class="form-check-label" for="color{{ $color->id }}">
+                                                    {{ $color->name }}
+                                                </label>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                </div>
+
+
                                 <div class="form-group">
                                     <label for="product_category">Product Category</label>
                                     {{-- <input required type="text" id="product_category" name="product_category" value="{{ old('product_category') }}"
@@ -330,11 +504,44 @@
                                             class="thumbnail">
                                     </div>
                                 </div>
+
                                 <div class="form-group">
-                                    <label for="image">Product Feature Image</label>
+                                    <label for="image">Change Product Feature Image</label>
                                     <input required type="file" id="image" name="image"
                                         value=""class="form-control">
                                     @error('image')
+                                        <p class="text-danger">{{ $message }}</p>
+                                    @enderror
+                                </div>
+
+                                <h4 class="heading pb-2">Design Images</h4>
+                                <div class="col-md-4">
+                                    <label>Front Side:</label>
+                                    <div class="form-group">
+                                        <img src="{{ asset($product->design_image_front_side) }}" alt=" Image"
+                                            class="thumbnail">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="image">Upload a png </label>
+                                    <input required type="file" id="image" name="design_image_front_side"
+                                        class="form-control">
+                                    @error('design_image_front_side')
+                                        <p class="text-danger">{{ $message }}</p>
+                                    @enderror
+                                </div>
+                                <div class="col-md-4">
+                                    <label>Back Side:</label>
+                                    <div class="form-group">
+                                        <img src="{{ asset($product->design_image_back_side) }}" alt=" Image"
+                                            class="thumbnail">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="image">Upload a png </label>
+                                    <input required type="file" id="image" name="design_image_back_side"
+                                        class="form-control">
+                                    @error('design_image_back_side')
                                         <p class="text-danger">{{ $message }}</p>
                                     @enderror
                                 </div>
@@ -420,6 +627,63 @@
 @endsection
 
 @section('js')
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Ensure JavaScript runs after the page is fully loaded
+        window.onload = function() {
+            // Get references to the radio buttons
+            const sizeType1Radio = document.getElementById('productsizetype1');
+            const sizeType2Radio = document.getElementById('productsizetype2');
+
+            // Get references to the size input containers
+            const sizeType1Container = document.getElementById('sizeInputsType1');
+            const sizeType2Container = document.getElementById('sizeInputsType2');
+
+            // Utility function to clear all input fields within a container
+            function clearInputs(container) {
+                const inputs = container.querySelectorAll('input');
+                inputs.forEach(input => {
+                    if (input.type === 'checkbox' || input.type === 'radio') {
+                        input.checked = false;
+                    } else {
+                        input.value = '';
+                    }
+                });
+            }
+
+            // Check if the elements exist before adding event listeners
+            if (sizeType1Radio && sizeType2Radio && sizeType1Container && sizeType2Container) {
+                // Show/Hide logic for size type containers
+                function toggleSizeInputs() {
+                    if (sizeType1Radio.checked) {
+                        sizeType1Container.style.display = 'block';
+                        sizeType2Container.style.display = 'none';
+                        clearInputs(sizeType2Container); // Clear inputs for size type 2
+                    } else if (sizeType2Radio.checked) {
+                        sizeType1Container.style.display = 'none';
+                        sizeType2Container.style.display = 'block';
+                        clearInputs(sizeType1Container); // Clear inputs for size type 1
+                    }
+                }
+
+                // Add event listeners to radio buttons
+                sizeType1Radio.addEventListener('change', toggleSizeInputs);
+                sizeType2Radio.addEventListener('change', toggleSizeInputs);
+
+                // Initial state setup
+                toggleSizeInputs();
+            } else {
+                console.error(
+                    'One or more elements not found. Ensure all IDs are correct and present in the DOM.'
+                );
+            }
+        };
+    });
+</script>
+
+
+
+
     <script>
         var myDropzone = new Dropzone("#myDropzone", {
             url: "{{ route('save-dropzone-image') }}",

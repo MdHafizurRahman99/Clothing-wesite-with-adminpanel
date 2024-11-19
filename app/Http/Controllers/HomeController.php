@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\ContactFormMail;
 use App\Models\Inventory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Mail;
 
 class HomeController extends Controller
 {
@@ -15,6 +17,29 @@ class HomeController extends Controller
     public function index()
     {
         //
+    }
+    public function contact()
+    {
+        return view('frontend.contact');
+        //
+    }
+    public function sendContactForm(Request $request)
+    {
+        $data = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email',
+            'subject' => 'required|string|max:255',
+            'message' => 'required|string',
+        ]);
+
+        Mail::to('admin@example.com')->send(new ContactFormMail(
+            $data['name'],
+            $data['email'],
+            $data['subject'],
+            $data['message']
+        ));
+
+        return back()->with('success', 'Your message has been sent successfully!');
     }
 
     /**
@@ -30,7 +55,7 @@ class HomeController extends Controller
      */
     public function store(Request $request)
     {
-// return $request;
+        // return $request;
         $data = $request->except('_token', 'total_price', 'product_id'); // Exclude CSRF token
         // return $data;
         $allValuesAreNull = empty(array_filter($data, function ($value) {
@@ -38,7 +63,7 @@ class HomeController extends Controller
         }));
         if ($allValuesAreNull) {
             // return response()->json(['message' => 'All inputs are null'], 400);
-        return back()->with('message','Please select any item.');
+            return back()->with('message', 'Please select any item.');
         }
 
         foreach ($data as $key => $quantity) {
@@ -121,7 +146,7 @@ class HomeController extends Controller
             }
             session(['totalProduct' => $totalProduct], 1440);
         }
-                // return $totalProduct;
+        // return $totalProduct;
 
         // session()->forget('totalProduct');
         // session()->forget('product_ids');
@@ -141,10 +166,15 @@ class HomeController extends Controller
                 if ($key === 'product_id') {
                     continue;
                 }
-                // Check if the key exists in the cached data array
-                if (!is_null($value) && is_numeric($value)) {
-                    $cachedDataInputValues[$key] += $value; // Add the request data value to the cached data value
-                }
+                    // Check if the key exists in the cached data array and handle it properly
+                    if (!is_null($value) && is_numeric($value)) {
+                        if (isset($cachedDataInputValues[$key])) {
+                            $cachedDataInputValues[$key] += $value; // Add the request data value to the cached data value
+                        } else {
+                            // Initialize the key if it doesn't exist
+                            $cachedDataInputValues[$key] = $value;
+                        }
+                    }
             }
 
             $postData = [
@@ -170,7 +200,11 @@ class HomeController extends Controller
         // Retrieve cached data
         // $cachedData = cache()->get($productCacheKey);
         // return $cachedData;
-        return redirect()->route('shop.product-cart')->with('message', 'Added to cart successFully');
+        // return $request->product_id;
+        session(['custom_design_product_id' => $request->product_id]);
+
+        return redirect()->route('shop.custom-design', ['product_id' => $request->product_id])->with('message', 'Added to cart successFully');
+        // return redirect()->route('shop.product-cart')->with('message', 'Added to cart successFully');
         //
     }
 

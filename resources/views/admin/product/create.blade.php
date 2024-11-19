@@ -22,7 +22,39 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
 
     {{-- <link href="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.5.1/min/dropzone.min.css" rel="stylesheet" /> --}}
+    <style>
+        /* size style start */
+        .size-inputs-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
 
+        .size-group {
+            flex: 1 1 calc(33% - 10px);
+            min-width: 250px;
+            background-color: #f9f9f9;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .size-details .form-control {
+            border-radius: 5px;
+        }
+
+        .size-group label {
+            font-size: 16px;
+        }
+
+        .size-group input[type="checkbox"] {
+            margin-right: 10px;
+        }
+
+        /* size style end */
+
+        .underline-text {
+            text-decoration: underline;
+        }
+    </style>
 
 
 
@@ -128,7 +160,7 @@
                                 <div class="form-group">
                                     <label for="product_for">Product Display On</label>
                                     <select class="form-control" name="product_for" id="product_for">
-                                        <option value="Buy Blank">Buy Blank</option>
+                                        {{-- <option value="Buy Blank">Buy Blank</option> --}}
                                         <option value="Order Form Catalog">Order Form Catalog</option>
                                     </select>
                                     @error('product_for')
@@ -188,7 +220,40 @@
                                         <p class="text-danger">{{ $message }}</p>
                                     @enderror
                                 </div>
+                                <div class="form-group">
+                                    <label for="name">Custom color available?</label>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="customcolor"
+                                            id="customcolor1" value="No"
+                                            {{ old('customcolor') == 'No' ? 'checked' : '' }} checked>
+                                        <label class="form-check-label" for="customcolor1">
+                                            No
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="customcolor"
+                                            id="customcolor2" value="Yes"
+                                            {{ old('customcolor') == 'Yes' ? 'checked' : '' }}>
+                                        <label class="form-check-label" for="customcolor2">
+                                            Yes
+                                        </label>
+                                    </div>
 
+                                    <div id="customColorDetails" style="display: none;">
+                                        <input type="text" name="minimum_order" id="minimumOrder" placeholder="Minimum Order Quantity(pcs)"
+                                        value="{{ old('minimum_order') }}" class="form-control">
+                                        <input type="text" name="minimum_time_required" id="minimumTimeRequired" placeholder="Minimum Required Time(days)"
+                                        value="{{ old('minimum_time_required') }}" class="form-control mt-2">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="size">Size(Height x width)</label>
+                                    <input type="text" name="size" id="size" placeholder="e.g., 39 x 13 cm"
+                                        value="{{ old('size') }}" class="form-control">
+                                    @error('size')
+                                        <p class="text-danger">{{ $message }}</p>
+                                    @enderror
+                                </div>
                                 <div class="form-group">
                                     <label for="product_weight">Weight(Gsm)</label>
                                     <input required type="text" id="product_weight" name="weight"
@@ -197,8 +262,7 @@
                                         <p class="text-danger">{{ $message }}</p>
                                     @enderror
                                 </div>
-
-                                <div class="form-group">
+                                {{-- <div class="form-group">
                                     <label for="name">Product Size Type</label>
                                     <div class="form-check">
                                         <input class="form-check-input" type="radio" name="productsizetype"
@@ -211,22 +275,173 @@
                                         <input class="form-check-input" type="radio" name="productsizetype"
                                             id="productsizetype2" value="2">
                                         <label class="form-check-label" for="productsizetype2">
-                                            8,10,12,14,12...
+                                            8,10,12,14,16...
                                         </label>
                                     </div>
-
-
                                 </div>
+                                <div class="form-group">
+                                    <label for="sizes" class="mb-2">Select Sizes</label>
+                                        @foreach ($sizetype1 as $size)
+                                            <div class="size-group border p-3 mb-3 rounded">
+                                                <div class="form-check form-check-inline">
+                                                    <input type="checkbox" name="sizes[{{ $size->size }}][selected]"
+                                                        value="1" id="size{{ $size->size }}"
+                                                        class="form-check-input">
+                                                    <label for="size{{ $size->size }}"
+                                                        class="form-check-label font-width-bold">{{ $size->size }}</label>
+                                                </div>
+                                                <div class="size-details mt-2">
+                                                    <input type="number" name="sizes[{{ $size->size }}][height]"
+                                                        placeholder="Height (cm)" step="0.01"
+                                                        class="form-control mb-2">
+                                                    <input type="number" name="sizes[{{ $size->size }}][weight]"
+                                                        placeholder="width (cm)" step="0.01" class="form-control">
+                                                </div>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                </div> --}}
+                                <!-- Radio Buttons -->
+                                <div class="form-group">
+                                    <label for="name">Product Size Type</label>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="productsizetype"
+                                            id="productsizetype1" value="1" checked>
+                                        <label class="form-check-label" for="productsizetype1">
+                                            XS, S, M, L, XL...
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="productsizetype"
+                                            id="productsizetype2" value="2">
+                                        <label class="form-check-label" for="productsizetype2">
+                                            8, 10, 12, 14, 16...
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="form-group" id="sizeInputsType1">
+                                    <label for="sizes" class="mb-2">Sizes</label>
+                                    <div id="sizeInputs" class="size-inputs-container">
+                                        @foreach ($sizetype1 as $size)
+
+                                            <div class="size-group border p-3 mb-3 rounded">
+                                                <div class="form-check form-check-inline">
+                                                    <input type="checkbox" name="sizes[{{ $size->size }}][selected]"
+                                                        value="1" id="size{{ $size->size }}"
+                                                        class="form-check-input"
+                                                        >
+                                                    <label for="size{{ $size->size }}"
+                                                        class="form-check-label font-weight-bold">{{ $size->size }}</label>
+                                                </div>
+                                                <div class="size-details mt-2">
+                                                    <input type="number" name="sizes[{{ $size->size }}][height]"
+                                                        placeholder="Height (cm)" step="0.01"
+                                                        class="form-control mb-2"
+                                                        value="{{ old("sizes.$size.height", $sizeDetail->height ?? '') }}">
+                                                    <input type="number" name="sizes[{{ $size->size }}][weight]"
+                                                        placeholder="Width (cm)" step="0.01" class="form-control"
+                                                        value="{{ old("sizes.$size.weight", $sizeDetail->weight ?? '') }}">
+                                                </div>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                </div>
+                                <div class="form-group" id="sizeInputsType2">
+                                    <label for="sizes" class="mb-2">Sizes</label>
+                                    <div id="sizeInputs" class="size-inputs-container">
+                                        @foreach ($sizetype2 as $size)
+
+                                            <div class="size-group border p-3 mb-3 rounded">
+                                                <div class="form-check form-check-inline">
+                                                    <input type="checkbox" name="sizes[{{ $size->size }}][selected]"
+                                                        value="1" id="size{{ $size->size }}"
+                                                        class="form-check-input"
+                                                        >
+                                                    <label for="size{{ $size->size }}"
+                                                        class="form-check-label font-weight-bold">{{ $size->size }}</label>
+                                                </div>
+                                                <div class="size-details mt-2">
+                                                    <input type="number" name="sizes[{{ $size->size }}][height]"
+                                                        placeholder="Height (cm)" step="0.01"
+                                                        class="form-control mb-2"
+                                                        value="{{ old("sizes.$size.height", $sizeDetail->height ?? '') }}">
+                                                    <input type="number" name="sizes[{{ $size->size }}][weight]"
+                                                        placeholder="Width (cm)" step="0.01" class="form-control"
+                                                        value="{{ old("sizes.$size.weight", $sizeDetail->weight ?? '') }}">
+                                                </div>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                </div>
+                                {{-- <!-- Size Type 1 Container -->
+                                <div class="form-group" id="sizeInputsType1">
+                                    <label for="sizes" class="mb-2">Select Sizes</label>
+                                    @foreach ($sizetype1 as $size)
+                                        <div class="size-group border p-3 mb-3 rounded">
+                                            <div class="form-check form-check-inline">
+                                                <input type="checkbox" name="sizes[{{ $size->size }}][selected]"
+                                                    value="1" id="size{{ $size->size }}"
+                                                    class="form-check-input">
+                                                <label for="size{{ $size->size }}"
+                                                    class="form-check-label font-width-bold">{{ $size->size }}</label>
+                                            </div>
+                                            <div class="size-details mt-2">
+                                                <input type="number" name="sizes[{{ $size->size }}][height]"
+                                                    placeholder="Height (cm)" step="0.01" class="form-control mb-2">
+                                                <input type="number" name="sizes[{{ $size->size }}][weight]"
+                                                    placeholder="Width (cm)" step="0.01" class="form-control">
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                </div>
+
+                                <!-- Size Type 2 Container -->
+                                <div id="sizeInputsType2">
+                                    <label for="sizes" class="mb-2">Select Sizes</label>
+                                    @foreach ($sizetype2 as $size)
+                                        <div class="size-group border p-3 mb-3 rounded">
+                                            <div class="form-check form-check-inline">
+                                                <input type="checkbox" name="sizes[{{ $size->size }}][selected]"
+                                                    value="1" id="size{{ $size->size }}"
+                                                    class="form-check-input">
+                                                <label for="size{{ $size->size }}"
+                                                    class="form-check-label font-width-bold">{{ $size->size }}</label>
+                                            </div>
+                                            <div class="size-details mt-2">
+                                                <input type="number" name="sizes[{{ $size->size }}][height]"
+                                                    placeholder="Height (cm)" step="0.01" class="form-control mb-2">
+                                                <input type="number" name="sizes[{{ $size->size }}][weight]"
+                                                    placeholder="Width (cm)" step="0.01" class="form-control">
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                </div> --}}
+
+                                <div class="form-group">
+                                    <label for="colors">Select Colors</label>
+                                    <div class="d-flex flex-wrap">
+                                        @foreach ($colors as $color)
+                                            <div class="form-check mr-3" style="min-width: 150px;">
+                                                <input class="form-check-input" type="checkbox" name="colors[]"
+                                                    value="{{ $color->id }}" id="color{{ $color->id }}">
+                                                <label class="form-check-label" for="color{{ $color->id }}">
+                                                    {{ $color->name }}
+                                                </label>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                </div>
+
                                 <div class="form-group">
                                     <label for="description">Product Description</label>
                                     <textarea name="description" class="form-control" id="description" cols="70" rows="5">{{ old('description') }}</textarea>
-
                                     {{-- <input required type="text" id="name" name="name" value="{{ old('name') }}"
                                         class="form-control" placeholder="Product Description"> --}}
                                     @error('description')
                                         <p class="text-danger">{{ $message }}</p>
                                     @enderror
                                 </div>
+
                                 <div class="form-group">
                                     <label for="image">Product Feature Image</label>
                                     <input required type="file" id="image" name="image"
@@ -235,6 +450,25 @@
                                         <p class="text-danger">{{ $message }}</p>
                                     @enderror
                                 </div>
+                                <h4 class="heading">Design Image</h4>
+
+                                <div class="form-group">
+                                    <label for="fromt">Front Side</label>
+                                    <input type="file" id="fromt" name="design_image_front_side"
+                                        class="form-control">
+                                    @error('design_image_front_side')
+                                        <p class="text-danger">{{ $message }}</p>
+                                    @enderror
+                                </div>
+                                <div class="form-group">
+                                    <label for="back">Back Side</label>
+                                    <input type="file" id="back" name="design_image_back_side"
+                                        class="form-control">
+                                    @error('design_image_back_side')
+                                        <p class="text-danger">{{ $message }}</p>
+                                    @enderror
+                                </div>
+
                                 {{-- <div class="form-group">
                                     <label for="document">Documents</label>
                                     <div class="needsclick dropzone" id="document-dropzone">
@@ -294,7 +528,8 @@
                                 </div> --}}
 
                                 <div class="form-group">
-                                    <label for="name">Product Discount Price on Quantity <span>(if creating a product for catalog then 1st range value(1) and the price)</span></label>
+                                    <label for="name">Product Discount Price on Quantity <span>(if creating a product
+                                            for catalog then 1st range value(1) and the price)</span></label>
                                     @php
                                         $sizes = ['1st-Range', '2nd-Range', '3rd-Range', '4th-Range', '5th-Range'];
                                     @endphp
@@ -341,6 +576,78 @@
 
 @section('js')
     <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Ensure JavaScript runs after the page is fully loaded
+            window.onload = function() {
+                // Get references to the radio buttons
+                const sizeType1Radio = document.getElementById('productsizetype1');
+                const sizeType2Radio = document.getElementById('productsizetype2');
+
+                // Get references to the size input containers
+                const sizeType1Container = document.getElementById('sizeInputsType1');
+                const sizeType2Container = document.getElementById('sizeInputsType2');
+
+                // Utility function to clear all input fields within a container
+                function clearInputs(container) {
+                    const inputs = container.querySelectorAll('input');
+                    inputs.forEach(input => {
+                        if (input.type === 'checkbox' || input.type === 'radio') {
+                            input.checked = false;
+                        } else {
+                            input.value = '';
+                        }
+                    });
+                }
+
+                // Check if the elements exist before adding event listeners
+                if (sizeType1Radio && sizeType2Radio && sizeType1Container && sizeType2Container) {
+                    // Show/Hide logic for size type containers
+                    function toggleSizeInputs() {
+                        if (sizeType1Radio.checked) {
+                            sizeType1Container.style.display = 'block';
+                            sizeType2Container.style.display = 'none';
+                            clearInputs(sizeType2Container); // Clear inputs for size type 2
+                        } else if (sizeType2Radio.checked) {
+                            sizeType1Container.style.display = 'none';
+                            sizeType2Container.style.display = 'block';
+                            clearInputs(sizeType1Container); // Clear inputs for size type 1
+                        }
+                    }
+
+                    // Add event listeners to radio buttons
+                    sizeType1Radio.addEventListener('change', toggleSizeInputs);
+                    sizeType2Radio.addEventListener('change', toggleSizeInputs);
+
+                    // Initial state setup
+                    toggleSizeInputs();
+                } else {
+                    console.error(
+                        'One or more elements not found. Ensure all IDs are correct and present in the DOM.'
+                    );
+                }
+
+                const customColorYes = document.getElementById('customcolor2');
+        const customColorNo = document.getElementById('customcolor1');
+        const customColorDetails = document.getElementById('customColorDetails');
+
+        customColorYes.addEventListener('change', function () {
+            if (this.checked) {
+                customColorDetails.style.display = 'block';
+            }
+        });
+
+        customColorNo.addEventListener('change', function () {
+            if (this.checked) {
+                customColorDetails.style.display = 'none';
+            }
+        });
+            };
+        });
+    </script>
+
+
+
+    <script>
         var myDropzone = new Dropzone("#myDropzone", {
             url: "{{ route('save-dropzone-image') }}",
             // url: "{{ route('product.store') }}",
@@ -386,11 +693,13 @@
             }
         });
     </script>
+
     <!-- Add this script at the end of your HTML body -->
     <script src="{{ asset('js/jquery-3.3.1.min.js') }}"></script>
     <script src="{{ asset('js/jquery.steps.js') }}"></script>
     <script src="{{ asset('js/jquery-ui.min.js') }}"></script>
     <script src="{{ asset('js/main.js') }}"></script>
+
     {{-- <script>
         $(document).ready(function() {
 

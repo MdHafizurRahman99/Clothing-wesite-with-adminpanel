@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
+use App\Models\Color;
 use App\Models\Inventory;
 use App\Models\Pattern;
 use App\Models\PriceRange;
@@ -24,6 +25,7 @@ class ShopController extends Controller
     {
         return view('frontend.shop.shop');
     }
+
     public function productDetails($product_id)
     {
         $product_images = ProductImage::where('product_id', $product_id)->select('image_url', 'color')->get()->groupBy('color');
@@ -48,6 +50,8 @@ class ShopController extends Controller
                 $quantityArray[$size][$color] = $quantityValue;
             }
         }
+        // return $quantityArray;
+
         // return $quantityArray['XS']['Aquamarine'];
 
         // return PriceRange::where('product_id', $product_id)->select('min_quantity', 'max_quantity', 'price')->get();
@@ -73,16 +77,19 @@ class ShopController extends Controller
         // return $product_id;
         $product = Product::where('id', $product_id)->first();
         // dd($product);
+        // $product = Product::findOrFail($product_id);
+        $colors = $product->colors;
+        // $colors=Color::all();
         if ($product->product_for == 'Order Form Catalog') {
             return view(
                 'frontend.order-form-catalog.product-details',
                 [
-
                     'product' => $product,
                     'quentity' => $quantityArray,
                     // 'colorRows' => $colorRows,
                     'prices' => $priceArray,
                     'colorImages' => $colorImages,
+                    'colors' => $colors,
                     'minQuantity' => $minQuantityArray,
                     'maxQuantity' => $maxQuantityArray,
                     'galleryImages' => ProductImage::where('product_id', $product_id)->get(),
@@ -222,7 +229,8 @@ class ShopController extends Controller
 
     public function customDesign(Request $request)
     {
-         $imageCount = session('imageCount');
+        // return $request;
+        $imageCount = session('imageCount');
 
         //  if ($imageCount !== null) {
         //     $sessionKey = 'texture' . $imageCount . '_' . $request->product_id;
@@ -232,12 +240,22 @@ class ShopController extends Controller
         //     }
         // }
         session(['imageCount' => 0], 1440);
+        $product_id = $request->product_id ?? session('custom_design_product_id');
 
+        // return $product_id;
+        if (isNull($product_id)) {
+            $product = Product::find($product_id);
+            $category = Category::find($product->category_id);
+            // $colors = Color::all();
+            $colors = $product->colors;
 
-        if (isNull($request->product_id)) {
-            // dd($request->product_id);
+            // dd($category);
+
+            // dd($product_id);
             return view('frontend.shop.design', [
-                'product_id' => $request->product_id
+                'product' => $product,
+                'category' => $category,
+                'colors' => $colors,
             ]);
         } else {
             return redirect('/');
@@ -345,19 +363,27 @@ class ShopController extends Controller
         $product_for = request()->query('product_for');
         // dd($shop);
         $products = Product::where('category_id', $shop->id)->where('product_for', $product_for)->get();
+        // return $products;
+        return view(
+            'frontend.shop.shop',
+            [
+                'products' => $products,
+            ]
+        );
 
-        if ($product_for == 'Buy Blank') {
-            # code...
-            return view('frontend.merchandise.gender', [
-                'category_id' => $shop->id,
-                'products' => $products,
-            ]);
-        } else {
-            return view('frontend.catalog-order.gender', [
-                'category_id' => $shop->id,
-                'products' => $products,
-            ]);
-        }
+        //this code for next use
+        // if ($product_for == 'Buy Blank') {
+        //     # code...
+        //     return view('frontend.merchandise.gender', [
+        //         'category_id' => $shop->id,
+        //         'products' => $products,
+        //     ]);
+        // } else {
+        //     return view('frontend.catalog-order.gender', [
+        //         'category_id' => $shop->id,
+        //         'products' => $products,
+        //     ]);
+        // }
     }
     public function products($category_id, $gender)
     {

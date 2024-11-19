@@ -80,6 +80,29 @@
                                         <p class="text-danger">{{ $message }}</p>
                                     @enderror
                                 </div>
+                                <h4 class="heading">Design Image</h4>
+
+                                <div class="form-group">
+                                    <label for="fromt">Front Side</label>
+                                    <input type="file" id="fromt" name="front_image" class="form-control">
+                                    @error('front_image')
+                                        <p class="text-danger">{{ $message }}</p>
+                                    @enderror
+                                </div>
+                                <div class="form-group">
+                                    <label for="back">Back Side</label>
+                                    <input type="file" id="back" name="back_image" class="form-control">
+                                    @error('back_image')
+                                        <p class="text-danger">{{ $message }}</p>
+                                    @enderror
+                                </div>
+                                {{-- <div class="form-group">
+                                    <label for="shoulder">Category Image</label>
+                                    <input type="file" id="shoulder" name="shoulder_image" class="form-control">
+                                    @error('shoulder_image')
+                                        <p class="text-danger">{{ $message }}</p>
+                                    @enderror
+                                </div> --}}
                             </div>
                         </section>
 
