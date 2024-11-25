@@ -6,14 +6,14 @@
     <style>
         /* Modal background and text styling */
         /* .modal-content {
-                                                                                                                                                background-color: black;
-                                                                                                                                                color: white;
-                                                                                                                                            } */
+                                                                                                                                                        background-color: black;
+                                                                                                                                                        color: white;
+                                                                                                                                                    } */
 
         /* Close button color */
         /* .close {
-                                                                                                                                                color: white;
-                                                                                                                                            } */
+                                                                                                                                                        color: white;
+                                                                                                                                                    } */
 
         /* Image styling to make them black and white */
         /* Blur effect */
@@ -39,25 +39,25 @@
 
         /* Button styling */
         /* .btn-primary {
-                                                                                                                                    background-color: black;
-                                                                                                                                    border-color: white;
-                                                                                                                                    color: white;
-                                                                                                                                }
+                                                                                                                                            background-color: black;
+                                                                                                                                            border-color: white;
+                                                                                                                                            color: white;
+                                                                                                                                        }
 
-                                                                                                                                .btn-primary:hover {
-                                                                                                                                    background-color: white;
-                                                                                                                                    color: black;
-                                                                                                                                }
+                                                                                                                                        .btn-primary:hover {
+                                                                                                                                            background-color: white;
+                                                                                                                                            color: black;
+                                                                                                                                        }
 
-                                                                                                                                .btn-secondary {
-                                                                                                                                    background-color: white;
-                                                                                                                                    color: black;
-                                                                                                                                }
+                                                                                                                                        .btn-secondary {
+                                                                                                                                            background-color: white;
+                                                                                                                                            color: black;
+                                                                                                                                        }
 
-                                                                                                                                .btn-secondary:hover {
-                                                                                                                                    background-color: black;
-                                                                                                                                    color: white;
-                                                                                                                                } */
+                                                                                                                                        .btn-secondary:hover {
+                                                                                                                                            background-color: black;
+                                                                                                                                            color: white;
+                                                                                                                                        } */
 
         .side-button {
             border: none;
@@ -1341,38 +1341,52 @@
             // Loop through each saved design
             designs.forEach((design, index) => {
                 var tempCanvas = new fabric.StaticCanvas(null, {
-                    width: 150,
-                    height: 150
+                    width: 600,
+                    height: 600
                 }); // Create a temporary canvas for each design
 
                 // Add each object from the saved design to the temporary canvas
                 fabric.util.enlivenObjects(design.objects, function(enlivenedObjects) {
+                    // console.log(enlivenedObjects); // Debugging: Check if objects are properly enlivened
+
                     enlivenedObjects.forEach(function(obj) {
+                        // console.log(obj.left, obj.top); // Check if objects are within canvas bounds
+
+                        obj.set({
+                            left: 0 , // Adjust position if needed
+                            top:  0 ,
+                            scaleX: 0.5,
+                            scaleY: 0.5,
+                        });
                         tempCanvas.add(obj); // Add object to the temporary canvas
                     });
 
                     // Now that all objects are added, we render the canvas
-                    tempCanvas.renderAll(); // Render the canvas to apply all objects
+                    // tempCanvas.backgroundColor = '#0000'; // Set a white background for debugging purposes
+                   tempCanvas.renderAll();
 
                     // Generate the preview image (thumbnail) after rendering the canvas
+                    // var dataUrl = tempCanvas.toDataURL(); // Get the image data URL for the preview
                     var dataUrl = tempCanvas.toDataURL(); // Get the image data URL for the preview
 
                     // Log dataUrl to debug
-                    console.log('Generated Data URL:', dataUrl);
+                    // console.log('Generated Data URL:', dataUrl);
 
                     if (dataUrl) {
                         // Create an image element for the gallery
                         var imgElement = document.createElement('img');
                         imgElement.src = dataUrl;
                         imgElement.alt = `Design ${index + 1}`;
-                        imgElement.style = 'width: 150px; height: 150px; cursor: pointer;';
+                        imgElement.style = 'width: 150px; height: 150px; cursor: pointer; object-fit: contain;';
                         imgElement.onclick = () => applyDesignToCanvas(design
-                        .objects); // Apply the design when clicked
+                            .objects); // Apply the design when clicked
 
                         galleryContainer.appendChild(imgElement); // Append the image to the gallery
                     } else {
                         console.log('Error generating data URL for design', index + 1);
                     }
+
+
                 });
             });
         }
