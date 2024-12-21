@@ -6,14 +6,14 @@
     <style>
         /* Modal background and text styling */
         /* .modal-content {
-                                                                                                                                                        background-color: black;
-                                                                                                                                                        color: white;
-                                                                                                                                                    } */
+                                                                                                                                                                                                    background-color: black;
+                                                                                                                                                                                                    color: white;
+                                                                                                                                                                                                } */
 
         /* Close button color */
         /* .close {
-                                                                                                                                                        color: white;
-                                                                                                                                                    } */
+                                                                                                                                                                                                    color: white;
+                                                                                                                                                                                                } */
 
         /* Image styling to make them black and white */
         /* Blur effect */
@@ -39,25 +39,25 @@
 
         /* Button styling */
         /* .btn-primary {
-                                                                                                                                            background-color: black;
-                                                                                                                                            border-color: white;
-                                                                                                                                            color: white;
-                                                                                                                                        }
+                                                                                                                                                                                        background-color: black;
+                                                                                                                                                                                        border-color: white;
+                                                                                                                                                                                        color: white;
+                                                                                                                                                                                    }
 
-                                                                                                                                        .btn-primary:hover {
-                                                                                                                                            background-color: white;
-                                                                                                                                            color: black;
-                                                                                                                                        }
+                                                                                                                                                                                    .btn-primary:hover {
+                                                                                                                                                                                        background-color: white;
+                                                                                                                                                                                        color: black;
+                                                                                                                                                                                    }
 
-                                                                                                                                        .btn-secondary {
-                                                                                                                                            background-color: white;
-                                                                                                                                            color: black;
-                                                                                                                                        }
+                                                                                                                                                                                    .btn-secondary {
+                                                                                                                                                                                        background-color: white;
+                                                                                                                                                                                        color: black;
+                                                                                                                                                                                    }
 
-                                                                                                                                        .btn-secondary:hover {
-                                                                                                                                            background-color: black;
-                                                                                                                                            color: white;
-                                                                                                                                        } */
+                                                                                                                                                                                    .btn-secondary:hover {
+                                                                                                                                                                                        background-color: black;
+                                                                                                                                                                                        color: white;
+                                                                                                                                                                                    } */
 
         .side-button {
             border: none;
@@ -150,7 +150,7 @@
                                 onclick="changeColor('#FFFF00')">Yellow</button> --}}
 
 
-                            <div class="form-group color-palette">
+                            <div class="form-group color-palette ">
                                 <div class="color-rows">
                                     @foreach ($colors as $color)
                                         @if ($color != null)
@@ -165,8 +165,7 @@
                                 </div>
                             </div>
                         </div>
-                        <button onclick="saveCurrentDesign()">Save Design</button>
-                        <button onclick="loadDesignGallery()">Load Gallery</button>
+
                         <div id="design-gallery" style="display: flex; flex-wrap: wrap; gap: 10px;">
                             <!-- Thumbnails will appear here -->
                         </div>
@@ -184,7 +183,33 @@
                         @endif
                         <div class="mt-2">
                             <input class="btn btn-secondary px-3 m-2 " type="file" id="logoInput" accept="image/*">
-                            <button class="btn btn-success px-3 m-2 " id="addTextButton">Add Text</button>
+                        </div>
+
+                        <button onclick="saveCurrentDesign()">Save Design</button>
+                        <button onclick="loadDesignGallery()">Load Gallery</button>
+                        <button onclick="clearGallery()">Clear Gallery</button>
+                        <div class="mt-2">
+                            <!-- Font Selection -->
+                            {{-- <label for="fontFamily">Text Font:</label>
+                            <select id="fontFamily" class="form-select">
+                                <option value="Arial">Arial</option>
+                                <option value="Times New Roman">Times New Roman</option>
+                                <option value="Verdana">Verdana</option>
+                                <option value="Courier New">Courier New</option>
+                            </select> --}}
+                            <!-- Font Selection -->
+                            <label for="fontFamily">Font:</label>
+                            <select id="fontFamily" class="form-select">
+                                <option value="" disabled selected>Select a font</option>
+                            </select>
+                            <!-- Search Input -->
+                            {{-- <input type="text" id="searchFont" placeholder="Search Fonts..." class="form-control mt-2" /> --}}
+                            <!-- Color Selection -->
+                            <label for="textColor">Text Color:</label>
+                            <input class="ml-3" type="color" id="textColor" value="#000000" class="form-control" />
+
+                            <!-- Add Text Button -->
+                            <button class="btn btn-success px-3 m-2" id="addTextButton">Add Text</button>
                         </div>
                         {{-- <button class="btn btn-success px-3 m-2 " id="saveButton">Save Mockup</button> --}}
                         <button class="btn btn-danger px-3 m-2 " id="delateSelectedButton">Delete Selected</button>
@@ -363,6 +388,11 @@
                             </div>
                         </div>
                         <div class="form-group">
+                            <label for="message">Neck level Design:</label>
+                            <input class="btn btn-secondary px-3 m-2 " type="file" accept="image/*"
+                                name="neck_level_design">
+                        </div>
+                        <div class="form-group">
                             <label for="message">Neck level Details:</label>
                             <textarea id="message"class="form-control" name="neck_level_details"></textarea>
                         </div>
@@ -378,6 +408,11 @@
                                     value="No">
                                 <label class="custom-control-label" for="swing_tag-2">No</label>
                             </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="message">Swing Tag Design:</label>
+                            <input class="btn btn-secondary px-3 m-2 " type="file" accept="image/*"
+                                name="swing_tag_design">
                         </div>
                         <div class="form-group">
                             <label for="message">Swing Tag Details:</label>
@@ -638,27 +673,90 @@
         // Remove border styles from both canvas layers
         document.querySelector('.lower-canvas').style.border = 'none';
         document.querySelector('.upper-canvas').style.border = 'none';
-
         document.querySelector('.canvas-container').style.marginLeft = '40px';
-
         // console.log(canvas.width);
+        // Predefined font list (popular Google Fonts)
 
         // Function to add text to the canvas
         function addText() {
+
+            var selectedFont = fontFamilySelect.value;
+            var textColor = textColorInput.value;
+            if (!selectedFont) {
+                alert('Please select a font!');
+                return;
+            }
+
             var text = new fabric.Textbox('Your Text Here', {
                 left: 300,
                 top: 300,
                 width: 150,
                 fontSize: 20,
-                fill: 'black'
+                fontFamily: selectedFont,
+                fill: textColor
             });
-
             canvas.add(text);
             saveCurrentCanvasObjects(); // Save the new object for the current side
-
         }
 
+        // Predefined font list (popular Google Fonts)
+
+        var fonts = [
+            'Arial',
+            'Times New Roman',
+            'Verdana',
+            'Courier New',
+            'Roboto',
+            'Lato',
+            'Montserrat',
+            'Open Sans',
+            'Oswald',
+            'Raleway',
+            'Poppins',
+            'Playfair Display',
+            'Source Sans Pro'
+        ];
         var addTextButton = document.getElementById('addTextButton');
+        var fontFamilySelect = document.getElementById('fontFamily');
+        var searchFontInput = document.getElementById('searchFont');
+        var textColorInput = document.getElementById('textColor');
+        // Populate the font dropdown
+        function populateFontDropdown(fontList) {
+            fontList.forEach(font => {
+                var option = document.createElement('option');
+                option.value = font;
+                option.textContent = font;
+                fontFamilySelect.appendChild(option);
+            });
+        }
+
+        // Load fonts dynamically from Google Fonts CDN
+        function loadGoogleFont(font) {
+            var link = document.createElement('link');
+            link.href = `https://fonts.googleapis.com/css2?family=${font.replace(/ /g, '+')}&display=swap`;
+            link.rel = 'stylesheet';
+            document.head.appendChild(link);
+        }
+
+
+        // Initialize dropdown with fonts
+        populateFontDropdown(fonts);
+
+        // Load all fonts initially
+        fonts.forEach(font => loadGoogleFont(font));
+
+        // // Filter fonts as the user types
+        // searchFontInput.addEventListener('input', function() {
+        //     var searchValue = this.value.toLowerCase();
+        //     var filteredFonts = fonts.filter(font => font.toLowerCase().includes(searchValue));
+
+        //     // Clear and repopulate dropdown with filtered fonts
+        //     fontFamilySelect.innerHTML = '<option value="" disabled selected>Select a font</option>';
+        //     populateFontDropdown(filteredFonts);
+        // });
+
+
+
 
         addTextButton.onclick = function() {
             addText();
@@ -1058,64 +1156,64 @@
             return new Promise(resolve => setTimeout(resolve, ms));
         }
 
-        function backside() {
-            canvas.clear();
+        // function backside() {
+        //     canvas.clear();
 
-            // var canvas = new fabric.Canvas('canvas');
-            var newImageURL =
-                '{{ asset('frontend/img/hoodie back side.jpg') }}'; // Replace 'new_image_url.jpg' with the URL of your new background image
+        //     // var canvas = new fabric.Canvas('canvas');
+        //     var newImageURL =
+        //         '{{ asset('frontend/img/hoodie back side.jpg') }}'; // Replace 'new_image_url.jpg' with the URL of your new background image
 
-            fabric.Image.fromURL(newImageURL, function(img) {
+        //     fabric.Image.fromURL(newImageURL, function(img) {
 
-                img.set({
-                    left: 0,
-                    top: 0,
-                    width: canvas.width,
-                    height: canvas.height,
-                    selectable: false
-                });
-                canvas.setBackgroundImage(img, canvas.renderAll.bind(canvas));
-            });
-        }
+        //         img.set({
+        //             left: 0,
+        //             top: 0,
+        //             width: canvas.width,
+        //             height: canvas.height,
+        //             selectable: false
+        //         });
+        //         canvas.setBackgroundImage(img, canvas.renderAll.bind(canvas));
+        //     });
+        // }
 
-        function frontside() {
-            canvas.clear();
+        // function frontside() {
+        //     canvas.clear();
 
-            // var canvas = new fabric.Canvas('canvas');
-            var newImageURL =
-                '{{ asset('frontend/img/white-hoodie.png') }}'; // Replace 'new_image_url.jpg' with the URL of your new background image
-            fabric.Image.fromURL(newImageURL, function(img) {
-                img.scaleToWidth(canvas.width);
-                img.scaleToHeight(canvas.height);
-                img.set({
-                    left: 0,
-                    top: 0,
-                    // width: canvas.width,
-                    // height: canvas.height,
-                    selectable: false
-                });
-                canvas.setBackgroundImage(img, canvas.renderAll.bind(canvas));
-            });
-        }
+        //     // var canvas = new fabric.Canvas('canvas');
+        //     var newImageURL =
+        //         '{{ asset('frontend/img/white-hoodie.png') }}'; // Replace 'new_image_url.jpg' with the URL of your new background image
+        //     fabric.Image.fromURL(newImageURL, function(img) {
+        //         img.scaleToWidth(canvas.width);
+        //         img.scaleToHeight(canvas.height);
+        //         img.set({
+        //             left: 0,
+        //             top: 0,
+        //             // width: canvas.width,
+        //             // height: canvas.height,
+        //             selectable: false
+        //         });
+        //         canvas.setBackgroundImage(img, canvas.renderAll.bind(canvas));
+        //     });
+        // }
 
-        function shoulder() {
-            canvas.clear();
+        // function shoulder() {
+        //     canvas.clear();
 
-            // var canvas = new fabric.Canvas('canvas');
-            var newImageURL =
-                '{{ asset('frontend/img/shoulder.jpeg') }}'; // Replace 'new_image_url.jpg' with the URL of your new background image
+        //     // var canvas = new fabric.Canvas('canvas');
+        //     var newImageURL =
+        //         '{{ asset('frontend/img/shoulder.jpeg') }}'; // Replace 'new_image_url.jpg' with the URL of your new background image
 
-            fabric.Image.fromURL(newImageURL, function(img) {
-                img.set({
-                    left: 0,
-                    top: 0,
-                    width: canvas.width,
-                    height: canvas.height,
-                    selectable: false
-                });
-                canvas.setBackgroundImage(img, canvas.renderAll.bind(canvas));
-            });
-        }
+        //     fabric.Image.fromURL(newImageURL, function(img) {
+        //         img.set({
+        //             left: 0,
+        //             top: 0,
+        //             width: canvas.width,
+        //             height: canvas.height,
+        //             selectable: false
+        //         });
+        //         canvas.setBackgroundImage(img, canvas.renderAll.bind(canvas));
+        //     });
+        // }
         // Add background image
         // fabric.Image.fromURL('{{ asset('frontend/img/white-hoodie.png') }}', function(img) {
         //     // Stretch the image to exactly fill the canvas
@@ -1216,66 +1314,27 @@
 
         //design gallery start here
 
-        // function saveCurrentDesign() {
-        //     var designData = JSON.stringify(canvas.toJSON()); // Serialize design to JSON
-        //     var designThumbnail = canvas.toDataURL(); // Generate thumbnail image (Base64)
-
-        //     // Save the design and its thumbnail in local storage or your backend
-        //     var designs = JSON.parse(localStorage.getItem('designGallery')) || [];
-        //     designs.push({
-        //         json: designData,
-        //         thumbnail: designThumbnail
-        //     });
-        //     localStorage.setItem('designGallery', JSON.stringify(designs));
-
-        //     alert('Design saved successfully!');
-        // }
-
-
-        // function loadSavedDesign(side) {
-        //     var savedData = localStorage.getItem(side === 'front' ? 'frontDesign' : 'backDesign');
-        //     if (savedData) {
-        //         canvas.loadFromJSON(savedData, canvas.renderAll.bind(canvas));
-        //     }
-        // }
-
-        // function generateThumbnail(designData) {
-        //     var tempCanvas = new fabric.StaticCanvas(null, {
-        //         width: 200,
-        //         height: 200
-        //     }); // Thumbnail size
-        //     tempCanvas.loadFromJSON(designData, function() {
-        //         var dataUrl = tempCanvas.toDataURL();
-        //         document.getElementById('design-gallery').innerHTML +=
-        //             `<img src="${dataUrl}" alt="Design Thumbnail" onclick="applyDesign('${designData}')">`;
-        //     });
-        // }
-
-        // function loadDesignGallery() {
-        //     var designs = JSON.parse(localStorage.getItem('designGallery')) || [];
-        //     var galleryContainer = document.getElementById('design-gallery');
-        //     galleryContainer.innerHTML = ''; // Clear existing thumbnails
-
-        //     designs.forEach((design, index) => {
-        //         var imgElement = document.createElement('img');
-        //         imgElement.src = design.thumbnail; // Use the saved thumbnail
-        //         imgElement.alt = `Design ${index + 1}`;
-        //         imgElement.style = 'width: 150px; height: 150px; cursor: pointer;'; // Thumbnail styling
-        //         imgElement.onclick = () => loadDesignToCanvas(design.json); // Apply the design when clicked
-        //         galleryContainer.appendChild(imgElement);
-        //     });
-        // }
-
-
-        // function loadDesignToCanvas(designData) {
-        //     canvas.loadFromJSON(designData, function() {
-        //         canvas.renderAll();
-        //         alert('Design loaded onto canvas!');
-        //     });
-        // }
         let designGallery = []; // Array to store designs
 
         // Function to Save Current Design
+        // function saveCurrentDesign() {
+        //     var objects = canvas.getObjects();
+        //     if (currentSide === 'front') {
+        //         frontDesign = objects;
+        //     } else if (currentSide === 'back') {
+        //         backDesign = objects;
+        //     }
+
+        //     // Save designs to localStorage or any other storage you prefer
+        //     var designs = JSON.parse(localStorage.getItem('designs')) || [];
+        //     designs.push({
+        //         side: currentSide,
+        //         objects: objects
+        //     });
+        //     localStorage.setItem('designs', JSON.stringify(designs));
+
+        //     alert('Design saved successfully!');
+        // }
         function saveCurrentDesign() {
             var objects = canvas.getObjects();
             if (currentSide === 'front') {
@@ -1284,16 +1343,34 @@
                 backDesign = objects;
             }
 
-            // Save designs to localStorage or any other storage you prefer
+            // Create a temporary canvas for generating the preview
+            var tempCanvas = new fabric.StaticCanvas(null, {
+                width: 600,
+                height: 600,
+            });
+
+            // Add objects to the temporary canvas
+            objects.forEach(function(obj) {
+                tempCanvas.add(obj);
+            });
+            // Generate the preview image
+            var previewImage = tempCanvas.toDataURL({
+                format: 'png',
+                quality: 0.8,
+            });
+
+            // Save designs to localStorage
             var designs = JSON.parse(localStorage.getItem('designs')) || [];
             designs.push({
                 side: currentSide,
-                objects: objects
+                objects: objects,
+                preview: previewImage, // Save the preview image
             });
-            localStorage.setItem('designs', JSON.stringify(designs));
 
+            localStorage.setItem('designs', JSON.stringify(designs));
             alert('Design saved successfully!');
         }
+
 
 
         // function loadDesignGallery() {
@@ -1305,90 +1382,80 @@
         //     // Loop through each saved design
         //     designs.forEach((design, index) => {
         //         var tempCanvas = new fabric.StaticCanvas(null, {
-        //             width: 150,
-        //             height: 150
+        //             width: 600,
+        //             height: 600
         //         }); // Create a temporary canvas for each design
 
-        //         // Loop through the objects in each design and add them to the temp canvas
-        //         design.objects.forEach(objData => {
-        //             fabric.util.enlivenObjects([objData], function(enlivenedObjects) {
-        //                 enlivenedObjects.forEach(function(obj) {
-        //                     tempCanvas.add(obj);
+        //         // Add each object from the saved design to the temporary canvas
+        //         fabric.util.enlivenObjects(design.objects, function(enlivenedObjects) {
+        //             // console.log(enlivenedObjects); // Debugging: Check if objects are properly enlivened
+
+        //             enlivenedObjects.forEach(function(obj) {
+        //                 // console.log(obj.left, obj.top); // Check if objects are within canvas bounds
+
+        //                 obj.set({
+        //                     left: 0 , // Adjust position if needed
+        //                     top:  0 ,
+        //                     scaleX: 0.5,
+        //                     scaleY: 0.5,
         //                 });
+        //                 tempCanvas.add(obj); // Add object to the temporary canvas
+        //             });
 
-        //                 // Generate the preview image once all objects are added
-        //                 var dataUrl = tempCanvas.toDataURL();
+        //             // Now that all objects are added, we render the canvas
+        //             // tempCanvas.backgroundColor = '#0000'; // Set a white background for debugging purposes
+        //            tempCanvas.renderAll();
 
+        //             // Generate the preview image (thumbnail) after rendering the canvas
+        //             // var dataUrl = tempCanvas.toDataURL(); // Get the image data URL for the preview
+        //             var dataUrl = tempCanvas.toDataURL(); // Get the image data URL for the preview
+
+        //             // Log dataUrl to debug
+        //             // console.log('Generated Data URL:', dataUrl);
+
+        //             if (dataUrl) {
         //                 // Create an image element for the gallery
         //                 var imgElement = document.createElement('img');
         //                 imgElement.src = dataUrl;
         //                 imgElement.alt = `Design ${index + 1}`;
-        //                 imgElement.style = 'width: 150px; height: 150px; cursor: pointer;';
+        //                 imgElement.style = 'width: 150px; height: 150px; cursor: pointer; object-fit: contain;';
         //                 imgElement.onclick = () => applyDesignToCanvas(design
-        //                 .objects); // Load design onto canvas when clicked
-        //                 galleryContainer.appendChild(imgElement); // Append image to the gallery
-        //             });
+        //                     .objects); // Apply the design when clicked
+
+        //                 galleryContainer.appendChild(imgElement); // Append the image to the gallery
+        //             } else {
+        //                 console.log('Error generating data URL for design', index + 1);
+        //             }
+
+
         //         });
         //     });
         // }
-
         function loadDesignGallery() {
             var galleryContainer = document.getElementById('design-gallery');
             galleryContainer.innerHTML = ''; // Clear existing gallery
 
             var designs = JSON.parse(localStorage.getItem('designs')) || [];
 
-            // Loop through each saved design
+            // Loop through saved designs and create image elements for the gallery
             designs.forEach((design, index) => {
-                var tempCanvas = new fabric.StaticCanvas(null, {
-                    width: 600,
-                    height: 600
-                }); // Create a temporary canvas for each design
+                // Create an image element for the gallery
+                var imgElement = document.createElement('img');
+                imgElement.src = design.preview; // Use saved preview image
+                imgElement.alt = `Design ${index + 1}`;
+                imgElement.style = 'width: 150px; height: 150px; cursor: pointer; object-fit: contain;';
+                imgElement.onclick = () => applyDesignToCanvas(design
+                    .objects); // Apply the design when clicked
 
-                // Add each object from the saved design to the temporary canvas
-                fabric.util.enlivenObjects(design.objects, function(enlivenedObjects) {
-                    // console.log(enlivenedObjects); // Debugging: Check if objects are properly enlivened
-
-                    enlivenedObjects.forEach(function(obj) {
-                        // console.log(obj.left, obj.top); // Check if objects are within canvas bounds
-
-                        obj.set({
-                            left: 0 , // Adjust position if needed
-                            top:  0 ,
-                            scaleX: 0.5,
-                            scaleY: 0.5,
-                        });
-                        tempCanvas.add(obj); // Add object to the temporary canvas
-                    });
-
-                    // Now that all objects are added, we render the canvas
-                    // tempCanvas.backgroundColor = '#0000'; // Set a white background for debugging purposes
-                   tempCanvas.renderAll();
-
-                    // Generate the preview image (thumbnail) after rendering the canvas
-                    // var dataUrl = tempCanvas.toDataURL(); // Get the image data URL for the preview
-                    var dataUrl = tempCanvas.toDataURL(); // Get the image data URL for the preview
-
-                    // Log dataUrl to debug
-                    // console.log('Generated Data URL:', dataUrl);
-
-                    if (dataUrl) {
-                        // Create an image element for the gallery
-                        var imgElement = document.createElement('img');
-                        imgElement.src = dataUrl;
-                        imgElement.alt = `Design ${index + 1}`;
-                        imgElement.style = 'width: 150px; height: 150px; cursor: pointer; object-fit: contain;';
-                        imgElement.onclick = () => applyDesignToCanvas(design
-                            .objects); // Apply the design when clicked
-
-                        galleryContainer.appendChild(imgElement); // Append the image to the gallery
-                    } else {
-                        console.log('Error generating data URL for design', index + 1);
-                    }
-
-
-                });
+                galleryContainer.appendChild(imgElement); // Append the image to the gallery
             });
+        }
+
+        function clearGallery() {
+            if (confirm('Are you sure you want to clear all saved designs?')) {
+                localStorage.removeItem('designs');
+                loadDesignGallery(); // Reload the gallery to reflect changes
+            }
         }
 
 
@@ -1402,10 +1469,9 @@
                     canvas.add(obj);
                 });
                 canvas.renderAll();
-                alert('Design loaded successfully!');
+                // alert('Design loaded successfully!');
             });
         }
-
 
 
         //end of gallery design

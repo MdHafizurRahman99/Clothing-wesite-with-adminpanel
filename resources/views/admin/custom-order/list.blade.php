@@ -28,9 +28,9 @@
                         <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                             <thead>
                                 <tr>
-                                    <th> Name</th>
-                                    <th>Company Name</th>
-                                    <th>Clothing Type</th>
+                                    <th> Target</th>
+                                    <th>Category</th>
+                                    <th>Looking For</th>
                                     <th>Date</th>
                                     @if (Auth::user()->can('order.edit') || Auth::user()->can('order.delete'))
                                         <th>Action</th>
@@ -60,14 +60,28 @@
                                             $customer_info=\App\Models\User::find($order->customer_id);
                                         @endphp --}}
                                         <td>
-                                            <p class="p-2"> {{ $order->name }} </p>
+                                            <p class="p-2"> {{ $order->target }} </p>
                                         </td>
                                         <td>
-                                            <p class="p-2"> {{ $order->company_name }} </p>
+                                            <p class="p-2"> {{ $order->category }} </p>
                                         </td>
                                         <td>
-                                            <p class="p-2"> {{ $order->clothing_type }} </p>
+
+                                            @php
+                                                $lookingFor = json_decode($order->looking_for, true);
+                                            @endphp
+
+                                            @if (is_array($lookingFor) && count($lookingFor) > 0)
+                                                <ul>
+                                                    @foreach ($lookingFor as $item)
+                                                        <li>{{ $item }}</li>
+                                                    @endforeach
+                                                </ul>
+                                            @else
+                                                <p>No Preferences Specified</p>
+                                            @endif
                                         </td>
+
 
                                         <td>
                                             <p class="p-2">
@@ -77,7 +91,7 @@
                                         @if (Auth::user()->can('order.edit') || Auth::user()->can('order.delete'))
                                             <td>
                                                 @if (Auth::user()->can('order.edit'))
-                                                    <a href="{{ route('order.edit', ['order' => $order->id]) }}">
+                                                    <a href="{{ route('custom-order.edit', ['custom_order' => $order->id]) }}">
                                                         <input class="btn btn-warning" type="button" value="Edit">
                                                     </a>
                                                 @endif

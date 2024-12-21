@@ -296,7 +296,12 @@ class CustomOrderController extends Controller
      */
     public function edit(CustomOrder $customOrder)
     {
-        //
+        $customOrder->looking_for = json_decode($customOrder->looking_for, true); // Decoding the JSON array
+
+        return view('frontend.custom-order.edit', [
+            'order' => $customOrder,
+            'images' => CustomOrderImage::where('custom_order_id', $customOrder->id)->get()
+        ]);
     }
 
     /**
@@ -304,7 +309,86 @@ class CustomOrderController extends Controller
      */
     public function update(Request $request, CustomOrder $customOrder)
     {
-        //
+        $rules = [
+            'target' => 'required|string|max:255',
+            'category' => 'required|string|max:255',
+            'subcategory' => 'string|max:255',
+            'looking_for' => 'required|max:255',
+            'additional_services' => 'nullable',
+            'number_of_products' => 'required',
+            'quantity_per_model' => 'required',
+            'project_budget' => 'required',
+            'sample_delivery_date' => 'required',
+            'production_delivery_date' => 'required ',
+            'project_description' => 'nullable|string',
+            'inspiration_images.*' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+        ];
+
+        // Define custom attribute names
+        $attributes = [
+            'target' => 'Target',
+            'category' => 'Category',
+            'subcategory' => 'Subcategory',
+            'looking_for' => 'Looking For',
+            'additional_services' => 'Additional Services',
+            'number_of_products' => 'Number of Products',
+            'quantity_per_model' => 'Quantity Per Model',
+            'project_budget' => 'Project Budget',
+            'sample_delivery_date' => 'Sample Delivery Date',
+            'production_delivery_date' => 'Production Delivery Date',
+            'project_description' => 'Project Description',
+            'inspiration_images' => 'Inspiration Images',
+        ];
+        $request->validate($rules, [], $attributes);
+        // return 'hello';
+        $customOrder->update(
+            [
+                'user_id' => auth()->user()->id,
+                'target' => $request->target,
+                'category' => $request->category,
+                'subcategory' => $request->subcategory,
+                'looking_for' => json_encode($request->looking_for),
+                'additional_services' => json_encode($request->additional_services),
+                'number_of_products' => $request->number_of_products,
+                'quantity_per_model' => $request->quantity_per_model,
+                'project_budget' => $request->project_budget,
+                'sample_delivery_date' => $request->sample_delivery_date,
+                'production_delivery_date' => $request->production_delivery_date,
+                'project_description' => $request->project_description,
+            ]
+        );
+        // return $custom->id;
+        // Validate the request
+
+        $imagePaths = [];
+
+        // Handle the uploaded files
+        if ($request->hasfile('inspiration_images')) {
+            foreach ($request->file('inspiration_images') as $file) {
+                $extention = $file->getClientOriginalExtension();
+                $imageName = rand() . '.' . $extention;
+                $directory = 'assets/frontend/product/custom-order/inspiration-images/';
+                $imageUrl = $directory . $imageName;
+                session()->push('galleryImage', $imageUrl);
+                $file->move($directory, $imageName);
+                $image = CustomOrderImage::create(
+                    [
+                        'custom_order_id' => $customOrder->id,
+                        'image_url' => $imageUrl,
+                    ]
+                );
+                // $name = time() . '_' . $file->getClientOriginalName();
+                // // return $name;
+                // // Store the file in the public storage
+                // $path = $file->storeAs('public/inspiration_images', $name);
+                // // Add the file path to the array
+                // $imagePaths[] = Storage::url($path);
+
+            }
+        }
+        // Mail::to($email)->send(new MailCustomOrder());
+
+        return redirect()->route('custom-order.index')->with('message', 'Product Custom Order Updated successfully.');
     }
 
     /**
