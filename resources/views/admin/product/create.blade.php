@@ -223,27 +223,27 @@
                                 <div class="form-group">
                                     <label for="name">Custom color available?</label>
                                     <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="customcolor"
-                                            id="customcolor1" value="No"
-                                            {{ old('customcolor') == 'No' ? 'checked' : '' }} checked>
+                                        <input class="form-check-input" type="radio" name="customcolor" id="customcolor1"
+                                            value="No" {{ old('customcolor') == 'No' ? 'checked' : '' }} checked>
                                         <label class="form-check-label" for="customcolor1">
                                             No
                                         </label>
                                     </div>
                                     <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="customcolor"
-                                            id="customcolor2" value="Yes"
-                                            {{ old('customcolor') == 'Yes' ? 'checked' : '' }}>
+                                        <input class="form-check-input" type="radio" name="customcolor" id="customcolor2"
+                                            value="Yes" {{ old('customcolor') == 'Yes' ? 'checked' : '' }}>
                                         <label class="form-check-label" for="customcolor2">
                                             Yes
                                         </label>
                                     </div>
 
                                     <div id="customColorDetails" style="display: none;">
-                                        <input type="text" name="minimum_order" id="minimumOrder" placeholder="Minimum Order Quantity(pcs)"
-                                        value="{{ old('minimum_order') }}" class="form-control">
-                                        <input type="text" name="minimum_time_required" id="minimumTimeRequired" placeholder="Minimum Required Time(days)"
-                                        value="{{ old('minimum_time_required') }}" class="form-control mt-2">
+                                        <input type="text" name="minimum_order" id="minimumOrder"
+                                            placeholder="Minimum Order Quantity(pcs)" value="{{ old('minimum_order') }}"
+                                            class="form-control">
+                                        <input type="text" name="minimum_time_required" id="minimumTimeRequired"
+                                            placeholder="Minimum Required Time(days)"
+                                            value="{{ old('minimum_time_required') }}" class="form-control mt-2">
                                     </div>
                                 </div>
                                 <div class="form-group">
@@ -323,13 +323,11 @@
                                     <label for="sizes" class="mb-2">Sizes</label>
                                     <div id="sizeInputs" class="size-inputs-container">
                                         @foreach ($sizetype1 as $size)
-
                                             <div class="size-group border p-3 mb-3 rounded">
                                                 <div class="form-check form-check-inline">
                                                     <input type="checkbox" name="sizes[{{ $size->size }}][selected]"
                                                         value="1" id="size{{ $size->size }}"
-                                                        class="form-check-input"
-                                                        >
+                                                        class="form-check-input">
                                                     <label for="size{{ $size->size }}"
                                                         class="form-check-label font-weight-bold">{{ $size->size }}</label>
                                                 </div>
@@ -350,13 +348,11 @@
                                     <label for="sizes" class="mb-2">Sizes</label>
                                     <div id="sizeInputs" class="size-inputs-container">
                                         @foreach ($sizetype2 as $size)
-
                                             <div class="size-group border p-3 mb-3 rounded">
                                                 <div class="form-check form-check-inline">
                                                     <input type="checkbox" name="sizes[{{ $size->size }}][selected]"
                                                         value="1" id="size{{ $size->size }}"
-                                                        class="form-check-input"
-                                                        >
+                                                        class="form-check-input">
                                                     <label for="size{{ $size->size }}"
                                                         class="form-check-label font-weight-bold">{{ $size->size }}</label>
                                                 </div>
@@ -469,6 +465,22 @@
                                     @enderror
                                 </div>
 
+                                <div class="form-group">
+                                    <label for="right">Right Sleeve</label>
+                                    <input type="file" id="right" name="design_image_right_side"
+                                        class="form-control">
+                                    @error('design_image_right_side')
+                                        <p class="text-danger">{{ $message }}</p>
+                                    @enderror
+                                </div>
+                                <div class="form-group">
+                                    <label for="left">Left Sleeve</label>
+                                    <input type="file" id="left" name="design_image_left_side"
+                                        class="form-control">
+                                    @error('design_image_left_side')
+                                        <p class="text-danger">{{ $message }}</p>
+                                    @enderror
+                                </div>
                                 {{-- <div class="form-group">
                                     <label for="document">Documents</label>
                                     <div class="needsclick dropzone" id="document-dropzone">
@@ -627,20 +639,20 @@
                 }
 
                 const customColorYes = document.getElementById('customcolor2');
-        const customColorNo = document.getElementById('customcolor1');
-        const customColorDetails = document.getElementById('customColorDetails');
+                const customColorNo = document.getElementById('customcolor1');
+                const customColorDetails = document.getElementById('customColorDetails');
 
-        customColorYes.addEventListener('change', function () {
-            if (this.checked) {
-                customColorDetails.style.display = 'block';
-            }
-        });
+                customColorYes.addEventListener('change', function() {
+                    if (this.checked) {
+                        customColorDetails.style.display = 'block';
+                    }
+                });
 
-        customColorNo.addEventListener('change', function () {
-            if (this.checked) {
-                customColorDetails.style.display = 'none';
-            }
-        });
+                customColorNo.addEventListener('change', function() {
+                    if (this.checked) {
+                        customColorDetails.style.display = 'none';
+                    }
+                });
             };
         });
     </script>

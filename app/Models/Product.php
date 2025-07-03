@@ -28,6 +28,8 @@ class Product extends Model
         'image',
         'design_image_front_side',
         'design_image_back_side',
+        'design_image_right_side',
+        'design_image_left_side',
         'price',
         'description',
     ];

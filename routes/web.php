@@ -37,6 +37,7 @@ use App\Http\Controllers\UserProfileController;
 use App\Http\Controllers\MessagesController;
 use App\Http\Controllers\ProductSizeController;
 use App\Models\StaffSchedule;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 
@@ -50,17 +51,31 @@ use Illuminate\Support\Facades\Auth;
 |
 */
 
+
+Route::get('/clear-cache', function () {
+    Artisan::call('config:clear');
+    Artisan::call('cache:clear');
+    Artisan::call('view:clear');
+    Artisan::call('route:clear');
+    Artisan::call('config:cache');
+    Artisan::call('optimize'); // Running optimize command
+
+    return 'Cache and Optimizations hello!';
+});
+
+Route::get('/', function () {
+    // return view('layouts.frontend.master');
+    return view('frontend.home');
+})->name('home');
 //clothing shop
 Route::get("/stripe-success", [StripeController::class, "success"])->name("stripe-success");
 Route::get("/stripe-cancel", [StripeController::class, "cancel"])->name("stripe-cancel");
 
 Route::middleware('mailverified')->group(function () {
-
-
-    Route::get('/', function () {
-        // return view('layouts.frontend.master');
-        return view('frontend.home');
-    })->name('home');
+    // Route::get('/', function () {
+    //     // return view('layouts.frontend.master');
+    //     return view('frontend.home');
+    // })->name('home');
     // Route::get('/', function() {
     //     return response()->json([
     //      'stuff' => phpinfo()
@@ -80,7 +95,6 @@ Route::middleware('mailverified')->group(function () {
     Route::post('/check-email', [CustomOrderController::class, 'checkEmail'])->name('check.email');
     Route::resource('catalog-order', CatalogOrderController::class);
     Route::match(['get', 'post'], '/botman', [BotManController::class, 'handle']);
-    Route::resource('custom-product-design', CustomDesignController::class);
 
     Route::resource('home', HomeController::class);
     Route::get('/contact-us', [HomeController::class, 'contact'])->name('contact');
@@ -93,6 +107,7 @@ Route::middleware('mailverified')->group(function () {
     Route::get('/product-cart', [ShopController::class, 'productCart'])->name('shop.product-cart');
     Route::get('/custom-design', [ShopController::class, 'customDesign'])->name('shop.custom-design');
     // Route::get('/custom-order', [ShopController::class, 'customOrder'])->name('shop.custom-order');
+    Route::resource('custom-product-design', CustomDesignController::class);
 
     Route::post('/add-to-cart', [CartController::class, 'addToCart'])->name('cart.add');
     Route::get('/reorder/{order}', [CartController::class, 'reorder'])->name('cart.reorder');

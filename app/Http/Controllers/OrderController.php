@@ -106,6 +106,7 @@ class OrderController extends Controller
             // return response()->json(['errors' => $validator->errors()], 400);
             return redirect()->back()->withErrors($validator)->withInput();
         }
+
         session()->forget('order_info');
 
         $orderData = $request->except('_token', '_method');
@@ -162,7 +163,6 @@ class OrderController extends Controller
                                 # code...
                                 return redirect()->route('shop.product-cart')->withErrors([
                                     'error' => "We apologize, but there is currently limited stock ({$inventory->quantity} pcs) available for '{$size}({$color})' of Product '" .
-
                                         $product->display_name .  "'. Please adjust the quantity."
                                 ]);
                             }

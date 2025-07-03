@@ -7,6 +7,7 @@ use App\Models\Payment;
 use GuzzleHttp\Promise\Create;
 use Illuminate\Http\Request;
 use App\Models\Inventory;
+use App\Models\MockupDesign;
 use App\Models\Order;
 use App\Models\OrderDetail;
 
@@ -116,6 +117,7 @@ class StripeController extends Controller
                         $cartproducts[$productId] = $cartProduct;
                     }
                 }
+
                 if (!empty($cartproducts) && isset($cartproducts)) {
                     foreach ($cartproducts as $cartproduct) {
                         // return $cartproducts;
@@ -160,20 +162,20 @@ class StripeController extends Controller
                                         'quantity' => $updateQuantity
                                     ]);
 
-                                    $customDesignAdditionalDatakey = 'customDesignAdditionalData_' . $product_id;
-                                    $cachedData = cache()->forget($customDesignAdditionalDatakey);
-                                    $customDesignAdditionalData = cache()->get($customDesignAdditionalDatakey);
-                                    if ($customDesignAdditionalData != null) {
-                                        cache()->forget($customDesignAdditionalDatakey);
-                                        $additionalData = CustomDesign::create([
-                                            'product_id' => $customDesignAdditionalData->product_id,
-                                            'design_details' => $customDesignAdditionalData->design_details,
-                                            'neck_level' => $customDesignAdditionalData->neck_level,
-                                            'neck_level_details' => $customDesignAdditionalData->neck_level_details,
-                                            'swing_tag' => $customDesignAdditionalData->swing_tag,
-                                            'swing_tag_details' => $customDesignAdditionalData->swing_tag_details,
-                                        ]);
-                                    }
+                                    // $customDesignAdditionalDatakey = 'customDesignAdditionalData_' . $product_id;
+                                    // // $cachedData = cache()->forget($customDesignAdditionalDatakey);
+                                    // $customDesignAdditionalData = cache()->get($customDesignAdditionalDatakey);
+                                    // if ($customDesignAdditionalData != null) {
+                                    //     // cache()->forget($customDesignAdditionalDatakey);
+                                    //     $additionalData = CustomDesign::create([
+                                    //         'product_id' => $customDesignAdditionalData->product_id,
+                                    //         'design_details' => $customDesignAdditionalData->design_details,
+                                    //         'neck_level' => $customDesignAdditionalData->neck_level,
+                                    //         'neck_level_details' => $customDesignAdditionalData->neck_level_details,
+                                    //         'swing_tag' => $customDesignAdditionalData->swing_tag,
+                                    //         'swing_tag_details' => $customDesignAdditionalData->swing_tag_details,
+                                    //     ]);
+                                    // }
                                 }
                             }
 
@@ -203,12 +205,86 @@ class StripeController extends Controller
                     }
                 }
 
+
+                // for custom design additional data
+                if (isset($productIds)) {
+                    foreach ($productIds as $productId) {
+                        $customDesignAdditionalDatakey = 'customDesignAdditionalData_' . $productId;
+                        $cachedData =cache()->get($customDesignAdditionalDatakey);
+                        // return $productId;
+                        // if ($cachedData !== null) {
+                            // The key exists, and data is available in the cache
+                            $designDetail = CustomDesign::create([
+                                'order_id' => $order->id,
+                                'product_id' => $productId,
+                                'neck_level' => $cachedData['input']['neck_level'] ?? null,
+                                'neck_level_details' => $cachedData['input']['neck_level_details'] ?? null,
+                                'neck_level_design' => $cachedData['files']['neck_level_design'] ?? null,
+                                'right_sleeve' => $cachedData['input']['right_sleeve'] ?? null,
+                                'right_sleeve_details' => $cachedData['input']['right_sleeve_details'] ?? null,
+                                'right_sleeve_design' => $cachedData['files']['right_sleeve_design'] ?? null,
+                                'left_sleeve' => $cachedData['input']['left_sleeve'] ?? null,
+                                'left_sleeve_details' => $cachedData['input']['left_sleeve_details'] ?? null,
+                                'left_sleeve_design' => $cachedData['files']['left_sleeve_design'] ?? null,
+                                'design_details' => $cachedData['input']['design_details'] ?? null,
+                                'swing_tag' => $cachedData['input']['swing_tag'] ?? null,
+                                'custom_color' => $cachedData['input']['custom_color'] ?? null,
+                                'swing_tag_details' => $cachedData['input']['swing_tag_details'] ?? null,
+                                'swing_tag_design' => $cachedData['files']['swing_tag_design'] ?? null,
+                            ]);
+                        // }
+
+                        // for canvas mockup design
+                        $sides = ['front', 'back', 'right', 'left', 'shoulder'];
+                        foreach ($sides as $side) {
+                            // Session Keys
+                            $designSessionKey = 'design_' . $side . '_' . $productId;
+                            $mockupSessionKey = 'mockup_' . $side . '_' . $productId;
+
+                            // Retrieve Design Data
+                            $designImages = session()->get($designSessionKey, []);
+
+                            // Retrieve Mockup Data
+                            $mockupData = session()->get($mockupSessionKey, []);
+
+                            // Check if data exists for the side
+                            if (!$designImages && !$mockupData) {
+                                continue; // Skip if no data
+                            }
+
+                            // Extract Mockup Data
+                            $mockupImageUrl = $mockupData['imageUrl'] ?? null;
+                            $objects = $mockupData['objects'] ?? [];
+
+                            // Store in Database
+                            MockupDesign::updateOrCreate(
+                                [
+                                    'order_id' => $order->id,
+                                    'product_id' => $productId,
+                                    'side' => $side,
+                                    'mockup_image_url' => $mockupImageUrl,
+                                    'design_images' => json_encode($designImages),
+                                    'objects' => json_encode($objects),
+                                ]
+                            );
+
+                            // Clear Session Data for the Side
+                            session()->forget($designSessionKey);
+                            session()->forget($mockupSessionKey);
+                        }
+
+
+                    }
+                }
+
+
                 session()->forget('product_ids');
                 session()->forget('totalProduct');
                 session()->forget('totalPrice');
                 session()->forget('discountedPrice');
                 session()->forget('session_id');
                 session()->forget('order_info');
+
                 $payment = Payment::create([
                     'payment_id' => $response->id,
                     'order_id' => $order->id,

@@ -545,6 +545,36 @@
                                         <p class="text-danger">{{ $message }}</p>
                                     @enderror
                                 </div>
+                                <div class="col-md-4">
+                                    <label>Right Side:</label>
+                                    <div class="form-group">
+                                        <img src="{{ asset($product->design_image_right_side) }}" alt=" Image"
+                                            class="thumbnail">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="image">Upload a png </label>
+                                    <input required type="file" id="image" name="design_image_right_side"
+                                        class="form-control">
+                                    @error('design_image_right_side')
+                                        <p class="text-danger">{{ $message }}</p>
+                                    @enderror
+                                </div>
+                                <div class="col-md-4">
+                                    <label>Left Side:</label>
+                                    <div class="form-group">
+                                        <img src="{{ asset($product->design_image_left_side) }}" alt=" Image"
+                                            class="thumbnail">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="image">Upload a png </label>
+                                    <input required type="file" id="image" name="design_image_left_side"
+                                        class="form-control">
+                                    @error('design_image_left_side')
+                                        <p class="text-danger">{{ $message }}</p>
+                                    @enderror
+                                </div>
 
                                 <div class="form-group">
                                     <label for="name">Product Discount Price on Quentity</label>

@@ -539,7 +539,7 @@
                 var quantity = 0;
                 var newkey = `${size}_${color}`;
 
-                if (size && color) {
+                // if (size && color) {
 
                     $.ajax({
                         url: "{{ route('increment-quantity') }}",
@@ -567,10 +567,10 @@
                             // Handle errors or display an error message to the user.
                         }
                     });
-                } else {
-                    // Optionally, you can provide feedback to the user if size, color, or quantity is not selected or quantity is 0
-                    console.warn("Please select size, color.");
-                }
+                // } else {
+                //     // Optionally, you can provide feedback to the user if size, color, or quantity is not selected or quantity is 0
+                //     console.warn("Please select size, color.");
+                // }
             }
 
             function addNewproduct(element) {

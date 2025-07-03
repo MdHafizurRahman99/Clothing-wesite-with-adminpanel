@@ -17,7 +17,7 @@ use App\Models\ProductQuentity;
 use App\Models\ProductSize;
 use App\Models\ProductSizeDetail;
 use Illuminate\Support\Facades\Validator;
-
+use Illuminate\Support\Facades\Log;
 class ProductController extends Controller
 {
     public $image, $imageName, $directory, $imgUrl;
@@ -159,6 +159,8 @@ class ProductController extends Controller
         $image = $this->saveImage($request->image);
         $design_image_front_side = $this->saveDesignImage($request->design_image_front_side);
         $design_image_back_side = $this->saveDesignImage($request->design_image_back_side);
+        $design_image_right_side = $this->saveDesignImage($request->design_image_right_side);
+        $design_image_left_side = $this->saveDesignImage($request->design_image_left_side);
         $product = Product::create([
             'id' => $key,
             'name' => $request->name,
@@ -174,11 +176,12 @@ class ProductController extends Controller
             'image' => $image,
             'design_image_front_side' => $design_image_front_side,
             'design_image_back_side' => $design_image_back_side,
+            'design_image_left_side' => $design_image_left_side,
+            'design_image_right_side' => $design_image_right_side,
             'description' => $request->description,
         ]);
 
         if ($request->customcolor == 'Yes') {
-
             $product->update(
                 [
                     'minimum_order' => $request->minimum_order,
@@ -493,6 +496,27 @@ class ProductController extends Controller
             $design_image_back_side = $this->saveImage($request->design_image_back_side);
             $product->update([
                 'design_image_back_side' => $design_image_back_side,
+            ]);
+        }
+
+        if (isset($request->design_image_left_side)) {
+            if (isset($product->design_image_left_side)) {
+                unlink($product->design_image_left_side);
+            }
+
+            $design_image_left_side = $this->saveImage($request->design_image_left_side);
+            $product->update([
+                'design_image_left_side' => $design_image_left_side,
+            ]);
+        }
+        if (isset($request->design_image_right_side)) {
+            if (isset($product->design_image_right_side)) {
+                unlink($product->design_image_right_side);
+            }
+
+            $design_image_right_side = $this->saveImage($request->design_image_right_side);
+            $product->update([
+                'design_image_right_side' => $design_image_right_side,
             ]);
         }
 
@@ -822,14 +846,13 @@ class ProductController extends Controller
 
             $sessionKey = 'mockup' . '_' . $request->side . '_' . $request->product_id;
             // dd($request->side);
-
+            // session()->forget($sessionKey);
             $previousImageUrl = session()->get($sessionKey);
 
             // Check if the file exists before attempting to delete
-            if ($previousImageUrl && file_exists($previousImageUrl)) {
-                unlink($previousImageUrl);
+            if (!empty($previousImageUrl['imageUrl']) && file_exists($previousImageUrl['imageUrl'])) {
+                unlink($previousImageUrl['imageUrl']);
             }
-
 
             // $imageUrls = session()->get($sessionKey, []);
             // if (isset($imageUrls)) {
@@ -840,8 +863,13 @@ class ProductController extends Controller
             //     $imageUrls[] = $imageUrl;
             //     session()->put($sessionKey, $imageUrls);
             // }
-            session()->put($sessionKey, $imageUrl);
+            $objects = json_decode($request->input('objects'), true);  // Decode the objects from JSON
 
+            Log::info('Premium objects input:', ['objects' => $request->input('objects')]);
+            session()->put($sessionKey, [
+                'objects' => $request->input('objects'),
+                'imageUrl' => $imageUrl
+            ]);
             return $imageUrl;
 
             // return session()->get($sessionKey,[]);

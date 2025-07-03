@@ -462,8 +462,6 @@
                             Design
 
                         </a>
-
-
                     </div>
                     {{-- <div class="responsive-table-container">
                         <p>Available inventory is shown below.</p>

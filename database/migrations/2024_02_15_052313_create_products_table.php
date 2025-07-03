@@ -26,6 +26,8 @@ return new class extends Migration
             $table->text('image')->nullable();
             $table->string('design_image_front_side')->nullable();
             $table->string('design_image_back_side')->nullable();
+            $table->string('design_image_right_side')->nullable();
+            $table->string('design_image_left_side')->nullable();
             $table->text('description')->nullable();
             $table->string('weight')->nullable();
             $table->string('gender')->nullable();

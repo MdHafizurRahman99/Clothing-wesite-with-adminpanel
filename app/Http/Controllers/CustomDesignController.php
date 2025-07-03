@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 
 class CustomDesignController extends Controller
 {
+    public $image, $imageName, $directory, $imgUrl;
+
     /**
      * Display a listing of the resource.
      */
@@ -28,24 +30,49 @@ class CustomDesignController extends Controller
      */
     public function store(Request $request)
     {
+        // $sessionKey = 'mockup_front_' . $request->product_id;
 
+        // return session()->get($sessionKey,[]);
         // return $request;
+        $swing_tag_design = $this->saveImage($request->file('swing_tag_design'));
+        $neck_level_design = $this->saveImage($request->file('neck_level_design'));
+        $right_sleeve_design = $this->saveImage($request->file('right_sleeve_design'));
+        $left_sleeve_design = $this->saveImage($request->file('left_sleeve_design'));
         $customDesignAdditionalData = [
             'input' => $request->input(),
-            // 'files' => $request->files->all(),
+            'files' => [
+                'swing_tag_design' => $swing_tag_design,
+                'neck_level_design' => $neck_level_design,
+                'right_sleeve_design' => $right_sleeve_design,
+                'left_sleeve_design' => $left_sleeve_design,
+            ],
             // 'cookies' => $request->cookies->all(),
             // Add more data as needed
         ];
+
         $customDesignAdditionalDatakey = 'customDesignAdditionalData_' . $request->product_id;
+
+        $cachedData = cache()->get($customDesignAdditionalDatakey);
+        if (!empty($cachedData['files'])) {
+            foreach ($cachedData['files'] as $filePath) {
+                if (file_exists($filePath)) {
+                    unlink($filePath); // Deletes the file
+                }
+            }
+        }
         $cachedData = cache()->forget($customDesignAdditionalDatakey);
 
-        // return $customDesignAdditionalDatakey;
         // Store the data in the cache
         cache()->put($customDesignAdditionalDatakey, $customDesignAdditionalData, now()->addMinutes(1440));
-        // return $data = cache()->get($customDesignAdditionalDatakey);
+        //  $data = cache()->get($customDesignAdditionalDatakey);
+        //  return $data['input']['neck_level_details'];
         // $cachedData = cache()->forget($customDesignAdditionalDatakey);
-        // return $cachedData;
-        return redirect()->route('shop.product-cart')->with('message', 'Additional details save successfully.');
+        // return $data;
+
+        $cartController = new CartController();
+        $cartController->addToCart($request);
+
+        return redirect()->route('shop.product-cart');
         //
     }
 
@@ -79,5 +106,21 @@ class CustomDesignController extends Controller
     public function destroy(CustomDesign $custom_product_design)
     {
         //
+    }
+
+    private function saveImage($image)
+    {
+        $this->image = $image;
+        // $this->image = $request->file('category_image');
+        // dd($request);
+        if ($this->image) {
+            $this->imageName = rand() . '.' . $this->image->getClientOriginalExtension();
+            $this->directory = 'images/customOrder/';
+            $this->imgUrl = $this->directory . $this->imageName;
+            $this->image->move($this->directory, $this->imageName);
+            return $this->imgUrl;
+        } else {
+            return $this->image;
+        }
     }
 }

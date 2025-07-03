@@ -268,6 +268,7 @@ class ShopController extends Controller
     // }
     public function productCheckout()
     {
+
         $cacheKey = session('cacheKey');
         $productIds = session('product_ids');
         $cartproducts = [];

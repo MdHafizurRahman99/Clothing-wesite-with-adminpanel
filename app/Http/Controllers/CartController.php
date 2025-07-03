@@ -59,14 +59,14 @@ class CartController extends Controller
             ->first();
         // return $inventory;
 
-        if (!$inventory || $inventory->quantity < $request->quantity) {
-            // return back()->withErrors(['error' => "Insufficient stock for '$size - $color'. Please try to order"]);
-            // return back()->withErrors(['error' => "We apologize, but there is currently limited stock available for '$request->size - $request->color'. Please adjust the quantity ."]);
-                return response()->json([
-                    'error' => true,
-                    'message' => "We apologize, there is currently Insufficient stock available for '{$request->size} - {$request->color}'. Please adjust the quantity."
-                ], 400);
-        }
+        // if (!$inventory || $inventory->quantity < $request->quantity) {
+        //     // return back()->withErrors(['error' => "Insufficient stock for '$size - $color'. Please try to order"]);
+        //     // return back()->withErrors(['error' => "We apologize, but there is currently limited stock available for '$request->size - $request->color'. Please adjust the quantity ."]);
+        //         return response()->json([
+        //             'error' => true,
+        //             'message' => "We apologize, there is currently Insufficient stock available for '{$request->size} - {$request->color}'. Please adjust the quantity."
+        //         ], 400);
+        // }
 
 
         // }
