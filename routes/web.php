@@ -35,6 +35,8 @@ use App\Http\Controllers\StripeController;
 use App\Http\Controllers\TryTestController;
 use App\Http\Controllers\UserProfileController;
 use App\Http\Controllers\MessagesController;
+use App\Http\Controllers\MockupController;
+use App\Http\Controllers\ProductSideController;
 use App\Http\Controllers\ProductSizeController;
 use App\Models\StaffSchedule;
 use Illuminate\Support\Facades\Artisan;
@@ -50,6 +52,7 @@ use Illuminate\Support\Facades\Auth;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
+
 
 
 Route::get('/clear-cache', function () {
