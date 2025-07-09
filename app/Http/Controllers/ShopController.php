@@ -244,14 +244,15 @@ class ShopController extends Controller
 
         // return $product_id;
         if (isNull($product_id)) {
-            $product = Product::find($product_id);
+            $product = Product::with(['sleeveConfigs', 'sizeDetails'])->findOrFail($product_id);
             $category = Category::find($product->category_id);
             // $colors = Color::all();
             $colors = $product->colors;
 
             // dd($category);
 
-            // dd($product_id);
+            // dd($product);
+            // return $product;
             return view('frontend.shop.design', [
                 'product' => $product,
                 'category' => $category,

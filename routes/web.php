@@ -38,6 +38,7 @@ use App\Http\Controllers\MessagesController;
 use App\Http\Controllers\MockupController;
 use App\Http\Controllers\ProductSideController;
 use App\Http\Controllers\ProductSizeController;
+use App\Http\Controllers\SleeveConfigAdminController;
 use App\Models\StaffSchedule;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
@@ -65,6 +66,8 @@ Route::get('/clear-cache', function () {
 
     return 'Cache and Optimizations hello!';
 });
+
+Route::get('/sleeve-configs', [SleeveConfigAdminController::class, 'index'])->name('sleeve-configs');
 
 Route::get('/', function () {
     // return view('layouts.frontend.master');

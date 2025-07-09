@@ -43,4 +43,9 @@ class Product extends Model
         return $this->belongsToMany(Color::class, 'product_colors', 'product_id', 'color_id');
     }
 
+       public function sleeveConfigs()
+    {
+        return $this->hasMany(sleeve_config::class);
+    }
+
 }
