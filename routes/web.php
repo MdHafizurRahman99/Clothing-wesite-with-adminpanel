@@ -67,7 +67,7 @@ Route::get('/clear-cache', function () {
     return 'Cache and Optimizations hello!';
 });
 
-Route::get('/sleeve-configs', [SleeveConfigAdminController::class, 'index'])->name('sleeve-configs');
+Route::get('/sleeve-configs', [SleeveConfigAdminController::class, 'index'])->name('sleeve-config.index')->middleware('auth');
 
 Route::get('/', function () {
     // return view('layouts.frontend.master');

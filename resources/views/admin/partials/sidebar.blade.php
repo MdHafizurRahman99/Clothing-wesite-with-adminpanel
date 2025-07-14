@@ -168,6 +168,7 @@
                         <a class="collapse-item" href="{{ route('pattern.index') }}">Patterns</a>
                     @endif
                     <a class="collapse-item" href="{{ route('product.index') }}">All Product </a>
+                    <a class="collapse-item" href="{{ route('sleeve-config.index') }}">Sleeve Configurations </a>
                     {{-- <a class="collapse-item" href="cards.html">Cards</a> --}}
                 </div>
             </div>

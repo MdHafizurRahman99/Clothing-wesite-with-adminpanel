@@ -36,7 +36,8 @@ class SleeveConfigController extends Controller
         }
 
         $config = sleeve_config::create($request->all());
-        return response()->json($config, 201);
+        // return response()->json($config, 201);
+        return redirect()->route('sleeve-config.index')->with('message', 'Sleeve configuration saved successfully!');
     }
 
     public function show($id)
@@ -66,7 +67,8 @@ class SleeveConfigController extends Controller
         }
 
         $config->update($request->all());
-        return response()->json($config);
+        return redirect()->route('sleeve-config.index')->with('message', 'Sleeve configuration saved successfully!');
+        // return response()->json($config);
     }
 
     public function destroy($id)
